@@ -297,6 +297,9 @@ LLM yorumu **kalıcı inanç değildir**. Observer kaydı kalıcıdır.
 >
 > Birine "evet" ise ihlal.
 
+### Alt-spec referansı
+`HumanIntentEvent`'in çekirdeğe ingress sınırı için bkz. [`WORLD_INGRESS.md`](./WORLD_INGRESS.md) §11.
+
 ---
 
 ## Madde 7 — Hafıza Sınırı
@@ -330,7 +333,7 @@ Tek tip hafıza modeli iki uçtan birine düşer: ya her şey sinapsta yaşar (a
 - Çekirdeğin kendi M2 kayıtlarını doğrudan, gate'siz yazması (self-deception riski)
 
 ### Detay
-Tam spec: [`MEMORY_CONTRACT.md`](./MEMORY_CONTRACT.md)
+Tam spec: [`MEMORY_CONTRACT.md`](./MEMORY_CONTRACT.md). M2'den `RecallEvent` ingress sınırı için bkz. [`WORLD_INGRESS.md`](./WORLD_INGRESS.md) §10.
 
 ### Violation Test
 > *Bu öneri herhangi bir hafıza katmanını başka bir katmana doğrudan emir verir hale getiriyor mu?*

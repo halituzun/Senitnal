@@ -74,6 +74,21 @@ Dış **hafıza organı**.
 - **Çekirdek doğrudan yazar mı:** **Hayır.** Sadece niyet üretir.
 - **Silinirse:** Bilgi kaybı, kimlik korunur, kısmen yeniden inşa edilebilir.
 
+#### Alt-türleme: `subject_class`
+
+M2 kayıtları `subject_class` alanı ile alt-türlenebilir. Yeni hafıza katmanı doğmaz; M2 içinde farklı **kayıt tipleri** olur. Örnekler:
+
+```
+subject_class:
+  - episodic         (insan/sistem olay kayıtları)
+  - structured_fact  (kalıcı dünya bilgileri)
+  - procedural       (lookup tabloları, compatibility matrix)
+  - incident         (anlık olaylar, hatalar)
+  - source_trust     (kaynak güvenirlik kayıtları — bkz. WORLD_INGRESS §16)
+```
+
+`SourceTrustRecord` (`subject_class = "source_trust"`) bu mekanizmanın ilk somut örneğidir. Yeni katman değildir; M2'nin bir alt-tipidir. CandidateMemoryRecord statü zinciri (§10) aynen geçerlidir.
+
 ### M3 — Translator Memory
 
 LLM'in **konuşma bağlamı**.

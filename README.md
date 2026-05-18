@@ -91,12 +91,11 @@ Bu soruları sormayan sistem AGI değil, sadece otomasyondur.
 ### Tamamlanmış
 
 - [x] `CONSTITUTION.md` v0.1 — 7 maddelik temel anayasa (Principle / Rationale / Allowed / Forbidden / Violation Test formatında)
-- [x] `MEMORY_CONTRACT.md` v0.1 — M0-M3 hafıza sınır anayasası, Memory Write Gate (epistemic), CandidateMemoryRecord statüleri
+- [x] `MEMORY_CONTRACT.md` v0.1 — M0-M3 hafıza sınır anayasası, Memory Write Gate (epistemic), CandidateMemoryRecord statüleri, M2 `subject_class` alt-türleme
 - [x] `ATTENTION_WORKSPACE.md` v0.1 — Madde 4 alt-spec'i: homojen WORKSPACE_PULSE, pulse imzası (tip değil), dissonant attention, InternalShockEvent ayrımı
+- [x] `WORLD_INGRESS.md` v0.1 — Dış dünya giriş sınırları: 4 ingress profile (Observation/Recall/HumanIntent/InternalShock), IngressEventEnvelope, deterministic compiler, SourceTrustRecord M2 alt-tipi
 
 ### Sıradaki (tasarım belgeleri)
-
-- [ ] `WORLD_MODEL_INGRESS.md` — dış dünya temsili ve giriş kuralları
 - [ ] `RECALL_PROTOCOL.md` — recall şema detayı
 - [ ] `OBSERVER_LEDGER_SCHEMA.md` — ledger event tipleri
 - [ ] `MEMORY_WRITE_GATE.md` — **epistemik gate** (deontic gate'ten ayrı)
