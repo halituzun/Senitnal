@@ -222,6 +222,9 @@ Deontic gate kurallarına eklenecek/çıkarılacak her madde, bu `CONSTITUTION.m
 >
 > İkisini karıştırıyorsa veya hangisinde olduğu belirsizse ihlal.
 
+### Alt-spec referansı
+Deontic gate'in constitutional vs operational hard-stop ayrımı, 11 anayasal declarative, block classification, bypass attempt handling, kill-switch protokolü ve operational policy update workflow için bkz. [`DEONTIC_GATE.md`](./DEONTIC_GATE.md) — Madde 5'in alt-spec'i, yeni anayasa maddesi değildir.
+
 ---
 
 ## Madde 6 — LLM Boundary

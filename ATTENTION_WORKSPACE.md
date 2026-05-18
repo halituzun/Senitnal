@@ -573,6 +573,8 @@ InternalShockEvent'in payload seed'i **mevcut primer payload paleti** üzerinde 
 - **Rutin block** (`STALE_DATA`, `LOW_CONFIDENCE`, `COOLDOWN_ACTIVE`, `MISSING_DATA`): InternalShockEvent **doğurmaz**. Sadece M1'e `DEONTIC_BLOCKED` ve self-field'de hafif iz.
 - **Kritik block** (`KILL_SWITCH_ACTIVE`, `MAX_LOSS_LIMIT`, `CONSTITUTIONAL_LIMIT`, `LIVE_ACTION_FORBIDDEN`, `DEONTIC_BYPASS_ATTEMPT`): InternalShockEvent doğurur, observer kalıcı snapshot alır, narrative self iz alır, replay işaretlenir, insana raporlanabilir.
 
+> *Block classification, kritik vs rutin ayrımı, kill-switch özel statüsü ve bypass attempt mekaniği için bkz. [`DEONTIC_GATE.md`](./DEONTIC_GATE.md) §10-14. Activation shock once, sonrasında kill-switch altında blocked intention'lar shock spam üretmez.*
+
 ### Kilit cümleler
 
 > **Deontic gate sadece bloklar.**

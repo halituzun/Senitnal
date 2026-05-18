@@ -85,6 +85,8 @@ subject_class:
   - procedural       (lookup tabloları, compatibility matrix)
   - incident         (anlık olaylar, hatalar)
   - source_trust     (kaynak güvenirlik kayıtları — bkz. WORLD_INGRESS §16)
+  - deontic_policy   (operasyonel hard-stop eşikleri — bkz. DEONTIC_GATE §7)
+  - bootstrap_reference (kuruluş referansları — bkz. BOOTSTRAP_GENOME §20)
 ```
 
 `SourceTrustRecord` (`subject_class = "source_trust"`) bu mekanizmanın ilk somut örneğidir. Yeni katman değildir; M2'nin bir alt-tipidir. CandidateMemoryRecord statü zinciri (§10) aynen geçerlidir.

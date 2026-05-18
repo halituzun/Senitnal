@@ -357,9 +357,11 @@ InternalShockEvent
 ### Kritik kurallar
 
 - learned_mappings **kapalı**. Deterministic. Anayasal.
-- Sadece **kritik** deontic block tetikler (rutin block sessiz kalır — bkz. ATTENTION_WORKSPACE §18).
+- Sadece **kritik** deontic block tetikler (rutin block sessiz kalır — bkz. ATTENTION_WORKSPACE §18 ve DEONTIC_GATE §12).
 - Payload_seed primer palette üzerinde **sınırlı** karışım (örn. `pain_trace`, `memory_echo`, `contradiction`, `fatigue_trace`). Yeni payload tipi üretmez.
 - Kesin seed magnitudes bu belgenin konusu değil — `DEONTIC_GATE.md` veya `BOOTSTRAP_GENOME.md` konusu.
+
+> *InternalShockEvent tetikleme kuralları (routine vs safety vs constitutional block), kill-switch özel statüsü ve bypass attempt InternalShockEvent davranışı için bkz. [`DEONTIC_GATE.md`](./DEONTIC_GATE.md) §12-14.*
 
 ### InternalShockEvent **yapamaz**
 - WORKSPACE_PULSE doğrudan üretmek
