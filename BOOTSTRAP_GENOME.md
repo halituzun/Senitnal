@@ -433,7 +433,7 @@ Toplam normalize. Deneyimle kayar (Madde 2 öğrenme kuralları + ATTENTION_WORK
 
 - **Homeostatic güçlü:** sistem doğduğunda kendi anlık iç durumunu güçlü hisseder (bebek gibi)
 - **Predictive zayıf:** kendi davranışını tahmin etmeyi henüz öğrenmemiştir (kademeli olgunlaşır)
-- **Narrative çok düşük + genesis trace:** kimlik henüz oluşmamıştır, ama doğum anı "ben buradayım" izi bırakır
+- **Narrative çok düşük + genesis trace:** kimlik henüz oluşmamıştır; genesis trace M1'de audit anchor olarak durur, çekirdeğe payload_seed olarak girmez (bkz. §21).
 
 ---
 
