@@ -165,7 +165,7 @@ ObserverEvent
 ├── audit_envelope                       # kim/ne zaman/hangi katman
 │   ├── event_id                         # unique
 │   ├── event_type                       # OBSERVATION_INGESTED, WORKSPACE_PULSE, ...
-│   ├── event_family                     # neural | attention | memory | ingress | bootstrap | deontic
+│   ├── event_family                     # neural | attention | memory | ingress | bootstrap | deontic | ledger_meta
 │   ├── occurred_at                      # event gerçek anı
 │   ├── observed_at                      # observer kaydetme anı
 │   ├── source_layer                     # M0 | adapter | gate | summarizer | ...
@@ -236,7 +236,7 @@ A-E boyunca bu disiplin emerge etti: B'de `WORKSPACE_PULSE` + dissonance field, 
 
 ## 9. Event Families
 
-Audit kategorizasyonu için 6 family:
+Audit kategorizasyonu için 7 family:
 
 ```
 event_family:
@@ -245,7 +245,8 @@ event_family:
 ├── memory         (recall request/event, memory write candidate status change, replay)
 ├── ingress        (observation/recall/human_intent/internal_shock ingested, dedup, ttl)
 ├── bootstrap      (self genesis, bootstrap m2 injection, constitutional shift)
-└── deontic        (block, policy status change, bypass, kill-switch)
+├── deontic        (block, policy status change, bypass, kill-switch)
+└── ledger_meta    (audit-of-audit: read events, summarization events, compaction)
 ```
 
 ### Kritik kural
@@ -384,6 +385,8 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 ```
 
 Kesin değerler implementation. F sadece **band**'ları anayasallaştırır.
+
+> **Snapshot window entries apply only when `permanence_policy` marks the event as `permanent_with_snapshot`.** Default `permanence_policy` `WORKSPACE_PULSE` için `permanent` (snapshot yok); pencere bandı yalnızca ileride açık policy revizyonuyla (örn. yüksek dissonance veya kritik attention varyantı) yükseltilirse kullanılır. Window band burada **gelecekte aktive olabilecek** policy için tanımlıdır.
 
 ### Snapshot içeriği: ham ve filtresiz
 
@@ -771,7 +774,7 @@ KILL_SWITCH_DEACTIVATED
 CONSTITUTIONAL_RULE_SHIFT_REQUESTED
 ```
 
-### Meta family (audit-of-audit)
+### Ledger meta family (audit-of-audit)
 ```
 M1_HUMAN_READ
 M1_LLM_REPORT_GENERATED
@@ -882,9 +885,9 @@ Bu sorular cevaplanmadan implementation aşamasına geçilmez.
 13. Meta-events first-order, non-recursive.
 14. Compaction storage organization only; içerik korunur.
 
-### 6 event family
+### 7 event family
 
-- `neural`, `attention`, `memory`, `ingress`, `bootstrap`, `deontic`
+- `neural`, `attention`, `memory`, `ingress`, `bootstrap`, `deontic`, `ledger_meta`
 - Family **audit grouping**, runtime behavior class **değil**.
 
 ---

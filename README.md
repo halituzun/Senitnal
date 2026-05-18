@@ -98,14 +98,14 @@ Bu soruları sormayan sistem AGI değil, sadece otomasyondur.
 - [x] `DEONTIC_GATE.md` v0.1 — Madde 5 alt-spec'i: anayasal eylem çıkış sınırı, 11 constitutional declarative, DeonticPolicyRecord (M2 alt-tipi), block classification (routine/safety/constitutional), bypass attempt iki-seviyeli audit, kill-switch graduated deactivation
 - [x] `OBSERVER_LEDGER_SCHEMA.md` v0.1 — M1 detayı: ObserverEvent envelope (audit/causal/body/integrity), recorder/summarizer rol ayrımı, event type vs field disiplini, deterministic permanence policy table (no-default), snapshot window policy + deterministic sampling, hash chain, read/write permission matrix, 6 event family
 
-### Sıradaki (tasarım belgeleri)
-- [ ] `RECALL_PROTOCOL.md` — recall şema detayı
-- [ ] `OBSERVER_LEDGER_SCHEMA.md` — ledger event tipleri
-- [ ] `MEMORY_WRITE_GATE.md` — **epistemik gate** (deontic gate'ten ayrı)
-- [ ] `DEONTIC_GATE.md` — kategorik action-risk kısıtlarının biçimsel listesi
-- [ ] `BOOTSTRAP_GENOME.md` — sistem doğduğunda elinde ne var
+### Sıradaki (operasyonel specification belgeleri)
+- [ ] `MEMORY_WRITE_GATE.md` — **epistemik gate** sayısal eşikler, summarizer candidate → verified kuralları
+- [ ] `RECALL_PROTOCOL.md` — RecallRequest/RecallEvent şemalarının tam spec'i
 - [ ] `ADAPTER_MANIFEST_SPEC.md` — uzuvların standart kontratı
-- [ ] `BACKUP_STRATEGY.md` — M0/M1 yedekleme planı
+- [ ] `INGRESS_COMPILER_SPEC.md` — neural_seed mapping numerics + bootstrap rules detail
+- [ ] `BACKUP_STRATEGY.md` — M0/M1 yedekleme planı, RPO/RTO
+- [ ] `OBSERVER_LEDGER_NUMERICS.md` — snapshot windows, sampling thresholds, segment sizes
+- [ ] `BOOTSTRAP_GENOME_NUMERICS.md` — kesin genome parametreleri
 
 Sıralama tasarım sohbetinin akışına göre değişebilir.
 
