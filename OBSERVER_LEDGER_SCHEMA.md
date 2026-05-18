@@ -741,16 +741,17 @@ MEMORY_RECORD_STATUS_CHANGED       # canonical for status transitions
                                     # (replaces MEMORY_WRITE_GATE_PASSED/REJECTED/VERIFIED/QUARANTINED;
                                     #  old_status/new_status as fields — see MEMORY_WRITE_GATE.md §17)
 RECALL_REQUEST_SENT
-RECALL_EVENT_INGESTED              # (alias: RECALL_INGESTED in ingress family — see below)
 RECALL_RESULT_EMPTY                # failure audit (RECALL_PROTOCOL.md §16)
 RECALL_SUPPRESSED                  # individual record suppressed (cooldown/habituation/status)
 OUTCOME_RECEIVED
 ```
 
+(`RECALL_EVENT_INGESTED` ingress family altındadır — recall'ın çekirdeğe duyusal giriş anı `*_INGESTED` ailesinin parçasıdır.)
+
 ### Ingress family
 ```
 OBSERVATION_INGESTED
-RECALL_INGESTED  (= RECALL_EVENT_INGESTED)
+RECALL_EVENT_INGESTED              # canonical; M2 → core sensory ingress (RECALL_PROTOCOL.md §11)
 HUMAN_INTENT_INGESTED
 INTERNAL_SHOCK_INGESTED
 INGRESS_DEDUP_REJECTED

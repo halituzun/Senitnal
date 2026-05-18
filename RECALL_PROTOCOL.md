@@ -702,14 +702,14 @@ Bu iki kanal **karışmamalı**. İnsan audit isteği "ben görmek istiyorum" de
 
 ## 19. Observer Recall Events
 
-OBSERVER_LEDGER §19'daki memory family event'leri:
+Recall-related observer event'leri **memory** ve **ingress** family'leri arasında dağılır (F event_family tek-tip kuralına göre):
 
-```
-RECALL_REQUEST_SENT              # çekirdek RecallRequest çıkardı
-RECALL_EVENT_INGESTED            # M2'den RecallEvent çekirdeğe girdi
-RECALL_RESULT_EMPTY              # failure (§16)
-RECALL_SUPPRESSED                # bireysel kayıt suppress edildi (cooldown/habituation/status)
-```
+| Event | event_family | Açıklama |
+|-------|--------------|----------|
+| `RECALL_REQUEST_SENT` | memory | Çekirdek RecallRequest çıkardı |
+| `RECALL_EVENT_INGESTED` | **ingress** | M2'den RecallEvent çekirdeğe duyusal olarak girdi (`*_INGESTED` ailesi) |
+| `RECALL_RESULT_EMPTY` | memory | Failure (§16) — çekirdeğe payload basmaz, M1 audit |
+| `RECALL_SUPPRESSED` | memory | Bireysel kayıt suppress edildi (cooldown/habituation/status) |
 
 ### RECALL_REQUEST_SENT şeması
 
