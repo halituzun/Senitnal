@@ -64,6 +64,8 @@ Sistemin **tarihinin kanıt defteri**.
 - **Okuyucu:** İnsanlar (audit), LLM tercüman (rapor), explicit memory adapter (özet üretmek için).
 - **Silinirse:** Tarih kaybı. **Yapılmaz.** Yedekleme sürekli ve dağıtık.
 
+> *Tam M1 event şeması, ObserverEvent envelope, permanence policy, snapshot rules, hash chain, meta-event non-recursion ve read/write permission matrix için bkz. [`OBSERVER_LEDGER_SCHEMA.md`](./OBSERVER_LEDGER_SCHEMA.md).*
+
 ### M2 — Explicit Recall Store
 
 Dış **hafıza organı**.
@@ -345,7 +347,7 @@ Kritik ayrım:
 
 Bu belgenin **sonraki sürümlerinde** çözülecek açık sorular:
 
-- **Observer dual-role:** Observer hem kaydedici hem paketleyici. Uzun vadede ayrılmalı mı? Hangi seviyede yetki ayrımı yeterli?
+- **Observer dual-role:** *(F tarafından yapısal cevap)* Observer iki rol taşır — `recorder` (M1 yazıcı, sadece permanence_policy uygular) ve `summarizer` (M1 okur, M2 candidate önerir, Memory Write Gate'ten geçer). İkisi farklı yetki seviyesinde; her summarizer hareketi M1'e meta-event olarak kayıtlı (non-recursive). Detay: [`OBSERVER_LEDGER_SCHEMA.md`](./OBSERVER_LEDGER_SCHEMA.md) §5. Açık kalan: summarizer'ın hangi event kombinasyonlarını candidate üretmek için kullanacağı `MEMORY_WRITE_GATE.md` konusu.
 - **Memory Write Gate karar kuralları:** Sayısal eşikler nereden geliyor? Anayasal mı (sabit) yoksa kalibre edilebilir mi (deneyimle ayar)? Kalibre ise kim kalibre ediyor?
 - **M2 schema versioning:** M2 explicit store şeması zamanla değişecek. Eski kayıtlar nasıl migrate olur? Migration sırasında provenance nasıl korunur?
 - **Replay engine'in M0 üzerindeki etkisi:** *(B tarafından kısmi cevap)* Replay M0'a iki ayrı kanaldan dokunur:

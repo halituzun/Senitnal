@@ -339,7 +339,7 @@ Tek tip hafıza modeli iki uçtan birine düşer: ya her şey sinapsta yaşar (a
 - Çekirdeğin kendi M2 kayıtlarını doğrudan, gate'siz yazması (self-deception riski)
 
 ### Detay
-Tam spec: [`MEMORY_CONTRACT.md`](./MEMORY_CONTRACT.md). M2'den `RecallEvent` ingress sınırı için bkz. [`WORLD_INGRESS.md`](./WORLD_INGRESS.md) §10.
+Tam spec: [`MEMORY_CONTRACT.md`](./MEMORY_CONTRACT.md). M2'den `RecallEvent` ingress sınırı için bkz. [`WORLD_INGRESS.md`](./WORLD_INGRESS.md) §10. M1 observer ledger event şeması, permanence policy, snapshot rules, hash chain ve meta-event non-recursion için bkz. [`OBSERVER_LEDGER_SCHEMA.md`](./OBSERVER_LEDGER_SCHEMA.md).
 
 ### Violation Test
 > *Bu öneri herhangi bir hafıza katmanını başka bir katmana doğrudan emir verir hale getiriyor mu?*

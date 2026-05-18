@@ -96,6 +96,7 @@ Bu soruları sormayan sistem AGI değil, sadece otomasyondur.
 - [x] `WORLD_INGRESS.md` v0.1 — Dış dünya giriş sınırları: 4 ingress profile (Observation/Recall/HumanIntent/InternalShock), IngressEventEnvelope, deterministic compiler, SourceTrustRecord M2 alt-tipi
 - [x] `BOOTSTRAP_GENOME.md` v0.1 — Madde 3 alt-spec'i: doğum anayasası, initial M0/M1/M2/M3 state, SELF_GENESIS şeması, payload modulation reflexes, plasticity yaş-değil-state-based, constitutional shift policy (3 compatibility class)
 - [x] `DEONTIC_GATE.md` v0.1 — Madde 5 alt-spec'i: anayasal eylem çıkış sınırı, 11 constitutional declarative, DeonticPolicyRecord (M2 alt-tipi), block classification (routine/safety/constitutional), bypass attempt iki-seviyeli audit, kill-switch graduated deactivation
+- [x] `OBSERVER_LEDGER_SCHEMA.md` v0.1 — M1 detayı: ObserverEvent envelope (audit/causal/body/integrity), recorder/summarizer rol ayrımı, event type vs field disiplini, deterministic permanence policy table (no-default), snapshot window policy + deterministic sampling, hash chain, read/write permission matrix, 6 event family
 
 ### Sıradaki (tasarım belgeleri)
 - [ ] `RECALL_PROTOCOL.md` — recall şema detayı
