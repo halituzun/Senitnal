@@ -98,9 +98,9 @@ Bu soruları sormayan sistem AGI değil, sadece otomasyondur.
 - [x] `DEONTIC_GATE.md` v0.1 — Madde 5 alt-spec'i: anayasal eylem çıkış sınırı, 11 constitutional declarative, DeonticPolicyRecord (M2 alt-tipi), block classification (routine/safety/constitutional), bypass attempt iki-seviyeli audit, kill-switch graduated deactivation
 - [x] `OBSERVER_LEDGER_SCHEMA.md` v0.1 — M1 detayı: ObserverEvent envelope (audit/causal/body/integrity), recorder/summarizer rol ayrımı, event type vs field disiplini, deterministic permanence policy table (no-default), snapshot window policy + deterministic sampling, hash chain, read/write permission matrix, 7 event family (ledger_meta dahil)
 - [x] `MEMORY_WRITE_GATE.md` v0.1 — Madde 7 / MEMORY_CONTRACT §9 alt-spec'i: epistemik fren (deontic gate ≠), subject_class × evidence axes verification matrix, self-deception detection mekaniği, statü makinesi (candidate/verified/active/quarantined/superseded/rejected/expired), human writes vs system writes ayrımı (auto-verified vs matrix-required), silent gate (çekirdeğe geri yansıma yok), `MEMORY_RECORD_STATUS_CHANGED` canonical event
+- [x] `RECALL_PROTOCOL.md` v0.1 — Madde 7 / MEMORY_CONTRACT §5-6 alt-spec'i: M2'den çekirdeğe hatırlatma protokolü (Memory Write Gate'in çift kapısı), recall is sensory ingress not retrieval, core-originated RecallRequest, hybrid scope, ranking is delivery not truth, top-1 RecallEvent + audit alternates, candidate recall sadece source_trust/procedural için capped intensity, human-requested recall HumanIntentEvent tetikleyici (doğrudan değil), operational audit ayrı kanal, recall failure (RECALL_RESULT_EMPTY) audit-only — çekirdeğe yokluk payload'ı basılmaz
 
 ### Sıradaki (operasyonel specification belgeleri)
-- [ ] `RECALL_PROTOCOL.md` — RecallRequest/RecallEvent şemalarının tam spec'i
 - [ ] `ADAPTER_MANIFEST_SPEC.md` — uzuvların standart kontratı
 - [ ] `INGRESS_COMPILER_SPEC.md` — neural_seed mapping numerics + bootstrap rules detail
 - [ ] `BACKUP_STRATEGY.md` — M0/M1 yedekleme planı, RPO/RTO

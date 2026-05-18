@@ -269,6 +269,8 @@ RecallEvent
 ### Kural
 > *RecallEvent gerçek değildir. RecallEvent kaynaklı hatırlatmadır.*
 
+> *RecallRequest tetikleyicileri, scope/ranking/multi-record kuralları, status-based recall davranışı, candidate recall sınırı (sadece source_trust + procedural), human-requested recall (HumanIntentEvent tetikleyici, doğrudan değil) ve recall failure handling için bkz. [`RECALL_PROTOCOL.md`](./RECALL_PROTOCOL.md).*
+
 ---
 
 ## 11. HumanIntentEvent Boundary

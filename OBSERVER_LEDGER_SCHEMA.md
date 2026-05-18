@@ -346,6 +346,8 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 (MEMORY_RECORD_STATUS_CHANGED, new_status=quarantined OR self_deception_risk=HIGH) → permanent_with_snapshot
 (RECALL_REQUEST_SENT, *)                     → ring_buffer_only
 (RECALL_EVENT_INGESTED, *)                   → ring_buffer_only
+(RECALL_RESULT_EMPTY, *)                     → permanent              # failure audit
+(RECALL_SUPPRESSED, *)                       → ring_buffer_only
 (OBSERVATION_INGESTED, *)                    → ring_buffer_only
 (HUMAN_INTENT_INGESTED, *)                   → permanent
 (INTERNAL_SHOCK_INGESTED, *)                 → permanent_with_snapshot + human_alert
@@ -739,6 +741,9 @@ MEMORY_RECORD_STATUS_CHANGED       # canonical for status transitions
                                     # (replaces MEMORY_WRITE_GATE_PASSED/REJECTED/VERIFIED/QUARANTINED;
                                     #  old_status/new_status as fields — see MEMORY_WRITE_GATE.md §17)
 RECALL_REQUEST_SENT
+RECALL_EVENT_INGESTED              # (alias: RECALL_INGESTED in ingress family — see below)
+RECALL_RESULT_EMPTY                # failure audit (RECALL_PROTOCOL.md §16)
+RECALL_SUPPRESSED                  # individual record suppressed (cooldown/habituation/status)
 OUTCOME_RECEIVED
 ```
 

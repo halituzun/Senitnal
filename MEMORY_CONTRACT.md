@@ -166,6 +166,8 @@ RecallEvent
 
 **Önemli kural:** RecallEvent gerçek değildir, **kaynaklı gözlemdir**. Çekirdek otomatik kabul etmez; çelişki/güven testlerine tabi tutar.
 
+> *Tam recall protokolü — RecallRequest tetikleyicileri, scope/ranking/multi-record kuralları, status-based recall davranışı, candidate recall sınırı, human-requested recall akışı ve recall failure handling — için bkz. [`RECALL_PROTOCOL.md`](./RECALL_PROTOCOL.md).*
+
 ---
 
 ## 6. Recall Economy
@@ -177,6 +179,8 @@ Sınırsız recall = **pathological rumination**. Her recall'un bedeli vardır:
 - **Habituation:** Aynı `RecallEvent` 5. kez geldiğinde 1.'ye göre çok düşük payload intensity üretir.
 
 Bu maliyetler self-field tarafından "hissedilir"; sistem kendi kendine recall fırtınasına girmez.
+
+> *Recall economy'nin biçimsel hali (recall_cost formülü, cooldown refractory period, habituation factor, recall_budget) için bkz. [`RECALL_PROTOCOL.md`](./RECALL_PROTOCOL.md) §14.*
 
 ---
 
