@@ -94,6 +94,7 @@ Bu soruları sormayan sistem AGI değil, sadece otomasyondur.
 - [x] `MEMORY_CONTRACT.md` v0.1 — M0-M3 hafıza sınır anayasası, Memory Write Gate (epistemic), CandidateMemoryRecord statüleri, M2 `subject_class` alt-türleme
 - [x] `ATTENTION_WORKSPACE.md` v0.1 — Madde 4 alt-spec'i: homojen WORKSPACE_PULSE, pulse imzası (tip değil), dissonant attention, InternalShockEvent ayrımı
 - [x] `WORLD_INGRESS.md` v0.1 — Dış dünya giriş sınırları: 4 ingress profile (Observation/Recall/HumanIntent/InternalShock), IngressEventEnvelope, deterministic compiler, SourceTrustRecord M2 alt-tipi
+- [x] `BOOTSTRAP_GENOME.md` v0.1 — Madde 3 alt-spec'i: doğum anayasası, initial M0/M1/M2/M3 state, SELF_GENESIS şeması, payload modulation reflexes, plasticity yaş-değil-state-based, constitutional shift policy (3 compatibility class)
 
 ### Sıradaki (tasarım belgeleri)
 - [ ] `RECALL_PROTOCOL.md` — recall şema detayı

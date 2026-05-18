@@ -132,6 +132,9 @@ Saf sıfırdan başlamak (tam tabula rasa) pratikte ölü doğmaktır — yılla
 >
 > Evet ise ihlal. Sadece refleks/genom seviyesinde bir mekanik yüklüyorsa geçer.
 
+### Alt-spec referansı
+Initial state şeması, developmental rules, genome immutability, constitutional shift policy ve birth_mode için bkz. [`BOOTSTRAP_GENOME.md`](./BOOTSTRAP_GENOME.md) — Madde 3'ün alt-spec'i, yeni anayasa maddesi değildir.
+
 ---
 
 ## Madde 4 — Akış / Paralellik–Rekabet–Teklik

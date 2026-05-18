@@ -335,6 +335,8 @@ Kritik ayrım:
 
 **Restore kuralı:** M0+M1 birlikte restore edilirse aynı varlık. Sadece M0 restore edilirse yeni varlık (M1 yoksa narrative continuity kırılır).
 
+> *Restore senaryolarının `birth_mode` ayrımı (`clean_birth`/`restore_birth`/`fork_birth`/`migration_birth`) ve constitutional shift policy için bkz. [`BOOTSTRAP_GENOME.md`](./BOOTSTRAP_GENOME.md) §23. Constitutional hash değiştiğinde sessiz upgrade yoktur; `genesis_affecting` shift yaşayan Sentinel'e uygulanmaz, `migration_birth` gerektirir.*
+
 ---
 
 ## 14. Open Questions
