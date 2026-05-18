@@ -62,7 +62,7 @@ Deontic gate düşünceye karışırsa Madde 4 (düşüncede paralellik) ve Madd
 - Action gate'inde intention'ı durdurma
 - M1'e `DEONTIC_BLOCKED` event yazma
 - Kritik bloklarda `InternalShockEvent` tetikleme (WORLD_INGRESS §12'ye)
-- Self-field'a `action_boundary_pressure` üretmesi (dolaylı, predictive)
+- Deontic boundary proximity'nin predictive self-field tarafından `action_boundary_pressure` olarak yorumlanmasına referans olması; pressure'ı gate değil self-field üretir (bkz. §15)
 
 ### Forbidden
 - Düşünce katmanına direkt müdahale
@@ -320,7 +320,7 @@ DEONTIC_GATE'te "warning-only" bant yoktur. Soft pressure self-field'in işidir 
 ```
 Intention reaches action gate
     ↓
-Constitutional rule check (8 declarative)
+Constitutional rule check (11 declaratives)
     ↓ (block if any rule violated)
 Operational threshold check (active DeonticPolicyRecord)
     ↓ (block if any threshold violated)
