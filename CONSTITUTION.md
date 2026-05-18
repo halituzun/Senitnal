@@ -164,6 +164,9 @@ Sistem aynı olay için **birden fazla yorum** aynı anda taşıyabilmeli (epist
 > - Niyet katmanında rekabeti atlıyorsa veya saf winner-take-all yapıyorsa ihlal.
 > - Eylem katmanında tekleşmeyi bozuyorsa ihlal.
 
+### Alt-spec referansı
+Düşünce ↔ niyet köprüsündeki yayın hakkı (workspace pulse, dikkat, audit) için bkz. [`ATTENTION_WORKSPACE.md`](./ATTENTION_WORKSPACE.md) — Madde 4'ün alt-spec'i, yeni anayasa maddesi değildir.
+
 ---
 
 ## Madde 5 — Self-field & Deontic Gate

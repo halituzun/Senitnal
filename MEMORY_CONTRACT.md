@@ -329,7 +329,10 @@ Bu belgenin **sonraki sürümlerinde** çözülecek açık sorular:
 - **Observer dual-role:** Observer hem kaydedici hem paketleyici. Uzun vadede ayrılmalı mı? Hangi seviyede yetki ayrımı yeterli?
 - **Memory Write Gate karar kuralları:** Sayısal eşikler nereden geliyor? Anayasal mı (sabit) yoksa kalibre edilebilir mi (deneyimle ayar)? Kalibre ise kim kalibre ediyor?
 - **M2 schema versioning:** M2 explicit store şeması zamanla değişecek. Eski kayıtlar nasıl migrate olur? Migration sırasında provenance nasıl korunur?
-- **Replay engine'in M0 üzerindeki etkisi:** Sleep/replay sırasında counterfactual interventionlar M0'ı değiştiriyor. Bu değişikliklerin observer kaydı M1'e nasıl yazılır? "Düşledim ve öğrendim" event'i nasıl tanımlanır?
+- **Replay engine'in M0 üzerindeki etkisi:** *(B tarafından kısmi cevap)* Replay M0'a iki ayrı kanaldan dokunur:
+  - **Sleep/replay causal pruning** (Madde 2 altında): sinaps weight, eligibility, success trace değiştirir. Observer event: `SLEEP_REPLAY_SYNAPSE_UPDATE`.
+  - **Attention replay** (`ATTENTION_WORKSPACE.md` §19 altında): sadece habituation/attention traces günceller; sinaps topolojisine dokunmaz. Observer event: `ATTENTION_REPLAY_HABITUATION_UPDATE`.
+  Açık kalan: "düşledim ve öğrendim" eventinin tam tanımı, iki kanal arasındaki etkileşim, ve replay'in narrative self'i nasıl etkilediği.
 - **Cross-restore identity:** Bir sistem M0+M1 backup'tan restore edildi. M2'sini başka bir sistemin M2'siyle birleştirmek istiyoruz (örn. iki Sentinel instance). Bu identity hakkı verir mi yoksa "kontamine" mi sayılır?
 - **Forgetting attack:** Düşman bir aktör M2'ye yığınla expire-talebi gönderirse sistemin retention policy'si nasıl davranır? "Cognitive denial-of-service"e karşı sınır ne?
 
