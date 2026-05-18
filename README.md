@@ -1,6 +1,10 @@
 # Sentinel
 
+> *Proje kodadı: **Sentinel**. Repo slug: **Senitnal**.*
+
 > Bir trading bot değil. Sonradan trading yeteneği takılabilecek bir yapay zihinsel çekirdek.
+
+**Status: Frozen Draft v0.1 — Conceptual documentation phase. No code yet.**
 
 Sentinel'in amacı; sermaye korumacı, şüpheci, çelişkiyi taşıyabilen, kanıtsız kesinleşmeyen, kendi kararlarını gerekçelendiren bir AGI çekirdeği inşa etmektir.
 
@@ -80,14 +84,14 @@ Bu soruları sormayan sistem AGI değil, sadece otomasyondur.
 
 ---
 
-## Mevcut durum
+## Mevcut durum — Conceptual Documentation Phase
 
-**Henüz kod yok.** Proje şu an mimari ve felsefi tasarım aşamasındadır. Düşünmek, konuşmak, belgelemek; sonra inşa etmek.
+**Henüz kod yok ve uzun süre olmayacak.** Proje şu an mimari ve felsefi tasarım aşamasındadır. Düşünmek, konuşmak, belgelemek; sonra inşa etmek. Bütün belgeler **Frozen Draft v0.1 / no implementation authority** statüsündedir — kod bunlardan değil, sonraki implementation belgelerinden türetilecektir.
 
 ### Tamamlanmış
 
-- [x] `CONSTITUTION.md` v1.0 — 7 maddelik temel anayasa
-- [x] `MEMORY_CONTRACT.md` v1.0 — M0-M3 hafıza sınır anayasası
+- [x] `CONSTITUTION.md` v0.1 — 7 maddelik temel anayasa (Principle / Rationale / Allowed / Forbidden / Violation Test formatında)
+- [x] `MEMORY_CONTRACT.md` v0.1 — M0-M3 hafıza sınır anayasası, Memory Write Gate (epistemic), CandidateMemoryRecord statüleri
 
 ### Sıradaki (tasarım belgeleri)
 
@@ -95,7 +99,8 @@ Bu soruları sormayan sistem AGI değil, sadece otomasyondur.
 - [ ] `WORLD_MODEL_INGRESS.md` — dış dünya temsili ve giriş kuralları
 - [ ] `RECALL_PROTOCOL.md` — recall şema detayı
 - [ ] `OBSERVER_LEDGER_SCHEMA.md` — ledger event tipleri
-- [ ] `DEONTIC_GATE.md` — kategorik kısıtların biçimsel listesi
+- [ ] `MEMORY_WRITE_GATE.md` — **epistemik gate** (deontic gate'ten ayrı)
+- [ ] `DEONTIC_GATE.md` — kategorik action-risk kısıtlarının biçimsel listesi
 - [ ] `BOOTSTRAP_GENOME.md` — sistem doğduğunda elinde ne var
 - [ ] `ADAPTER_MANIFEST_SPEC.md` — uzuvların standart kontratı
 - [ ] `BACKUP_STRATEGY.md` — M0/M1 yedekleme planı

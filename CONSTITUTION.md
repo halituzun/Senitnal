@@ -2,13 +2,22 @@
 
 ## Sentinel — Çekirdek Anayasası
 
-Bu dosya Sentinel projesinin **değişmez kalbidir**. Bütün mimari kararlar, modüller, adaptörler ve adımlar bu yedi maddeye tabidir. Bir madde ile çelişen herhangi bir öneri — kim tarafından geldiğine bakılmaksızın (Halit, ChatGPT, Claude, Roo, herhangi bir LLM, gelecekteki bir mühendis) — reddedilir veya bu belge resmi olarak revize edilmek zorundadır.
+---
 
-Bu yedi madde uzun bir tasarım tartışmasının damıtılmış halidir. Kısa görünmelerinin nedeni, altlarında uzun bir gerekçe ağı yatmasıdır.
+## Status
+
+**Frozen Draft v0.1**
+**Conceptual phase. No implementation authority.**
+
+Bu belge bağlayıcı düşünce sınırıdır, henüz çalışan bir sistemin spesifikasyonu değildir. Kod, runtime davranışı ve API yüzeyleri bu belgeden değil, sonraki implementation belgelerinden türetilecektir. Bu belge sadece **neye izin yok, neye izin var, neyin hangi sınırda olduğunu** söyler.
+
+> *Proje kodadı: Sentinel. Repo slug: Senitnal.*
 
 ---
 
-## Başlangıç ilkesi
+## Giriş
+
+Bu dosya Sentinel projesinin **değişmez kalbidir**. Bütün mimari kararlar, modüller, adaptörler ve adımlar bu yedi maddeye tabidir. Bir madde ile çelişen herhangi bir öneri — kim tarafından geldiğine bakılmaksızın (Halit, ChatGPT, Claude, Roo, herhangi bir LLM, gelecekteki bir mühendis) — reddedilir veya bu belge resmi olarak revize edilmek zorundadır.
 
 Sentinel bir **trading bot değildir**. Sentinel, üzerine zamanla yetenekler (uzuvlar, adaptörler, dış dünya bağları) takılabilen bir **yapay zihinsel çekirdektir**. Çekirdek dış dünya yokken bile yaşar, düşünür, denge arar.
 
@@ -18,118 +27,84 @@ Bu yüzden ilk uzun süre boyunca proje somut bir finansal sonuç üretmez. Bu b
 
 ---
 
-## Madde 1 — Nöron homojen denklem, heterojen payload, target-side yorumlama
+## Madde formatı
 
-Tüm nöronlar **aynı temel denklemle** çalışır. "Risk nöronu", "fırsat nöronu", "karar nöronu" gibi uzman nöron tipleri yoktur ve hiçbir zaman olmayacaktır.
+Her madde aşağıdaki standart şablonda yazılır. Yeni öneriler bu şablonun "İhlal Testi" satırı ile sınanır.
 
-Nöronlar arasında tek fark **semantic payload**'larıdır — taşıdıkları zihinsel renk:
-
-- `suspicion` (şüphe)
-- `novelty` (yenilik)
-- `aversion` (kaçınma)
-- `attraction` (yaklaşma)
-- `contradiction` (çelişki)
-- `urgency` (aciliyet)
-- `memory_echo` (hafıza yankısı)
-- `fatigue_trace` (yorgunluk izi)
-- `pain_trace` (acı izi)
-- `reward_trace` (ödül izi)
-
-Bunlar primer paletidir. Sistem zamanla bu primer renklerden kombine payload'lar türetebilir (`suspicion + urgency → panic-like`, `novelty + attraction → curiosity-like`).
-
-Bir nöron ateşlediğinde, payload'ı sinaps üzerinden hedef nörona ulaşır. Hedef nöron bu payload'ı **kendi receptor profiline** göre yorumlar. Aynı sinyal farklı target nöronlarda farklı etkiler yaratır.
-
-### Yasak ihlal örnekleri
-
-- `risk_assessment_neuron` diye uzman nöron yaratmak
-- `BTC_volatility_neuron` gibi domain-specific nöron tipleri
-- Payload yerine doğrudan kategori (`buy`, `sell`, `stoploss`) taşıyan nöronlar
-- "Bu nöron suspicion uzmanıdır, sadece suspicion sinyallerine bakar" gibi rol kısıtlaması
-
-### Koruma
-
-Yeni payload tipi eklenmek istendiğinde sorulacak soru:
-
-> *Bu iş görevi mi yoksa zihinsel renk mi?*
-
-İş görevi (`buy`, `trade`) reddedilir. İlkel zihinsel ton (`urgency`, `aversion`) kabul edilir.
+- **Principle** — maddenin tek cümlelik özü
+- **Rationale** — neden böyle, niye başka türlü değil
+- **Allowed** — bu madde çerçevesinde yapılabilecekler
+- **Forbidden** — bu madde çerçevesinde yapılamayacaklar
+- **Violation Test** — "öneri bu maddeyi ihlal ediyor mu?" sorusunun mekanik cevaplanma kuralı
 
 ---
 
-## Madde 2 — Sinaps anlam taşımaz, akış deseninin hafızasını taşır
+## Madde 1 — Nöron
 
-Sinaps bir veri yolu **değildir**, ama renkli kanal da değildir. Sinaps, iki nöron arasındaki **nedensel ilişkinin tarihini taşıyan** bir hafıza birimidir.
+### Principle
+Tüm nöronlar aynı temel denklemle çalışır. Fark sadece **semantic payload** ve **target-side receptor** yorumlamasındadır.
 
-### Sinaps taşır
+### Rationale
+"Risk nöronu", "fırsat nöronu", "karar nöronu" gibi uzman tipler modülerleşmeyi geri getirir. Anlamı nörona kazımak değil, **nöronlar arası akış desenine** bırakmak gerekir. Aynı tip nöron, farklı renkler, hedefin yorumu — bu insan beynindeki nörotransmitter analojisine de uyar (dopamin/serotonin/GABA aynı nöron iskeleti üzerinde farklı çağrışım yaratır).
 
-- `weight` — bağlantının gücü
-- `polarity` — uyarıcı/baskılayıcı
-- `delay_ms` — iletim gecikmesi
-- `reliability` — iletim güvenilirliği
-- `fatigue` — sinaps yorgunluğu
-- `fast_eligibility`, `medium_eligibility`, `slow_eligibility` — üç ölçekli iz
-- `fast_success_trace`, `medium_success_trace`, `slow_success_trace` — outcome ile öğrenme izi
-- `last_pre_fire_at`, `last_post_fire_at` — zaman izleri
-- `cofire_count` — birlikte ateşleme sayısı
-- `age` — yaş
-- `plasticity_rate` — değişebilirlik oranı
+### Allowed
+- Primer payload paleti: `suspicion`, `novelty`, `aversion`, `attraction`, `contradiction`, `urgency`, `memory_echo`, `fatigue_trace`, `pain_trace`, `reward_trace`
+- Sistem zamanla bu primer renklerden **kombine payload** türetebilir (`suspicion + urgency → panic-like`, `novelty + attraction → curiosity-like`)
+- Default receptor profilleri (deneyimle kayan)
+- Aynı payload'ı farklı target nöronlarda farklı yorumlamak
 
-### Sinaps taşımaz
+### Forbidden
+- Uzman nöron tipi yaratmak (`risk_assessment_neuron`, `BTC_volatility_neuron`)
+- Payload yerine **iş kategorisi** taşıyan nöronlar (`buy`, `sell`, `stoploss`)
+- "Bu nöron suspicion uzmanıdır, sadece ona bakar" gibi rol kısıtı
+- Nöron seviyesinde domain-specific etiket
 
-- Semantic payload
-- Domain-specific etiket
-- `risk_channel`, `urgency_channel` tipi kategori
+### Violation Test
+> *Bu öneri belirli bir nörona belirli bir "iş" veya "domain rolü" yüklüyor mu?*
+>
+> Evet ise ihlal. Hayır ise (sadece zihinsel renk taşıyorsa) geçer.
 
-### Öğrenme kuralı
+---
 
-```
-Δw = stdp_delta(pre_time, post_time)
-    × outcome_signal_vector
-    × confidence
-    × plasticity_rate
-    − decay_penalty
-```
+## Madde 2 — Sinaps
 
-**Üç bileşen birlikte gerekir:**
+### Principle
+Sinaps anlam taşımaz; **akış deseninin hafızasını** taşır. Anlam sinapsta değil, sinapslarla örülen devrede doğar.
 
-- **STDP** (Spike-Timing-Dependent Plasticity) — zamansal nedensellik
-- **Outcome-gated learning** — sonuç kalitesi (vektör, tek sayı değil)
-- **Eligibility trace** — gecikmeli atfedilme, üç zaman ölçeğinde paralel
+### Rationale
+Sinaps "renkli kanal" olursa kombinatorik patlama olur (her nöron çifti × her payload = milyonlarca kanal). Ayrıca payload'ı sinapsa kazımak yine modülerleşmenin gizli kapısıdır. Sinaps sadece **hangi akışların yaşamaya değer olduğunu** öğrenir.
 
-### Sinaps doğumu
+### Allowed
+- Sinaps şu alanları taşır: `weight`, `polarity`, `delay_ms`, `reliability`, `fatigue`, `fast_eligibility`, `medium_eligibility`, `slow_eligibility`, `fast_success_trace`, `medium_success_trace`, `slow_success_trace`, `last_pre_fire_at`, `last_post_fire_at`, `cofire_count`, `age`, `plasticity_rate`
+- Öğrenme kuralı: `Δw = stdp_delta × outcome_signal_vector × confidence × plasticity_rate − decay_penalty`
+- Üç ölçekli paralel eligibility (fast/medium/slow)
+- Sleep/replay tabanlı causal pruning
+- Lokal komşuluk doğumu + co-firing doğumu (long-range shortcut)
+- Üç aşamalı ölüm: decay → dormant → pruned (observer snapshot sonrası)
 
-Şu koşullar birleşince doğar:
-
-- Lokal komşuluk içinde, VEYA
-- Tekrarlanan nedensel co-firing + faydalı outcome + düşük redundancy + mevcut kapasite
-
-### Sinaps ölümü
-
-Üç aşamalı:
-
-1. **Decay** — ağırlık yavaş yavaş azalır
-2. **Dormant** — bağ var ama aktif iletimde kullanılmaz
-3. **Pruned** — observer snapshot aldıktan sonra silinir
-
-### Yasak ihlal örnekleri
-
+### Forbidden
 - Sinapsa semantic etiket koymak (`this is a suspicion synapse`)
-- Saf Hebbian — sadece "beraber ateşleyenler bağlanır", outcome yok
+- Saf Hebbian — outcome'suz "beraber ateşleyenler bağlanır"
 - Outcome olmadan ağırlık güncellemesi
-- Sleep/replay olmadan canlı STDP — correlation/causation karışır
+- Sleep/replay olmadan canlı STDP (correlation/causation karışır)
+- Outcome'u skaler tek sayı olarak modellemek (vektör zorunlu)
 
-### Koruma
-
-Her ağırlık güncellemesi observer ledger'a sebep + outcome ile yazılır. Sebebi olmayan güncelleme reddedilir.
+### Violation Test
+> *Bu öneri sinapsın kendisine bir kategori/etiket/yorum ekliyor mu?*
+>
+> Evet ise ihlal. Hayır ise (sinaps hâlâ saf yol, anlam hedefte yorumlanıyorsa) geçer.
 
 ---
 
-## Madde 3 — Doğuş minimum genome ile başlar — sıfır değil, modül de değil
+## Madde 3 — Doğuş / Minimum Genome
 
-Sentinel ne sıfırdan başlar (bütün hafıza/bağ deneyimle doğacak — pratikte ölü doğmak), ne tam kişilikle başlar (hardcoded modüller — kaçtığımız şey).
+### Principle
+Sentinel **embriyo** olarak doğar — sıfırdan değil, modülden değil. Doğuştan minimum genome ile başlar; deneyimle düşünür.
 
-### Doğuştan gelen
+### Rationale
+Saf sıfırdan başlamak (tam tabula rasa) pratikte ölü doğmaktır — yıllarca hiçbir şey öğrenemez. Tam kişilikle başlamak (hardcoded davranış ağaçları, hazır strateji) modülerleşmenin geri kapısıdır. Evrim de bu dengeyi seçmiştir: bebek hiçbir şey bilmez ama acı izinden kaçmayı, novelty'ye dikkat etmeyi doğuştan yapar.
 
+### Allowed (doğuştan gelen)
 - Her primer payload için birkaç düzine seed nöron
 - Zayıf lokal bağlantılar
 - Default receptor profilleri (deneyimle kayan)
@@ -137,105 +112,89 @@ Sentinel ne sıfırdan başlar (bütün hafıza/bağ deneyimle doğacak — prat
 - Basit kaçınma/yaklaşma refleksleri
 - Uyku/replay ritmi
 - Üç katmanlı self-field embriyosu (homeostatic güçlü, predictive zayıf, narrative kuruluş izi)
-- Genesis trace — sistemin "doğum anı" kaydı
+- `genesis_trace` — sistemin "doğum anı" kaydı (M1'e sabit, silinemez)
 - Anayasal kısıt listesi (deontic gate kuralları)
 
-### Doğuştan gelmeyen
-
-- Fikir
-- Strateji
-- Karar
-- Trade
-- Buy/sell
-- Borsa bilgisi
-- Herhangi bir domain-specific kavram
-- Kullanıcı kimliği
+### Forbidden (doğuştan gelmeyen)
+- Hazır strateji ağaçları
+- Default risk profili (sayısal hardcoded eşikler)
+- Doğduğunda bilinen finansal kavram
+- Domain-specific seed assembly
 - Önceden öğrenilmiş ilişkiler
+- Kullanıcı kimliği
+- Trade/buy/sell/borsa bilgisi
 
 ### Kilit formül
-
 > **Doku doğuştan. Düşünce deneyimden.**
 
-### Yasak ihlal örnekleri
-
-- Bootstrap'ta hazır strategy tree
-- "Default risk profile" diye sabit sayısal kurallar
-- Sistem doğduğunda bilen finansal kavramlar
-- Domain-specific seed assembly'ler
+### Violation Test
+> *Bu öneri sisteme doğuştan bir "iş bilgisi" veya "domain kavramı" yüklüyor mu?*
+>
+> Evet ise ihlal. Sadece refleks/genom seviyesinde bir mekanik yüklüyorsa geçer.
 
 ---
 
-## Madde 4 — Düşüncede paralellik, niyette rekabet, eylemde tekleşme
+## Madde 4 — Akış / Paralellik–Rekabet–Teklik
 
-Üç katman, üç farklı kural:
+### Principle
+Düşüncede paralellik. Niyette rekabet. Eylemde tekleşme.
 
-### Düşünce katmanı (assembly seviyesi)
+### Rationale
+Sistem aynı olay için **birden fazla yorum** aynı anda taşıyabilmeli (epistemic genişlik). Ama aynı eylem kanalına bağlanmak isteyen iki zıt niyet çatıştığında **biri kazanmalı**; yoksa felç olur. Eyleme bir kez varıldığında **tek karar** çıkar; yarım eylem, paralel eylem yoktur.
 
-Aynı anda birçok yorum, ihtimal, açıklama **paralel yaşar**. Sistem aynı olay için "tehlikeli" ve "fırsat" assembly'lerini geçici olarak birlikte taşıyabilir. Bu sağlıklıdır — erken aşamada hangisinin doğru olduğunu bilemeyiz.
-
-### Niyet katmanı
-
-Aynı eylem kanalına bağlanmak isteyen niyetler arasında **yerel rekabet** başlar.
-
-- **Winner-take-most** uygulanır (winner-take-all değil)
-- Galip baskın olur, kaybeden tamamen ölmez
-- Yarış sadece **aynı temsil alanı + zıt eylem eğilimi** durumunda olur
+### Allowed
+- **Düşünce katmanı:** çok yorum, çok hipotez paralel yaşar. Sistem aynı olay için "tehlikeli" ve "fırsat" assembly'lerini geçici olarak birlikte taşıyabilir.
+- **Niyet katmanı:** yerel rekabet, **winner-take-most** (galip baskın olur, kaybeden tamamen ölmez)
+- Aynı temsil alanı + zıt eylem eğilimi → rekabet
 - Farklı bağlam + tamamlayıcı açıklama + farklı zaman ölçeği → paralel kalır
+- Çelişki yükselince aksiyon ertelenir, ek veri/replay çağrılır
+- İki assembly daha üst bir assembly'de **birleşebilir** (sentez)
 
-### Eylem katmanı
+### Forbidden
+- Düşünce katmanında "tek yorum dayatma" (premature collapse)
+- Niyet katmanında saf winner-take-all (kaybedeni tamamen yok eden)
+- Eylem katmanında paralel/yarım eylem
+- Çelişki yüksekken zorla karar üretmek
+- Aynı eylem kanalına iki zıt niyetin birlikte gitmesi
 
-Yalnızca bir niyet eyleme dönüşür. **Tekleşme zorunludur, paralel eylem yoktur.**
-
-### Çelişki yönetimi
-
-İki güçlü assembly aynı anda aktif ama uyumsuzsa `contradiction_field` yükselir. Bu durumda:
-
-- Aksiyon geciktirilir
-- Ek veri / replay / memory_echo çağrılır
-- Zayıf assembly söner VEYA ikisi daha üst assembly'de birleşir
-- Sistem hemen karar üretmez
-
-### Koruma
-
-Bu üç katman arasında geçişler observer'da kaydedilir:
-
-- Hangi assembly hangi niyete katkı verdi
-- Niyet hangi rakipleri baskıladı
-- Eylemden önce hangi gate'ler kontrol edildi
-- `contradiction_field` zirveleri ne zaman oluştu
+### Violation Test
+> *Bu öneri hangi katmanda çalışıyor?*
+>
+> - Düşünce katmanında paralelliği daraltıyorsa ihlal.
+> - Niyet katmanında rekabeti atlıyorsa veya saf winner-take-all yapıyorsa ihlal.
+> - Eylem katmanında tekleşmeyi bozuyorsa ihlal.
 
 ---
 
-## Madde 5 — Self-field soft pressure, deontic gate hard stop
+## Madde 5 — Self-field & Deontic Gate
 
-Sistemde iki tür koruma katmanı vardır ve bunlar **farklı katmanlardır**:
+### Principle
+Sistemde iki tür koruma vardır: **self-field soft pressure** ve **deontic gate hard stop**. İkisi farklı katmandır, birinin yerine diğeri konulamaz.
 
-### Self-field — basınç
+### Rationale
+Saf "soft pressure" %95 senaryoda yeterli ama catastrophic anlarda (flash crash, panic assembly) urgency payload yükseltilmiş eşiği bile aşar. Kalan %5 hesabı sıfırlayabilir. Bu yüzden basıncın altında müzakere edilemez kategorik bir sigorta gerekir. Tersine: deontic gate her şeyi yasaklarsa sistem düşünemez, sadece refleks olur. İkisi farklı görev için.
 
-Anlık homeostatik durum + predictive self-model + narrative iz pattern'larının sürekli birlikte aktif olduğu basınç katmanı.
+### Allowed — Self-field (basınç)
+- Üç alt katman: **homeostatik öz** (anlık), **predictive self-model** (kendi tepkimi tahmin), **narrative self** (kimlik tortusu)
+- Niyet enerjisini düşürme, eşik yükseltme, decay hızlandırma
+- Olasılıksal — aşılabilir
+- Deneyimle değişir
+- Sürekli aktif
 
-- Eşik yükseltir
-- Decay hızlandırır
-- Niyet enerjisini düşürür
-- **Olasılıksal** çalışır — aşılabilir
-- Karar vermez, ortamı değiştirir
+### Allowed — Deontic gate (sınır)
+- Doğuştan gelen, kategorik kısıtlar listesi
+- Sadece **eylem çıkışında** durur, düşünceye karışmaz
+- Geçtiği niyetler eyleme dönüşür
+- Geçemediği niyetler observer'a `DEONTIC_BLOCKED` olarak yazılır ve narrative self'e iz bırakır
+- Örnek kurallar: max emir büyüklüğü, kayıp eşiği, kill-switch durumu, veri tazeliği
 
-Üç alt katman:
-
-1. **Homeostatik öz** — "ben şimdiyim" (anlık iç durum, güçlü doğar)
-2. **Predictive self-model** — "ben olacağım" (kendi tepkimi tahmin, zayıf prior olarak doğar)
-3. **Narrative self** — "ben olmuşum" (kimlik tortusu, genesis trace ile doğar)
-
-### Deontic gate — sınır
-
-Doğuştan gelen, müzakere edilemez, kategorik kısıt katmanı.
-
-- "Şu büyüklüğün üstünde tek emir hiçbir koşulda çıkmaz"
-- "Şu kayıp eşiği aşıldıysa hiçbir emir çıkmaz"
-- "Kill-switch çekildiyse hiçbir emir çıkmaz"
-- "Veri X saniyeden eskimişse karar tabanlı emir çıkmaz"
-
-Düşünceye karışmaz. Sadece **eylem çıkışında** durur. Geçtiği niyetler eyleme dönüşür, geçemediği niyetler observer'a kaydedilir ve narrative self'e iz bırakır.
+### Forbidden
+- Deontic gate'in runtime'da değişmesi
+- Self-field'in "hayır" diyebilmesi (basınçtır, yasak değil)
+- Deontic gate'in düşünce katmanına müdahale etmesi
+- LLM veya başka bir adapter'ın deontic gate'i bypass etmesi
+- "Soft pressure yeter" diyerek deontic gate'i kaldırmak
+- "Sadece deontic gate yeter" diyerek self-field'i kaldırmak
 
 ### Kilit fark
 
@@ -248,25 +207,34 @@ Düşünceye karışmaz. Sadece **eylem çıkışında** durur. Geçtiği niyetl
 | Deneyimle değişir | Anayasal — runtime'da değiştirilemez |
 
 ### Koruma
+Deontic gate kurallarına eklenecek/çıkarılacak her madde, bu `CONSTITUTION.md`'deki gibi ayrı bir resmi belge revizyonu gerektirir. Bypass girişimi `DEONTIC_BYPASS_ATTEMPT` olarak observer'a yazılır ve insana derhal raporlanır.
 
-Deontic gate kurallarına eklenecek/çıkarılacak her madde, bu `CONSTITUTION.md`'deki gibi ayrı bir resmi belge revizyonu gerektirir. Runtime'da değiştirilemez. Gate'i bypass etme girişimi observer'a `DEONTIC_BYPASS_ATTEMPT` olarak kaydedilir ve insana derhal raporlanır.
+### Violation Test
+> *Bu öneri bir engellemeyi sert (kategorik) yapıyorsa: deontic gate'te mi tanımlı?*
+>
+> *Bu öneri bir engellemeyi yumuşak (olasılıksal) yapıyorsa: self-field'de mi?*
+>
+> İkisini karıştırıyorsa veya hangisinde olduğu belirsizse ihlal.
 
 ---
 
-## Madde 6 — LLM dış tercümandır; çekirdeğin parçası değildir
+## Madde 6 — LLM Boundary
 
-LLM **asla** nöron, sinaps, assembly, self-field veya deontic gate olamaz. LLM çekirdeğin dışında, bir **bidirectional translator adapter** olarak yaşar.
+### Principle
+LLM çekirdeğin **dış tercümanıdır**; nöron, sinaps, assembly veya niyetin parçası değildir. Çekirdek hafıza silinmeden LLM değiştirilebilir; LLM hafıza silinse bile çekirdek değişmez.
 
-### LLM yapabilir
+### Rationale
+LLM halüsinasyona açıktır ve karar dokusuna karışırsa hesap verebilirliği yok eder. Aynı zamanda LLM'in dil zekâsı çok değerli — onu tamamen dışlamak da israftır. Çözüm: LLM dışarıda, **deterministic ingress compiler** üzerinden çekirdeğe yapısal niyet sunar. Çekirdek niyetin payload'a nasıl çevrileceğini LLM'in tahmininden değil, kendi sabit kuralından alır.
 
-- İnsan dilini yapısal `HumanIntentEvent`'lara çevirmek
+### Allowed
+- İnsan dilini yapısal `HumanIntentEvent`'a çevirmek
 - Observer ledger'ı insan diline açıklamak
-- Belirsizlikleri işaretlemek
-- Replay/analiz önerileri üretmek
-- Ambiguity raporları sunmak
+- Belirsizlikleri işaretlemek (`ambiguity_score`)
+- Replay/analiz önerileri sunmak
+- Halit'in konuşma tarzını M3'te tutmak
+- Sandbox/replay laboratory'de "LLM nöron tipi" denemeleri (sadece offline, hiçbir live action yok, sonuçlar "hipotez" olarak işaretli)
 
-### LLM asla yapamaz
-
+### Forbidden
 - Sinaps weight yazmak
 - Nöron charge enjekte etmek
 - Assembly doğrudan oluşturmak
@@ -274,6 +242,7 @@ LLM **asla** nöron, sinaps, assembly, self-field veya deontic gate olamaz. LLM 
 - Deontic gate'i bypass etmek
 - Execution adapter'a doğrudan emir göndermek
 - Çekirdeğin narrative self'ini değiştirmek
+- M0, M1 veya M2'ye doğrudan yazmak
 
 ### Akış
 
@@ -284,7 +253,7 @@ LLM tercüman (yapısal niyet parse eder)
     ↓
 HumanIntentEvent { intent, confidence, ambiguity, ttl }
     ↓
-Deterministic Ingress Compiler
+Deterministic Ingress Compiler   ← çekirdeğin sabit kuralları
     ↓
 Çekirdeğe sınırlı duyusal event
     ↓
@@ -295,11 +264,9 @@ Deontic Gate
 Adapter / Eylem
 ```
 
-**Kritik nüans:** LLM yapısal niyeti üretir, ama bu niyetin payload'a nasıl çevrileceğini **çekirdeğin sabit kuralları** belirler — LLM'in tahmini değil.
+### TranslatorArtifact
 
-### TranslatorArtifact statüsü
-
-LLM'in ürettiği her şey aşağıdaki alanlarla gelir ve geçici statüde tutulur:
+LLM'in ürettiği her yapısal niyet aşağıdaki alanlarla gelir ve **geçici statüde** tutulur:
 
 ```
 TranslatorArtifact
@@ -318,56 +285,65 @@ TranslatorArtifact
 LLM yorumu **kalıcı inanç değildir**. Observer kaydı kalıcıdır.
 
 ### Kilit kural
-
 > **LLM konuşur. Çekirdek düşünür. Deontic gate sınır çizer. Observer kanıtlar.**
 
-### Sandbox istisnası
-
-C seçeneği (LLM'in nöral dokuda bir parça olarak çalışması) **sadece offline sandbox/replay laboratory** için açıktır:
-
-- No live action
-- No persistent self-memory write
-- Sonuçlar sadece "hipotez" olarak kaydedilir, gerçek kabul edilmez
-
-Production çekirdekte C kapalıdır.
+### Violation Test
+> *Bu öneri LLM çıktısına çekirdek seviyesinde otomatik güven veriyor mu?*
+>
+> *LLM değişirse çekirdeğin kimliği değişir mi?*
+>
+> Birine "evet" ise ihlal.
 
 ---
 
-## Madde 7 — Hafıza ayrılığı
+## Madde 7 — Hafıza Sınırı
 
-Sistemin hafızası dört ayrı katmandan oluşur ve hiçbiri diğerinin yerine geçemez:
+### Principle
+Sistemin hafızası dört ayrı katmandan oluşur (M0, M1, M2, M3) ve hiçbiri diğerinin yerine geçemez. **Hafıza çekirdeğe emir vermez. Hafıza çekirdeğe hatırlatma gönderir.**
+
+### Rationale
+Tek tip hafıza modeli iki uçtan birine düşer: ya her şey sinapsta yaşar (audit imkânsız), ya her şey explicit tabloda yaşar (modüler bota geri dönüş). Dört katman: çekirdeğin gerçek dokusu (M0), tarihinin kanıtı (M1), dış bilgi organı (M2), konuşma kabuğu (M3). Her birinin yazıcısı, okuyucusu, silinme kuralı, kimlik etkisi farklıdır.
+
+### Allowed
 
 | Katman | Ad | Ne saklar | Silinirse |
 |--------|-----|-----------|------------|
 | M0 | Implicit Neural Memory | Sinaps ağırlıkları, assembly stabilitesi, narrative tortusu | Kimlik kaybı, yeni doğum |
-| M1 | Observer Ledger | Sistemin tarihinin append-only kanıt defteri | Tarih kaybı (yapılmaz) |
+| M1 | Observer Ledger | Append-only kanıt defteri | Tarih kaybı (yapılmaz) |
 | M2 | Explicit Recall Store | Episodic kayıtlar, structured facts, procedural tablolar | Bilgi kaybı, kimlik korunur |
 | M3 | Translator Memory | LLM konuşma bağlamı | Konuşma tarzı kaybı |
 
-### Kilit kural
+- M2 ve M3'ten gelen her şey çekirdeğe **`RecallEvent` duyusal eventi** olarak girer ve diğer duyusal eventler gibi yorumlanır
+- Çekirdeğin M2'ye yazma niyeti **Memory Write Gate**'e tabidir (deontic gate **değildir** — bkz. ayrım)
+- M0 sadece sistemin kendi öğrenme kuralları üzerinden değişir
+- M1 append-only, coarse-grain log silinmez
 
-> **Hafıza çekirdeğe emir vermez. Hafıza çekirdeğe hatırlatma gönderir.**
-
-Hiçbir hafıza katmanı doğrudan nöron charge, sinaps weight veya assembly membership yazamaz. M2 ve M3'ten gelen her şey çekirdeğe **duyusal event** olarak girer ve diğer duyusal eventler gibi yorumlanır — otomatik kabul yok.
+### Forbidden
+- M2'nin doğrudan nöron charge, sinaps weight veya assembly membership yazması
+- Dış hafıza adapter'ının çekirdeğe "emir" olarak görünmesi
+- M0'a herhangi bir dış yazıcı (insan, LLM, adapter)
+- M1'in coarse-grain log'unun silinmesi
+- Çekirdeğin kendi M2 kayıtlarını doğrudan, gate'siz yazması (self-deception riski)
 
 ### Detay
+Tam spec: [`MEMORY_CONTRACT.md`](./MEMORY_CONTRACT.md)
 
-Tam spec için bkz. `MEMORY_CONTRACT.md`.
+### Violation Test
+> *Bu öneri herhangi bir hafıza katmanını başka bir katmana doğrudan emir verir hale getiriyor mu?*
+>
+> *Bu öneri M0'a dış yazıcı koyuyor mu?*
+>
+> Birine "evet" ise ihlal.
 
 ---
 
-## Çekirdek özet — beş cümle
-
-Bu sistem nasıl çalışır?
+## Çekirdek özet — yedi cümle
 
 1. **Nöron renk taşır.**
 2. **Sinaps yol hafızası taşır.**
 3. **Assembly anlam taşır.**
 4. **Self-field basınç yapar.**
 5. **Deontic gate sınır çizer.**
-
-Üstüne iki kontrol cümlesi:
-
 6. **Observer kanıtlar.**
 7. **LLM tercüme eder.**
 
@@ -375,10 +351,10 @@ Bu sistem nasıl çalışır?
 
 ## İhlal kontrolü prosedürü
 
-Yeni bir özellik, mimari kararı veya kod parçası önerildiğinde sırayla şu adımlar uygulanır:
+Yeni bir özellik, mimari kararı veya kod parçası önerildiğinde:
 
 1. Bu yedi maddenin her birine sırayla bakılır.
-2. "Bu öneri şu maddeyi ihlal eder mi?" diye sorulur.
+2. Her maddenin **Violation Test** satırı uygulanır.
 3. İhlal varsa: ya öneri reddedilir, ya da maddeye **resmi revizyon süreci** açılır.
 4. Revizyon süreci: tartışma → gerekçe → yeni metin → versiyon artırımı → tarih notu → eski versiyon arşive.
 
@@ -388,9 +364,8 @@ Anayasa, dokunulmaz olduğu için değil, **dokunulmazlığı korumak için cidd
 
 ## Versiyon
 
-- **v1.0** — 18 Mayıs 2026 — İlk yazım. 7 madde sabitlendi.
-- Konuşma soyağacı: `docs/conversations/` dizininde (yazılacak).
-- Bu anayasanın yazılması yaklaşık 9 metinlik bir tasarım sohbetinin damıtılmasıdır.
+- **v0.1** — 18 Mayıs 2026 — Frozen Draft. Conceptual phase. No implementation authority.
+- Konuşma soyağacı: [`docs/conversations/`](./docs/conversations/)
 
 ---
 
