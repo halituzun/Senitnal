@@ -313,7 +313,8 @@ Tek tip hafıza modeli iki uçtan birine düşer: ya her şey sinapsta yaşar (a
 | M2 | Explicit Recall Store | Episodic kayıtlar, structured facts, procedural tablolar | Bilgi kaybı, kimlik korunur |
 | M3 | Translator Memory | LLM konuşma bağlamı | Konuşma tarzı kaybı |
 
-- M2 ve M3'ten gelen her şey çekirdeğe **`RecallEvent` duyusal eventi** olarak girer ve diğer duyusal eventler gibi yorumlanır
+- M2'den gelen her şey çekirdeğe **`RecallEvent` duyusal eventi** olarak girer ve diğer duyusal eventler gibi yorumlanır
+- M3 çekirdeğe doğrudan girmez; yalnızca LLM translator'ın `HumanIntentEvent` üretiminde geçici konuşma bağlamı olarak kullanılır (bu event de Madde 6'daki Deterministic Ingress Compiler'dan geçer)
 - Çekirdeğin M2'ye yazma niyeti **Memory Write Gate**'e tabidir (deontic gate **değildir** — bkz. ayrım)
 - M0 sadece sistemin kendi öğrenme kuralları üzerinden değişir
 - M1 append-only, coarse-grain log silinmez
