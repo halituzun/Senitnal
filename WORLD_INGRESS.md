@@ -152,9 +152,10 @@ IngressEventEnvelope
 │   └── profile_specific_scalars
 │
 └── compiler_output      # çekirdeğe giren tek şey
-    ├── payload_seed
-    ├── receptor_bias_seed
-    └── trace_seed
+    └── neural_seed
+        ├── payload_seed         # mandatory — primer palette üzerinde dağılım
+        ├── receptor_bias_seed   # optional, bounded
+        └── trace_seed           # optional, bounded
 ```
 
 ### compiler_output **yapmaz**
@@ -166,6 +167,10 @@ IngressEventEnvelope
 - M0 sinapslarını doğrudan değiştirmez
 
 Sadece **nöral uyarı tohumu** üretir. Sonrası normal nöral akış.
+
+> **Core-facing output tek bir `neural_seed`'dir.**
+> **`neural_seed` kategori, fact, world state, niyet, pulse veya assembly değildir.**
+> **Sadece bounded nöral uyarı tohumu taşır.**
 
 ---
 
@@ -204,7 +209,7 @@ ObservationEvent
 │   └── feedback_delay_ms
 │
 └── compiler_output
-    └── payload_seed
+    └── neural_seed       # payload_seed mandatory; receptor_bias_seed / trace_seed optional
 ```
 
 ### Kritik notlar
@@ -251,7 +256,7 @@ RecallEvent
 │   └── criticality_band
 │
 └── compiler_output
-    └── payload_seed
+    └── neural_seed       # payload_seed mandatory; receptor_bias_seed / trace_seed optional
 ```
 
 ### Kritik kurallar
@@ -297,7 +302,7 @@ HumanIntentEvent
 │   └── criticality_band
 │
 └── compiler_output
-    └── payload_seed
+    └── neural_seed       # payload_seed mandatory; receptor_bias_seed / trace_seed optional
 ```
 
 ### Kritik kurallar
@@ -344,8 +349,10 @@ InternalShockEvent
 │   └── ttl_ms
 │
 └── compiler_output
-    └── payload_seed   # bounded, deterministic over primer palette
+    └── neural_seed       # bounded, deterministic over primer palette
 ```
+
+> *Diğer event class'larındaki gibi, payload_seed mandatory; receptor_bias_seed ve trace_seed optional. InternalShockEvent için tüm seed bileşenleri **deterministic** ve **bounded**.*
 
 ### Kritik kurallar
 
@@ -723,11 +730,26 @@ HUMAN_INTENT_INGESTED
 INTERNAL_SHOCK_INGESTED
 INGRESS_DEDUP_REJECTED
 INGRESS_TTL_EXPIRED
-COMPILER_MAPPING_UPDATED   # learned_mappings güncellendiğinde
-SOURCE_TRUST_CANDIDATE
-SOURCE_TRUST_VERIFIED
-SOURCE_TRUST_REJECTED
+COMPILER_MAPPING_UPDATED              # learned_mappings güncellendiğinde
+SOURCE_TRUST_STATUS_CHANGED
 ```
+
+### SourceTrustStatusChangedEvent şeması
+
+```
+SourceTrustStatusChangedEvent
+├── event_type: SOURCE_TRUST_STATUS_CHANGED
+├── source_trust_record_id
+├── old_status
+├── new_status            # candidate | verified | superseded | rejected | expired
+├── evidence_refs
+├── current_reliability_band
+├── candidate_reliability_change
+├── provenance            # human | observer | system
+└── observer_snapshot_ref
+```
+
+`candidate / verified / superseded / rejected / expired` ayrı event tipleri **değildir** — `MEMORY_CONTRACT.md` §10'daki CandidateMemoryRecord statü makinesinin durumlarıdır. Bu yüzden tek event tipi, alt durumlar `old_status` / `new_status` field'leri olarak gelir. Bu, B'deki `WORKSPACE_PULSE` "tek event tipi, alt durum field" disiplininin C seviyesindeki yansımasıdır.
 
 ### Audit zorunluluğu
 
