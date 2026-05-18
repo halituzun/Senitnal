@@ -342,8 +342,8 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 (INTENTION_FORMED, *)                        → permanent
 (INTENTION_SUPPRESSED, *)                    → ring_buffer_only
 (MEMORY_WRITE_PROPOSED, *)                   → permanent
-(MEMORY_WRITE_GATE_PASSED, *)                → permanent
-(MEMORY_WRITE_GATE_REJECTED, *)              → permanent
+(MEMORY_RECORD_STATUS_CHANGED, *)            → permanent
+(MEMORY_RECORD_STATUS_CHANGED, new_status=quarantined OR self_deception_risk=HIGH) → permanent_with_snapshot
 (RECALL_REQUEST_SENT, *)                     → ring_buffer_only
 (RECALL_EVENT_INGESTED, *)                   → ring_buffer_only
 (OBSERVATION_INGESTED, *)                    → ring_buffer_only
@@ -735,8 +735,9 @@ ATTENTION_REPLAY_HABITUATION_UPDATE
 ### Memory family
 ```
 MEMORY_WRITE_PROPOSED
-MEMORY_WRITE_GATE_PASSED
-MEMORY_WRITE_GATE_REJECTED
+MEMORY_RECORD_STATUS_CHANGED       # canonical for status transitions
+                                    # (replaces MEMORY_WRITE_GATE_PASSED/REJECTED/VERIFIED/QUARANTINED;
+                                    #  old_status/new_status as fields — see MEMORY_WRITE_GATE.md §17)
 RECALL_REQUEST_SENT
 OUTCOME_RECEIVED
 ```

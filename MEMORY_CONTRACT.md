@@ -257,6 +257,8 @@ Gate **yargı yapmaz, koşul kontrol eder**. Tamamen sayısal/mekanik kurallar �
 
 Bu kurallar `MEMORY_WRITE_GATE.md` belgesinde sayısal eşiklerle tanımlanacak. Gate hiçbir koşulda "bu kayıt mantıklı mı?" diye semantik yargı yapmaz.
 
+> *Tam epistemic test seti, subject_class × evidence axes verification matrix, self-deception detection mekaniği, silent gate kuralı ve `MEMORY_RECORD_STATUS_CHANGED` canonical event'i için bkz. [`MEMORY_WRITE_GATE.md`](./MEMORY_WRITE_GATE.md). Memory Write Gate deontic gate'in alt türü **değildir** — action-risk vs epistemic-risk ayrımı için bkz. MEMORY_WRITE_GATE §4.*
+
 ---
 
 ## 10. CandidateMemoryRecord
