@@ -283,6 +283,25 @@ incident_human_record (subset of incident):
     provenance:human
     AND human_decision_record_signature
     AND audit_path_intact
+
+operator_decision_record:
+    provenance:human
+    AND operator_identity_ref valid
+    AND audit_path_intact
+    AND event describes operator's own action, not world claim
+
+deontic_kill_switch_action_record:
+    provenance:human
+    AND kill_switch_event_ref exists
+    AND audit_path_intact
+    AND action_type IN {activated, deactivation_requested, deactivation_confirmed, deactivated}
+
+signed_administrative_reference:
+    provenance:human
+    AND signature_valid
+    AND administrative_scope_only
+    AND no_world_claim
+    AND audit_path_intact
 ```
 
 ### Critical kural
@@ -666,6 +685,8 @@ Human-write matrix-required subject_classes:
     Outcome / cross_source / replay survival gerekebilir.
     Provenance:human evidence gücünü artırır ama otomatik verified yapmaz.
 ```
+
+> *Human-write auto-verified subject_classes are not exempt from the matrix; their matrix rows are administrative/action-record rows with provenance and audit-path requirements (§8). Yani auto-verified tipler "matrix yok" anlamına gelmez — sadece matrix satırı insan-eylem kaydı + provenance + audit_path_intact testlerinden oluşur, dünya-iddiası testlerinden değil. Matrix satırı olmayan hiçbir subject_class verified olamaz (§8).*
 
 ### Forbidden
 
