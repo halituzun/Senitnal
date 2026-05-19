@@ -628,6 +628,8 @@ Aynı assembly bir iç durumda gereksiz tekrar, başka iç durumda hayati sinyal
 
 > **Attention replay sinaps budamaz. Sadece o assembly'nin tekrar yayın hakkını zorlaştırır veya kolaylaştırır.**
 
+> *Attention replay'in tek replay protokolü içindeki yeri (attention_habituation_update channel), session lifecycle, counterfactual ablation kuralları ve self-deception safeguards için bkz. [`REPLAY_PROTOCOL.md`](./REPLAY_PROTOCOL.md) §11.*
+
 ---
 
 ## 20. Observer Events

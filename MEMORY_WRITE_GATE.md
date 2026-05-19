@@ -477,6 +477,8 @@ slow outcome subject_classes:
 
 Bu yüzden candidate `candidate_max_age` ile sonsuza dek beklemez — ama beklemesi gerek. Subject_class kararı.
 
+> *`replay_survival_score` ve `outcome_alignment_score`'un nasıl üretildiği, replay session protokolü, counterfactual ablation kuralları ve "sentetik test gerçek outcome'u ikame edemez" disiplini için bkz. [`REPLAY_PROTOCOL.md`](./REPLAY_PROTOCOL.md) §13-14.*
+
 ---
 
 ## 12. Provenance and Staleness

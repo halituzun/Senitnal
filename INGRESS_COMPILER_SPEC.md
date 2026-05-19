@@ -589,6 +589,8 @@ CompilerMappingUpdatedEvent
 - LLM/human/adapter direct update
 - Audit'siz update
 
+> *Ingress calibration update'in replay session içindeki yeri (ingress_calibration_update channel), counterfactual ablation kuralları ve audit zinciri için bkz. [`REPLAY_PROTOCOL.md`](./REPLAY_PROTOCOL.md) §12.*
+
 ---
 
 ## 15. Rate Limiting and Drift Control

@@ -94,6 +94,9 @@ Sinaps "renkli kanal" olursa kombinatorik patlama olur (her nöron çifti × her
 >
 > Evet ise ihlal. Hayır ise (sinaps hâlâ saf yol, anlam hedefte yorumlanıyorsa) geçer.
 
+### Alt-spec referansı
+Sleep/replay causal pruning detayı, replay channel'ları, counterfactual ablation kuralları ve eligibility trace constraint için bkz. [`REPLAY_PROTOCOL.md`](./REPLAY_PROTOCOL.md) §10 (sleep_synapse_update channel).
+
 ---
 
 ## Madde 3 — Doğuş / Minimum Genome

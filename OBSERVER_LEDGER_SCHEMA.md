@@ -360,7 +360,11 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 (INGRESS_NO_RULE_MATCH, *)                   → ring_buffer_only
 (SLEEP_REPLAY_SYNAPSE_UPDATE, *)             → ring_buffer_only
 (ATTENTION_REPLAY_HABITUATION_UPDATE, *)     → ring_buffer_only
-(REPLAY_SESSION_COMPLETED, *)                → permanent
+(REPLAY_SESSION_STATUS_CHANGED, *)           → permanent
+(REPLAY_SESSION_STATUS_CHANGED, new_status=failed) → permanent_with_snapshot
+(REPLAY_SURVIVAL_EVALUATED, *)               → permanent
+(REPLAY_OUTCOME_ALIGNMENT_EVALUATED, *)      → permanent
+(COUNTERFACTUAL_ABLATION_PERFORMED, *)       → permanent
 (WAKE_TO_SLEEP_TRANSITION, *)                → permanent
 (SLEEP_TO_WAKE_TRANSITION, *)                → permanent
 (LEDGER_COMPACTION_PERFORMED, *)             → permanent
@@ -731,7 +735,11 @@ SPIKE_BURST
 SLEEP_REPLAY_SYNAPSE_UPDATE
 WAKE_TO_SLEEP_TRANSITION
 SLEEP_TO_WAKE_TRANSITION
-REPLAY_SESSION_COMPLETED
+REPLAY_SESSION_STATUS_CHANGED        # canonical lifecycle (replaces REPLAY_SESSION_COMPLETED; 
+                                      # old_status/new_status as fields — bkz. REPLAY_PROTOCOL.md §18)
+REPLAY_SURVIVAL_EVALUATED            # memory verification channel (REPLAY_PROTOCOL.md §13)
+REPLAY_OUTCOME_ALIGNMENT_EVALUATED   # outcome alignment channel (REPLAY_PROTOCOL.md §14)
+COUNTERFACTUAL_ABLATION_PERFORMED    # counterfactual detail audit (REPLAY_PROTOCOL.md §15)
 ```
 
 ### Attention family

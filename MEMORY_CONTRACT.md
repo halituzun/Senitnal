@@ -357,11 +357,16 @@ Bu belgenin **sonraki sürümlerinde** çözülecek açık sorular:
 - **Observer dual-role:** *(F tarafından yapısal cevap)* Observer iki rol taşır — `recorder` (M1 yazıcı, sadece permanence_policy uygular) ve `summarizer` (M1 okur, M2 candidate önerir, Memory Write Gate'ten geçer). İkisi farklı yetki seviyesinde; her summarizer hareketi M1'e meta-event olarak kayıtlı (non-recursive). Detay: [`OBSERVER_LEDGER_SCHEMA.md`](./OBSERVER_LEDGER_SCHEMA.md) §5. Açık kalan: summarizer'ın hangi event kombinasyonlarını candidate üretmek için kullanacağı `MEMORY_WRITE_GATE.md` konusu.
 - **Memory Write Gate karar kuralları:** Sayısal eşikler nereden geliyor? Anayasal mı (sabit) yoksa kalibre edilebilir mi (deneyimle ayar)? Kalibre ise kim kalibre ediyor?
 - **M2 schema versioning:** M2 explicit store şeması zamanla değişecek. Eski kayıtlar nasıl migrate olur? Migration sırasında provenance nasıl korunur?
-- **Replay engine'in M0 üzerindeki etkisi:** *(B + J tarafından kısmi cevap)* Replay M0'a şu kanallardan dokunur:
-  - **Sleep/replay causal pruning** (Madde 2 altında): sinaps weight, eligibility, success trace değiştirir. Observer event: `SLEEP_REPLAY_SYNAPSE_UPDATE`.
-  - **Attention replay** (`ATTENTION_WORKSPACE.md` §19 altında): sadece habituation/attention traces günceller; sinaps topolojisine dokunmaz. Observer event: `ATTENTION_REPLAY_HABITUATION_UPDATE`.
-  - **Ingress compiler calibration update** (`INGRESS_COMPILER_SPEC.md` §13-14): outcome/replay evidence ile `ingress_calibration_traces` (M0 alt-tipi) güncellenir; rate cap'li, asymmetric (dampening > strengthening). Observer event: `COMPILER_MAPPING_UPDATED`.
-  Açık kalan: "düşledim ve öğrendim" eventinin tam tanımı, kanallar arası etkileşim, ve replay'in narrative self'i nasıl etkilediği.
+- **Replay engine'in M0 üzerindeki etkisi:** *(B + J + K tarafından formal tam cevap)* Replay tek mekanizma, çoklu effect channel. Sandboxed (live core'a sensory event basamaz). Detaylar [`REPLAY_PROTOCOL.md`](./REPLAY_PROTOCOL.md) §5:
+  - **sleep_synapse_update** channel (Madde 2 altında): eligibility trace içindeki sinaps weight/trace update. Asymmetric (dampening > strengthening). Observer event: `SLEEP_REPLAY_SYNAPSE_UPDATE`.
+  - **attention_habituation_update** channel (ATTENTION §19 altında): habituation trace update; sinaps topolojisi dokunulmaz. Observer event: `ATTENTION_REPLAY_HABITUATION_UPDATE`.
+  - **ingress_calibration_update** channel (INGRESS_COMPILER_SPEC §13-14): `ingress_calibration_traces` update. Observer event: `COMPILER_MAPPING_UPDATED` (replay_origin: true).
+  - **memory_verification_update** channel: M2 candidate'lar için `replay_survival_score` üretir. Observer event: `REPLAY_SURVIVAL_EVALUATED`.
+  - **outcome_alignment_analysis** channel: gerçek outcome ile uyum skoru. Observer event: `REPLAY_OUTCOME_ALIGNMENT_EVALUATED`.
+  
+  Counterfactual ablation bounded (single-variable default, pairwise causal-linked, higher-order yasak). `replay_survival_score` ≠ `outcome_alignment_score` (sentetik vs gerçek). Replay M2'ye doğrudan yazmaz, sadece Memory Write Gate'e evidence axis sağlar.
+  
+  Açık kalan: cross-channel evidence paylaşımı, replay outcome alignment lag tolerance, multi-instance replay (cross-restore identity ile bağlantılı).
 - **Cross-restore identity:** Bir sistem M0+M1 backup'tan restore edildi. M2'sini başka bir sistemin M2'siyle birleştirmek istiyoruz (örn. iki Sentinel instance). Bu identity hakkı verir mi yoksa "kontamine" mi sayılır?
 - **Forgetting attack:** Düşman bir aktör M2'ye yığınla expire-talebi gönderirse sistemin retention policy'si nasıl davranır? "Cognitive denial-of-service"e karşı sınır ne?
 
