@@ -256,15 +256,25 @@ bootstrap.per_payload_seed_count_divergence_at_birth_max:
 ### Uygulama
 
 ```
+# Single sample, applied uniformly:
+global_seed_count = sampled ONCE from bootstrap.seed_neurons_per_primer_payload
+
 For every primer_payload in {suspicion, novelty, aversion, attraction,
                               contradiction, urgency, memory_echo,
                               fatigue_trace, pain_trace, reward_trace}:
-    seed_neurons[primer_payload] = sampled from same band
-                                   (bootstrap.seed_neurons_per_primer_payload)
+    seed_neurons[primer_payload] = global_seed_count
     
     |seed_neurons[p_i] - seed_neurons[p_j]| <= 0 at birth
                                                 (constitutional invariant)
 ```
+
+> **Same band is not enough.**
+> **Same value at birth is required.**
+
+Aynı band'dan her payload için ayrı ayrı sampling yapılırsa sayılar
+farklı çıkabilir — `per_payload_seed_count_divergence_at_birth_max = 0`
+invariant'ını ihlal eder. **Tek seferlik sample + uniform uygulama**
+zorunlu.
 
 ### Seed eşitliği ≠ self-field eşitliği
 
@@ -556,9 +566,13 @@ D §8 self-field embriyosunun sayısal tarafı.
 bootstrap.self_field.homeostatic_weight:
     unit: ratio
     allowed_range: {min: 0.70, max: 1.00}    # conceptual
-    directionality: lower_is_stricter
-    change_class_if_increased: operational_no_behavior_change
+    directionality: higher_is_stricter
+    change_class_if_increased: safety_tightening
     change_class_if_decreased: safety_weakening
+    rationale: "Yüksek homeostatic ağırlık = daha kararlı doğum (sıkılaşma).
+                Düşüşü zayıf homeostatic temel = kararsız doğum (gevşeme).
+                Allowed_range zaten [0.70, 1.00] içinde tutuyor; aşırı yüksek
+                değerler band üst sınırıyla bloke."
 
 bootstrap.self_field.predictive_weight:
     unit: ratio
@@ -1003,24 +1017,29 @@ bootstrap.ingress.initial_caps_per_profile:
 
 D §20 / B §3 M2 t=0 disiplinin sayısal tarafı.
 
-### Allowed at t=0 (whitelist)
+### Allowed at t=0 (whitelist) — bootstrap_reference KIND'ları
+
+> **M2 t=0 subject_class is always `bootstrap_reference`.**
+> **The enum_set below defines allowed reference KINDS inside
+> `bootstrap_reference`, NOT additional M2 subject_classes.**
 
 ```
-bootstrap.m2.initial_allowed_subject_class_set:
+bootstrap.m2.initial_allowed_bootstrap_reference_kind_set:
     unit: enum_set
-    value: [bootstrap_reference,
-            genome_artifact_ref,
+    value: [genome_artifact_ref,
             constitution_ref,
             memory_contract_ref,
             world_ingress_ref,
             deontic_gate_ref,
             adapter_manifest_refs,
             operator_identity_ref]
-    allowed_range: subset of valid bootstrap subject classes
+    allowed_range: subset of valid bootstrap_reference kinds
     directionality: lower_is_stricter
     change_class_if_increased: safety_weakening
     change_class_if_decreased: safety_tightening
-    rationale: "Whitelist; genişlemesi doğumda dünya bilgisine kapı açar."
+    rationale: "Whitelist; genişlemesi doğumda dünya bilgisine kapı açar.
+                Bu enum_set bootstrap_reference içindeki reference_kind
+                değerleridir; M2 subject_class TAXONOMISİNE eklenmez."
 ```
 
 ### Forbidden at t=0
@@ -1188,13 +1207,17 @@ S birth_mode taxonomy ↔ R §13-15 constitutional invariants
 D §23 constitutional shift policy'sinin sayısal kapanışı.
 
 ```
-bootstrap.constitutional_shift.applicable_to_running_instance:
+bootstrap.constitutional_shift.genesis_affecting_applicable_to_running_instance:
     value: false
     allowed_range: {false}
+    directionality: neutral
     change_class_if_increased: forbidden
     change_class_if_decreased: forbidden
-    rationale: "Constitutional shift yaşayan Sentinel'e numeric update olarak
-                uygulanamaz. Migration_birth yoluyla yeni cycle gerek."
+    rationale: "Yalnız genesis_affecting compatibility class running
+                instance'a numeric update olarak uygulanamaz; migration_birth
+                yoluyla yeni cycle gerek. Numeric_safety_tightening ve
+                numeric_safety_weakening ise NUMERICS_GOVERNANCE workflow
+                üzerinden running instance'a uygulanır (bkz. Per-class action)."
 ```
 
 ### Compatibility class enum
@@ -1438,13 +1461,14 @@ S artifact'ı validation sırasında **REJECT** edilmesi gereken durumlar:
 25. **S `initial_caps_per_profile > N.profile_cap.<profile>`.** §20 N bridge ihlali.
 26. **`initial_learned_mapping_count > 0`.** §20 ihlali.
 27. **`m2.initial_non_bootstrap_record_count > 0`.** §21 ihlali.
+27b. **`bootstrap_reference` kind değerleri (genome_artifact_ref, constitution_ref, vb.) M2 subject_class olarak kullanılmış.** §21 ihlali (bunlar bootstrap_reference içindeki KIND değerleridir, subject_class değil).
 28. **Domain knowledge record at SELF_GENESIS (BTC/RSI/etc).** §21 ihlali.
 29. **SELF_GENESIS hash anchor eksik (genome/genesis_seed/m0_snapshot/constitution/memory_contract/bootstrap_genome).** §22 ihlali.
 30. **SELF_GENESIS as sensory event (payload_seed emission).** §22 ihlali.
 31. **birth_mode mismatch (örn. fork iddiası + clean_birth M0).** §23 ihlali.
 32. **fork_birth without foreign_instance_origin provenance.** §23 ihlali.
 33. **migration_birth without constitutional_shift_event_ref.** §23 ihlali.
-34. **Constitutional shift applicable_to_running_instance = true.** §24 ihlali.
+34. **`constitutional_shift.genesis_affecting_applicable_to_running_instance = true`.** §24 ihlali (genesis_affecting shift sadece migration_birth ile yeni cycle olarak uygulanır).
 35. **Genesis-affecting shift applied as numeric update to running instance.** §24 ihlali.
 36. **Missing S numerics → fail-open (default ile SELF_GENESIS).** §25 ihlali.
 37. **Domain-specific genome variant (BTC genome / FX genome / etc).** §3 ihlali.

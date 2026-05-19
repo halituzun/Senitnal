@@ -324,6 +324,9 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 (BOOTSTRAP_M2_INJECTION, *)                  → permanent
 (CONSTITUTIONAL_SHIFT_APPLIED, *)            → permanent
 (CONSTITUTIONAL_SHIFT_AVAILABLE, *)          → permanent
+(PHASE_TRANSITION_OCCURRED, reason=state_metrics_satisfied) → permanent
+(PHASE_TRANSITION_OCCURRED, reason=restore_rollback)        → permanent_with_snapshot + human_alert
+(PHASE_TRANSITION_OCCURRED, reason=migration_re_genesis)    → permanent_with_snapshot + human_alert
 (WORKSPACE_PULSE, *)                         → permanent
 (DEONTIC_BLOCKED, routine_block)             → permanent
 (DEONTIC_BLOCKED, safety_block low)          → permanent
@@ -811,6 +814,11 @@ SELF_GENESIS
 BOOTSTRAP_M2_INJECTION
 CONSTITUTIONAL_SHIFT_APPLIED
 CONSTITUTIONAL_SHIFT_AVAILABLE
+PHASE_TRANSITION_OCCURRED      # plasticity phase lifecycle (bootstrap family)
+                                # boot_phase → stabilization_phase → consolidated_phase
+                                # reason: state_metrics_satisfied |
+                                #         restore_rollback | migration_re_genesis
+                                # bkz. BOOTSTRAP_GENOME_NUMERICS.md §16, §27
 ```
 
 ### Deontic family
