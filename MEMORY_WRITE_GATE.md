@@ -302,6 +302,14 @@ signed_administrative_reference:
     AND administrative_scope_only
     AND no_world_claim
     AND audit_path_intact
+
+adapter_trust:
+    sustained_health_pattern
+    AND manifest_signature_valid
+    AND schema_violation_count below threshold
+    AND replay_survival
+    AND provenance_recorded
+    AND adapter_manifest_status IN {verified, active, degraded}
 ```
 
 ### Critical kural
