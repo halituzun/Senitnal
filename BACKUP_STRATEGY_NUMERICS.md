@@ -667,6 +667,8 @@ Constitutional anchors validation:
 
 ## 13. restore_with_missing_history Numerics — restricted mode
 
+> *Bu mode S'nin phase monotonicity invariant'ının (S §16) **iki rollback kanalından biridir** — boot/stabilization/consolidated phase'lerden restricted phase'e geri dönüş bu mode'da otomatik. Bkz. [`BOOTSTRAP_GENOME_NUMERICS.md`](./BOOTSTRAP_GENOME_NUMERICS.md) (S) §16: "Normal operasyonda phase rollback forbidden; sadece restore_with_missing_history veya migration_birth ile mümkün."*
+
 ### Üst sınır var
 
 ```
@@ -824,6 +826,8 @@ backup.fork.source_lock_during_fork_required:
 ---
 
 ## 15. Migration Restore Numerics
+
+> *Migration_birth S'nin phase monotonicity'sinin **ikinci rollback kanalı** — constitutional shift sonrası boot_phase'e yeni cycle olarak başlama (S §16). Genesis-affecting shift yaşayan Sentinel'e numeric update olarak uygulanamaz; migration_birth zorunlu. Bkz. [`BOOTSTRAP_GENOME_NUMERICS.md`](./BOOTSTRAP_GENOME_NUMERICS.md) (S) §23-24.*
 
 ### Constitutional invariants
 

@@ -29,6 +29,8 @@ Bu belge depo formatlarını konuşmaz; **yetkilerin sınırını** konuşur.
 
 ### M0 — Implicit Neural Memory
 
+> *Doğumda M0 başlangıç bandları, stable_assembly_count_at_birth = 0 + initial_recallable_assembly_count = 0 + initial_memory_write_eligible_assembly_count = 0 constitutional invariants, proto-resonance 5-katmanlı koruma, self-field embryo weight hierarchy (homeostatic > predictive > narrative), ve M2 t=0 only bootstrap_reference whitelist için bkz. [`BOOTSTRAP_GENOME_NUMERICS.md`](./BOOTSTRAP_GENOME_NUMERICS.md) (S). **Sentinel fikirle doğmaz; fikir deneyim + replay + stabilization ile doğar.***
+
 Çekirdeğin **dokusu**. Sistemin gerçek hafızası.
 
 - **Ne saklar:** Sinaps ağırlıkları, eligibility trace'ler (fast/medium/slow), success trace'ler, assembly stabilite skorları, payload alışkanlıkları, self-field eğilimleri, narrative self tortusu, receptor profile kaymaları.

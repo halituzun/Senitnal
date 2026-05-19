@@ -153,6 +153,8 @@ Hiçbir replay sayısı **çıplak** yazılmaz. Her biri bu metadata zarfında.
 
 ## 5. Replay Session Budget
 
+> *Doğum ritmi tarafından gelen initial priors (`bootstrap.initial_replay_cadence_prior`, `bootstrap.initial_replay_session_duration_prior`, fatigue accumulation/recovery base rates) için bkz. [`BOOTSTRAP_GENOME_NUMERICS.md`](./BOOTSTRAP_GENOME_NUMERICS.md) (S) §17-18. **S O cap'lerini bypass edemez**; initial priors O caps'in altında computed_less_than_or_equal dependency ile sınırlı.*
+
 ### Conceptual values (production = signed artifact)
 
 ```

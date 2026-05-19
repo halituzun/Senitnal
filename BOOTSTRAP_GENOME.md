@@ -60,6 +60,8 @@ Bu beş cümle belgenin kilididir. Her tasarım kararı bunlara dönülerek sın
 
 ## 4. Genome Is Not Knowledge
 
+> *Bu bölümün sayısal omurgası — seed neuron count band (per-payload eşit, divergence_at_birth_max = 0 constitutional), initial synaptic weight bands, receptor bias epsilon, proto-resonance 5-katmanlı invariant (recallability=0, assembly_id=none, persistence cap, stability cap, memory_write_eligibility=false), stable_assembly_count_at_birth = 0 — için bkz. [`BOOTSTRAP_GENOME_NUMERICS.md`](./BOOTSTRAP_GENOME_NUMERICS.md) (S) §5-10.*
+
 ### Principle
 Genome doğuştan gelen bilgi içermez. Genome doğuştan gelen **öğrenebilirlik düzeni** içerir.
 
@@ -208,6 +210,8 @@ Genome runtime'da değişebilirse Sentinel "öğrenmek" değil "ayarlanmak" olur
 ---
 
 ## 8. What Is Born With
+
+> *Doğum dokusunun sayısal bandları — self-field embryo weights (homeostatic > predictive > narrative constitutional dependency), payload modulation reflex priors, initial homeostatic reference bands, M2 t=0 only bootstrap_reference whitelist (world knowledge yasak), SELF_GENESIS 6 hash anchor zorunlu — için bkz. [`BOOTSTRAP_GENOME_NUMERICS.md`](./BOOTSTRAP_GENOME_NUMERICS.md) (S) §11-13, §21-22.*
 
 Doğuştan gelenler (Madde 3'ün detayı):
 
@@ -438,6 +442,8 @@ Toplam normalize. Deneyimle kayar (Madde 2 öğrenme kuralları + ATTENTION_WORK
 ---
 
 ## 16. Plasticity and Consolidation
+
+> *Plasticity phase transition sayısal koşulları (6-metrik AND: observation_count + replay_session_count + stable_assembly_count + homeostatic_variance + contradiction_spike_rate + fatigue_recovery_stability), age-based transition constitutional forbidden, ve **phase monotonicity** (boot → stabilization → consolidated; rollback yalnız restore_with_missing_history veya migration_birth ile) için bkz. [`BOOTSTRAP_GENOME_NUMERICS.md`](./BOOTSTRAP_GENOME_NUMERICS.md) (S) §14-16.*
 
 ### Principle
 **Sentinel'in biyolojik yaşı yoktur.** Plasticity yaş-temelli **değildir**. Plasticity durum-temelli ve consolidation-temellidir.
@@ -764,6 +770,8 @@ Bu üçlü ileride "aynı genome'dan doğan iki Sentinel neden farklı gelişti?
 ---
 
 ## 23. Constitutional Anchors and Shift Policy
+
+> *Birth mode taxonomy (clean/restore/restore_with_missing_history/fork/migration) sayısal restrictions ve constitutional shift compatibility class numerics (numeric_safety_tightening / numeric_safety_weakening / constitutional_amendment / genesis_affecting) için bkz. [`BOOTSTRAP_GENOME_NUMERICS.md`](./BOOTSTRAP_GENOME_NUMERICS.md) (S) §23-24. Constitutional rule: **genesis-affecting shift yaşayan Sentinel'e numeric update olarak uygulanamaz; migration_birth ile yeni cycle gerek.***
 
 ### Principle
 Yaşayan Sentinel anayasa değişikliğini **sessizce kabul etmez**. Her anayasa değişimi M1'de görünür event olarak kaydedilir ve compatibility class'ına göre uygulanır.
