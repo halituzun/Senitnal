@@ -675,6 +675,8 @@ memory_status_band → status_band_multiplier:
 
 ## 15. CandidateRecall Numerics
 
+> *N candidate cap'in recall-side karşılığı için bkz. [`RECALL_PROTOCOL_NUMERICS.md`](./RECALL_PROTOCOL_NUMERICS.md) (T) §14, §18: T `candidate.intensity_multiplier ≤ N.candidate_recall_ratio` (computed_less_than_or_equal); allowed_subject_classes = {source_trust, procedural} enum_set; candidate cooldown ≥ verified × 1.5 asimetri. **N candidate cap + T candidate dağıtımı atomic update zincirinde** (M §12).*
+
 `profile_cap.CandidateRecall` = en sınırlı kanal. (Canonical key — bkz. §7.)
 
 ### Cap formula

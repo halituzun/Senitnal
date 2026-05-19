@@ -95,6 +95,8 @@ Eğer recall "veri çekme" olarak modellense, çekirdek M2'yi bilen, sorgulayan,
 
 ## 5. Who May Request Recall
 
+> *RecallRequest trigger sayısal eşikleri (`memory_echo_threshold_for_recall_request` bidirectional_sensitive, sustained_tension_required constitutional, trigger_source_allowed whitelist) ve composite trigger AND koşulları için bkz. [`RECALL_PROTOCOL_NUMERICS.md`](./RECALL_PROTOCOL_NUMERICS.md) (T) §5-6.*
+
 ### RecallRequest tetikleyici yetkisi
 
 Sadece **core-originated** RecallRequest çekirdeğe RecallEvent döndürebilir. Diğer aktörler M2'yi okuyabilir ama **çekirdeğe RecallEvent enjekte edemez**.
@@ -205,6 +207,8 @@ RecallRequest
 ---
 
 ## 8. Recall Scope and Search Boundaries
+
+> *Scope-side mechanical ranking score (status_weight × provenance_strength × freshness_dampening × (1 - contradiction_penalty) × (1 - habituation_penalty) × scope_match_score), core-facing top-1 invariant (constitutional immutable), core-originated scope signature inputs (memory_echo / context / payload_mix / subject_class / causal_ref filter) ve domain label forbidden discipline için bkz. [`RECALL_PROTOCOL_NUMERICS.md`](./RECALL_PROTOCOL_NUMERICS.md) (T) §7-8.*
 
 ### Principle — Hybrid scoping
 
@@ -431,6 +435,8 @@ RecallEvent.event_body'de `status_band` field'ı **açık**. Compiler bu field'a
 
 ## 13. Candidate Recall Boundary
 
+> *Candidate recall sayısal disiplini için bkz. [`RECALL_PROTOCOL_NUMERICS.md`](./RECALL_PROTOCOL_NUMERICS.md) (T) §14: allowed_subject_classes = {source_trust, procedural} enum_set; `candidate.intensity_multiplier ≤ N.candidate_recall_ratio` (N bridge computed_less_than_or_equal); `candidate.cooldown ≥ verified.cooldown × 1.5` asimetri. Status-based suppression (quarantined/rejected/expired) §12, §15. Recall-side staleness behavior P canonical bridge §16-17 — T cannot make epistemically stale record feel fresh.*
+
 ### Principle
 
 Candidate recall **varsayılan kapalıdır**. Sadece dar bir subject_class alt-kümesinde, sıkı koşullarda açıktır.
@@ -483,6 +489,8 @@ Narrative/causal/episodic/structured_fact için candidate recall **kapalı** ç�
 ---
 
 ## 14. Recall Economy — Cost, Cooldown, Habituation
+
+> *Recall economy sayısal disiplini için bkz. [`RECALL_PROTOCOL_NUMERICS.md`](./RECALL_PROTOCOL_NUMERICS.md) (T) §9-11, §22: cooldown matrix (record/scope/subject_class/global), recall budget çift cap (cycle + 24h, O pattern), recall budget restore continuity constitutional (forgetting attack defense), fatigue accumulation/recovery, habituation decay invariant + min intensity after decay > 0. `cooldown.candidate >= cooldown.verified × 1.5` asimetrisi.*
 
 MEMORY_CONTRACT §6'daki kavramların biçimsel hali:
 

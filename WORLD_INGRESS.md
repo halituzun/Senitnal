@@ -227,6 +227,8 @@ ObservationEvent
 
 ## 10. RecallEvent Boundary
 
+> *RecallEvent compiler_input intensity / status_band / staleness / candidate ayrımı sayısal disiplini için bkz. [`RECALL_PROTOCOL_NUMERICS.md`](./RECALL_PROTOCOL_NUMERICS.md) (T) §13-17: verified/active multiplier'lar N profile_cap RecallEvent ile uyumlu, candidate intensity ≤ N candidate_recall_ratio, staleness behavior P epistemic_staleness_threshold canonical kaynak (T gevşetemez), self-deception-prone subject_class SUPPRESS, factual/historical DAMPEN.*
+
 M2 Explicit Recall Store'dan çağrılan kalıcı hatırlatma.
 
 ```

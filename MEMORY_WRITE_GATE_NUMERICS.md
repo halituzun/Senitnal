@@ -413,7 +413,9 @@ NumericEntry: memory_write.refresh_required_window_ms.<subject_class>
                 (sıkılaşma)."
 ```
 
-### epistemic_staleness_threshold_ms — canonical source (O bridge)
+### epistemic_staleness_threshold_ms — canonical source (O + T bridges)
+
+> *T (RECALL_PROTOCOL_NUMERICS) §16-17 P epistemic_staleness_threshold'unu recall-side davranış için canonical kaynak olarak kullanır. T threshold'u **gevşetemez**; subject_class'a göre SUPPRESS (self-deception-prone + active policy) veya DAMPEN (factual + historical) uygular. "T cannot make epistemically stale record feel fresh."*
 
 P, "verified bir kayıt artık epistemik olarak taze sayılır mı?" sorusunun **canonical kaynağıdır**:
 

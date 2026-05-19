@@ -74,6 +74,8 @@ Sistemin **tarihinin kanıt defteri**.
 
 ### M2 — Explicit Recall Store
 
+> *M2'den çekirdeğe hatırlatma sayısal disiplini için bkz. [`RECALL_PROTOCOL_NUMERICS.md`](./RECALL_PROTOCOL_NUMERICS.md) (T): core-facing top-1 constitutional, memory_echo bidirectional_sensitive threshold, recall economy çift cap, mechanical ranking (semantic değil), status-based eligibility, recall-side staleness (P canonical bridge), candidate recall dar (source_trust + procedural), human bypass forbidden, recall failure audit-only. **Hafıza çekirdeğe emir vermez; hatırlatma gönderir.***
+
 Dış **hafıza organı**.
 
 - **Ne saklar:** Episodic kayıtlar ("Halit 18 Mayıs'ta kill-switch çekti"), structured facts, procedural lookup'lar, incident kayıtları, insan kararlarının izleri, deontic geçmişi, world facts.
