@@ -735,11 +735,6 @@ SPIKE_BURST
 SLEEP_REPLAY_SYNAPSE_UPDATE
 WAKE_TO_SLEEP_TRANSITION
 SLEEP_TO_WAKE_TRANSITION
-REPLAY_SESSION_STATUS_CHANGED        # canonical lifecycle (replaces REPLAY_SESSION_COMPLETED; 
-                                      # old_status/new_status as fields — bkz. REPLAY_PROTOCOL.md §18)
-REPLAY_SURVIVAL_EVALUATED            # memory verification channel (REPLAY_PROTOCOL.md §13)
-REPLAY_OUTCOME_ALIGNMENT_EVALUATED   # outcome alignment channel (REPLAY_PROTOCOL.md §14)
-COUNTERFACTUAL_ABLATION_PERFORMED    # counterfactual detail audit (REPLAY_PROTOCOL.md §15)
 ```
 
 ### Attention family
@@ -757,6 +752,8 @@ MEMORY_RECORD_STATUS_CHANGED       # canonical for status transitions
 RECALL_REQUEST_SENT
 RECALL_RESULT_EMPTY                # failure audit (RECALL_PROTOCOL.md §16)
 RECALL_SUPPRESSED                  # individual record suppressed (cooldown/habituation/status)
+REPLAY_SURVIVAL_EVALUATED          # M2 verification evidence axis (REPLAY_PROTOCOL.md §13)
+REPLAY_OUTCOME_ALIGNMENT_EVALUATED # outcome alignment evidence axis (REPLAY_PROTOCOL.md §14)
 OUTCOME_RECEIVED
 ```
 
@@ -809,6 +806,11 @@ ADAPTER_MANIFEST_STATUS_CHANGED       # adapter lifecycle canonical event
                                        #  old_status/new_status field — bkz. ADAPTER_MANIFEST_SPEC.md §14)
 COMPILER_RULE_FAMILY_STATUS_CHANGED   # bootstrap rule family lifecycle (active/deprecated/archived)
                                        # bkz. INGRESS_COMPILER_SPEC.md §17
+REPLAY_SESSION_STATUS_CHANGED         # replay session lifecycle canonical event
+                                       # (replaces REPLAY_SESSION_COMPLETED; old_status/new_status as fields)
+                                       # bkz. REPLAY_PROTOCOL.md §18
+COUNTERFACTUAL_ABLATION_PERFORMED     # counterfactual ablation audit detail (audit-of-replay artifact)
+                                       # bkz. REPLAY_PROTOCOL.md §15
 ```
 
 ### Yeni event ekleme
