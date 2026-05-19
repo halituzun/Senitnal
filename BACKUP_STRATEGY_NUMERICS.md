@@ -228,7 +228,7 @@ Composite identity preservation:
 
 - M1 periyodik RPO (continuous_replication değil)
 - M0 için RPO entry'si olmayan artifact
-- M2 RPO M0 RPO'dan sıkı olması (asymmetric weight yanlış yön)
+- M2 snapshot'ın full identity restore precondition'ı olarak M0/M1 yerine kullanılması (M2 RPO operational nedenlerle M0'dan sıkı olabilir; ama M2 backup kimlik continuity'sini sağlayamaz)
 
 ---
 
@@ -641,7 +641,9 @@ Full same-identity restore başlamadan ÖNCE TÜM koşullar:
 Bir koşul tatmin edilmezse:
     same_identity restore ABORT
     → restore_with_missing_history (§13) veya
-    → restore aborted, fork_birth (§14) / migration_birth (§15) tercih
+    → restore aborted, fork_birth (§14) tercih veya clean_birth with foreign audit
+    → migration_birth (§15) sadece eş zamanlı bir constitutional/genesis-affecting
+      shift de uygulanıyorsa; M1 gap tek başına migration_birth tetikleyemez.
 ```
 
 ### Cross-artifact dependency
@@ -896,11 +898,12 @@ Migration ancak anayasal/genesis-affecting uyumsuzluk varsa.
 ```
 backup.retention_ms.M2Snapshot:
     unit: ms
-    directionality: lower_is_stricter
+    directionality: bidirectional_sensitive
     change_class_if_increased: safety_weakening
     change_class_if_decreased: safety_weakening
         (kısa retention = bilgi kaybı; uzun retention = storage pressure;
-         ikisi de boundary'ye dokunur)
+         ikisi de boundary'ye dokunur — directionality bidirectional_sensitive
+         M canonical metadata schema ile uyumlu)
     allowed_range: bounded medium
     rationale: "Knowledge retention; identity etkisi yok ama operational önemli."
 
