@@ -166,12 +166,15 @@ RestoreManifest (atomic composition for a restore point)
 │   ├── memory_contract_hash
 │   ├── replay_protocol_hash
 │   └── adapter_manifest_hashes
-├── replay_trace_summary           # §10
+├── numerics_artifact_refs[]       # active numerics artifact'ler — bkz. NUMERICS_GOVERNANCE §19
+├── replay_trace_summary           # §17
 ├── backup_reason                  # scheduled | pre_migration | pre_policy_change | pre_adapter_activation | manual_emergency
 ├── created_at
 ├── signed_by
 └── manifest_hash
 ```
+
+> *Restore sırasında numerics versioning ve sessiz uygulama yasağı için bkz. [`NUMERICS_GOVERNANCE.md`](./NUMERICS_GOVERNANCE.md) §19. RestoreManifest restore anındaki numerics ref'lerini taşır; sonraki numerics değişimleri ayrı workflow gerektirir.*
 
 ### Kritik kural
 

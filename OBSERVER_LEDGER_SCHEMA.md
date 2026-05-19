@@ -374,6 +374,12 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 (FORK_FROM_INSTANCE, *)                      → permanent + human_alert
 (MIGRATION_FROM_INSTANCE, *)                 → permanent + human_alert
 (FORGETTING_ATTACK_SUSPECTED, *)             → permanent_with_snapshot + human_alert
+(NUMERICS_ARTIFACT_STATUS_CHANGED, *)        → permanent
+(NUMERICS_ARTIFACT_STATUS_CHANGED, new_status=active AND compatibility_class=safety_weakening) → permanent + human_alert
+(NUMERICS_ARTIFACT_STATUS_CHANGED, new_status=rejected) → permanent_with_snapshot
+(NUMERICS_ARTIFACT_STATUS_CHANGED, trigger=emergency_revert) → permanent_with_snapshot + human_alert
+(NUMERICS_VERSION_MISMATCH_DETECTED, *)      → permanent + human_alert
+(NUMERICS_FAILSAFE_ACTIVATED, *)             → permanent_with_snapshot + human_alert
 (WAKE_TO_SLEEP_TRANSITION, *)                → permanent
 (SLEEP_TO_WAKE_TRANSITION, *)                → permanent
 (LEDGER_COMPACTION_PERFORMED, *)             → permanent
@@ -827,6 +833,9 @@ M1_HISTORY_LOST_AT_RESTORE            # degraded identity critical event (restor
 FORK_FROM_INSTANCE                    # fork_birth audit event
 MIGRATION_FROM_INSTANCE               # migration_birth audit event (constitutional shift sonrası)
 FORGETTING_ATTACK_SUSPECTED           # forgetting attack pattern alarm
+NUMERICS_ARTIFACT_STATUS_CHANGED      # numerics artifact lifecycle (NUMERICS_GOVERNANCE.md §20)
+NUMERICS_VERSION_MISMATCH_DETECTED    # restore sonrası version uyumsuzluğu
+NUMERICS_FAILSAFE_ACTIVATED           # missing/invalid numerics → strict mode
 ```
 
 ### Yeni event ekleme

@@ -310,7 +310,21 @@ adapter_trust:
     AND replay_survival
     AND provenance_recorded
     AND adapter_manifest_status IN {verified, active, degraded}
+
+numerics_artifact_reference:
+    valid_signature
+    AND spec_ref_hash matches existing A-L document version
+    AND directionality_metadata complete for all entries
+    AND allowed_range declared for all entries
+    AND no_default_check passed
+    AND dependency_check passed
+    AND if any change_class includes safety_weakening:
+        human_approval_ref present
+    AND previous_artifact_hash chain intact
+    AND owning_spec_ref valid
 ```
+
+> *Numerics artifact yönetiminin tam meta-anayasası — directionality metadata, dependency declaration, fail-safe strict mode, rollback workflow ve safety tightening vs weakening sınıflandırması — için bkz. [`NUMERICS_GOVERNANCE.md`](./NUMERICS_GOVERNANCE.md).*
 
 ### Critical kural
 

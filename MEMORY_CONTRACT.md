@@ -100,6 +100,7 @@ subject_class:
   - narrative_claim                (anlatı; self-deception riskine tabi)
   - causal_explanation             (neden iddiası; self-deception riskine tabi)
   - decision_rationale             (karar gerekçesi; self-deception riskine tabi)
+  - numerics_artifact_reference    (signed numerics artifact ref'leri — bkz. NUMERICS_GOVERNANCE §6)
 ```
 
 ### M2 provenance
