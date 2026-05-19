@@ -196,7 +196,8 @@ NumericsArtifact (immutable, signed)
 │   ├── source_document        # örn. "REPLAY_PROTOCOL.md"
 │   ├── source_document_hash   # A-L belgesinin tam hash'i
 │   └── section_ref            # örn. "§9 Replay Budget"
-├── numerics_family            # safety_critical | resource_limits | calibration_bands | identity_retention | operational_convenience | experimental
+├── numeric_risk_family        # safety_critical | resource_limits | calibration_bands | identity_retention | operational_convenience | experimental
+├── spec_family                # ingress_compiler | replay_protocol | memory_write_gate | observer_ledger | backup_strategy | bootstrap_genome | recall_protocol | adapter_trust
 ├── numeric_entries[]          # bkz. §8 NumericEntry
 ├── compatibility_class
 │   ├── clarification
@@ -220,7 +221,8 @@ NumericsArtifactReference (M2 record)
 ├── artifact_id
 ├── artifact_hash
 ├── status                      # candidate | verified | active | superseded | rejected | expired | rollback_active
-├── numerics_family
+├── numeric_risk_family
+├── spec_family
 ├── active_for_spec_ref         # hangi A-L specs için aktif
 ├── previous_artifact_hash
 └── provenance                  # human | system
@@ -282,8 +284,8 @@ NumericEntry
 │   ├── min
 │   └── max
 ├── directionality              # higher_is_stricter | lower_is_stricter | bidirectional_sensitive | neutral
-├── change_class_if_increased   # clarification | safety_tightening | safety_weakening | forbidden
-├── change_class_if_decreased   # clarification | safety_tightening | safety_weakening | forbidden
+├── change_class_if_increased   # clarification | operational_no_behavior_change | safety_tightening | safety_weakening | forbidden
+├── change_class_if_decreased   # clarification | operational_no_behavior_change | safety_tightening | safety_weakening | forbidden
 ├── requires_human_approval     # bool
 ├── requires_m1_snapshot        # bool
 ├── dependencies[]              # bkz. §12
@@ -338,7 +340,7 @@ Doğru: explicit zorunluluk. Her sayı kendi metadata'sını taşır.
        value: 100
        unit: count
        allowed_range: {min: 1, max: 1000}
-       directionality: higher_is_weaker
+       directionality: lower_is_stricter
        change_class_if_increased: safety_weakening
        change_class_if_decreased: safety_tightening
        requires_human_approval: true (for weakening)
@@ -404,7 +406,7 @@ Directionality'ye göre:
 | `higher_is_stricter` | safety_tightening | safety_weakening |
 | `lower_is_stricter` | safety_weakening | safety_tightening |
 | `bidirectional_sensitive` | safety_weakening (both directions) | safety_weakening (both directions) |
-| `neutral` | clarification or operational | clarification or operational |
+| `neutral` | clarification or operational_no_behavior_change | clarification or operational_no_behavior_change |
 
 `bidirectional_sensitive` için **her iki yön de safety_weakening sayılabilir** — human approval'a tabi.
 
@@ -859,7 +861,8 @@ NumericsArtifactStatusChangedEvent
 ├── event_family: ledger_meta
 ├── artifact_id
 ├── artifact_hash
-├── numerics_family
+├── numeric_risk_family
+├── spec_family
 ├── old_status                          # candidate | verified | active | superseded | rejected | expired | rollback_active
 ├── new_status
 ├── reason                              # validation_pass | human_approval | dependency_violation | invalid_signature | missing_directionality | safety_weakening_without_approval | superseded_by_new_version | emergency_revert
@@ -879,7 +882,7 @@ NumericsArtifactStatusChangedEvent
 (NUMERICS_ARTIFACT_STATUS_CHANGED, *)                    → permanent
 (NUMERICS_ARTIFACT_STATUS_CHANGED, new_status=active)    → permanent + human_alert (if compatibility_class=safety_weakening)
 (NUMERICS_ARTIFACT_STATUS_CHANGED, new_status=rejected)  → permanent_with_snapshot
-(NUMERICS_ARTIFACT_STATUS_CHANGED, trigger=emergency_revert) → permanent_with_snapshot + human_alert
+(NUMERICS_ARTIFACT_STATUS_CHANGED, reason=emergency_revert) → permanent_with_snapshot + human_alert
 (NUMERICS_VERSION_MISMATCH_DETECTED, *)                  → permanent + human_alert
 (NUMERICS_FAILSAFE_ACTIVATED, *)                         → permanent_with_snapshot + human_alert
 ```

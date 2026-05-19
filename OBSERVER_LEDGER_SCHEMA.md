@@ -377,7 +377,7 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 (NUMERICS_ARTIFACT_STATUS_CHANGED, *)        → permanent
 (NUMERICS_ARTIFACT_STATUS_CHANGED, new_status=active AND compatibility_class=safety_weakening) → permanent + human_alert
 (NUMERICS_ARTIFACT_STATUS_CHANGED, new_status=rejected) → permanent_with_snapshot
-(NUMERICS_ARTIFACT_STATUS_CHANGED, trigger=emergency_revert) → permanent_with_snapshot + human_alert
+(NUMERICS_ARTIFACT_STATUS_CHANGED, reason=emergency_revert) → permanent_with_snapshot + human_alert
 (NUMERICS_VERSION_MISMATCH_DETECTED, *)      → permanent + human_alert
 (NUMERICS_FAILSAFE_ACTIVATED, *)             → permanent_with_snapshot + human_alert
 (WAKE_TO_SLEEP_TRANSITION, *)                → permanent
