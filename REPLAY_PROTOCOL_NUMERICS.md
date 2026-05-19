@@ -906,7 +906,9 @@ ingress_calibration_replay_delta_cap ≤ N.per_mapping_daily_delta_cap × 0.30
                                        (computed_less_than_or_equal)
 outcome_alignment.max_wait_ms        ≤ P.epistemic_staleness_threshold_ms.<owning_subject_class>
                                        (computed_less_than_or_equal; P §8 canonical)
-restore_budget_continuity = required → L (BACKUP_STRATEGY) RestoreManifest
+restore_budget_continuity = required → R (BACKUP_STRATEGY_NUMERICS) §18
+                                       backup.replay_budget_continuity_required = true
+                                       (constitutional immutable)
 replay_survival_weight integration   → G (MEMORY_WRITE_GATE) §8 verification matrix
 ```
 

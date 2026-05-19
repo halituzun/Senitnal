@@ -727,6 +727,8 @@ observer.permanence.<event_type>
 
 Permanent log'un tier hierarchy'si (hot / warm / cold). Tier transition lossless invariant'a tabidir.
 
+> *Backup tarafında M1Segment retention = lifetime + tier transition lossless required disiplini için bkz. [`BACKUP_STRATEGY_NUMERICS.md`](./BACKUP_STRATEGY_NUMERICS.md) (R) §8. R Q'nun tier transition kuralını M1Segment lifetime retention'a uygular; aynı invariant iki katmanda.*
+
 ### Conceptual tiers
 
 ```

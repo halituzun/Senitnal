@@ -847,6 +847,8 @@ P bunu NumericEntry olarak taşımaz; **declarative kural** olarak referans veri
 
 ## 16. Self-deception Risk Numerics
 
+> *Foreign M2 merge tarafından gelen kayıtların gate disipliniyle integrasyonu için bkz. [`BACKUP_STRATEGY_NUMERICS.md`](./BACKUP_STRATEGY_NUMERICS.md) (R) §17: `forbidden_subject_class_set` enum_set (higher_is_stricter) self-deception riskli subject'leri (narrative_claim/causal_explanation/decision_rationale + episodic + operator_decision_record + deontic_kill_switch_action_record + numerics_artifact_reference) foreign import'tan tamamen yasaklar; `required_gate_ref = memory_write_gate` (Memory Write Gate bypass yok); foreign_instance_origin provenance permanent.*
+
 ### L bridge — internal_only vs external_corroboration
 
 L §10 `internal_only_refs` / `external_corroboration_refs` ayrımı P'de numerics'leşir:

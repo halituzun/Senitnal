@@ -195,6 +195,8 @@ Hiçbir aktör (insan, operatör, system) "şu M0 dosyasını yükleyelim" diyem
 
 ## 7. M0 Snapshot Policy
 
+> *Bu bölümün sayısal değerleri — snapshot cadence, consistency window, freeze/copy-on-write timeouts, partial_assembly_state_unsealed_max_count = 0 constitutional, replay sırasında M0 snapshot rule (sealed_checkpoint required), last-known-good permanent retention — `BACKUP_STRATEGY_NUMERICS.md` (R) §9-10, §21'de.*
+
 ### Point-in-time consistency
 
 ```
@@ -238,6 +240,8 @@ Hepsi snapshot'ta birleşik, tutarlı.
 ## 8. M1 Append-only Log Backup
 
 > *M1 ledger'ın iç sayısal disiplini (permanent log segment'leri, hash-chain checkpoint cadence, lossless compaction invariant, tier transition, storage pressure failsafe) için bkz. [`OBSERVER_LEDGER_NUMERICS.md`](./OBSERVER_LEDGER_NUMERICS.md) (Q) §10-13, §18-19. Backup tarafı L kapsamında; Q M1'in iç tutulma kurallarını sayısallaştırır. Foreign event reception caps (Q §16) L §22 forgetting attack defense'in observer ledger tarafıdır.*
+>
+> *M1 backup numeric disiplini için bkz. [`BACKUP_STRATEGY_NUMERICS.md`](./BACKUP_STRATEGY_NUMERICS.md) (R) §7-8: replication_mode = continuous_replication (constitutional immutable), WAL lag bounded (operational), chain_gap_tolerance_events = 0 (constitutional), M1Segment retention = lifetime + lossless tier transition (Q bridge). R §19: M1 retention shrink forbidden constitutional (forgetting attack defense).*
 
 ### Principle
 
@@ -352,6 +356,8 @@ Her birth_mode farklı operational_mode başlangıcı taşır.
 ---
 
 ## 12. Identity Continuity Matrix
+
+> *Identity matrix'in sayısal eşikleri için bkz. [`BACKUP_STRATEGY_NUMERICS.md`](./BACKUP_STRATEGY_NUMERICS.md) (R) §12-15: same-identity restore precondition checklist (WAL lag=0 + M1 gap=0 + M0 valid + manifest valid + constitutional anchors compatible); restore_with_missing_history `missing_history_max_gap_ms` bounded + restricted_mode invariants; fork (new_instance_id + foreign_instance_origin + anchors match origin + identity_continuity_claim forbidden constitutional); migration (constitutional_shift_event_ref + numerics_compatibility_validation constitutional). Üst sınır aşılan gap için restore_with_missing_history forbidden; fork/clean_birth tercih edilir (migration sadece constitutional shift için).*
 
 ### Restore senaryoları
 
@@ -592,6 +598,8 @@ Restore sequence:
 
 ## 17. Replay-derived Trace Provenance
 
+> *Bu bölümün sayısal disiplini için bkz. [`BACKUP_STRATEGY_NUMERICS.md`](./BACKUP_STRATEGY_NUMERICS.md) (R) §18: `provenance_preservation_required = true` constitutional; minimum field set zorunlu; restore sonrası **replay budget reset YOK** (O §7 canonical bağ — `replay_budget_continuity_required = true` constitutional).*
+
 ### Principle
 
 K (REPLAY_PROTOCOL §10-14) ile öğrendik ki M0 trace'leri iki kaynaktan gelir:
@@ -646,6 +654,8 @@ Each M0 trace item (optional, recommended for forensic audit):
 ---
 
 ## 18. Cross-restore and M2 Foreign Merge
+
+> *Foreign M2 merge sayısal cap'leri için bkz. [`BACKUP_STRATEGY_NUMERICS.md`](./BACKUP_STRATEGY_NUMERICS.md) (R) §17: `forbidden_subject_class_set` enum_set (higher_is_stricter; blacklist semantik — narrative/causal/rationale/episodic/operator_decision/deontic_kill_switch/numerics_artifact_reference); `required_gate_ref = memory_write_gate` (P bridge, Memory Write Gate bypass yasak); `foreign_instance_origin_provenance_required = true` constitutional (provenance permanent, native'a dönüşemez); per-restore max records ve subject classes cap'leri.*
 
 ### Principle
 
