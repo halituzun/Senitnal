@@ -241,6 +241,21 @@ Tek anda **tek active policy**. Yeni policy active olduğunda eski `superseded` 
 
 11. Emergency revert path may only revert to a previously verified
     policy, never forward to a new policy (§18).
+
+12. Forked instance may never claim identity continuity with its
+    source instance. Fork = parallel new entity; foreign_instance_origin
+    provenance is permanent and cannot be converted to native
+    (BACKUP_STRATEGY §14, BACKUP_STRATEGY_NUMERICS §14:
+     `identity_continuity_claim_forbidden = true` constitutional;
+     ADAPTER_TRUST_NUMERICS §20:
+     `fork_foreign_starts_quarantined = true` constitutional).
+
+13. `restore_with_missing_history` mode may never claim full identity
+    continuity. Restricted mode invariants (execution adapter
+    activation forbidden, foreign M2 merge forbidden, numerics
+    artifact activation forbidden, replay write channels disabled)
+    apply for the duration of restricted_mode_min_duration_ms
+    (BACKUP_STRATEGY §13, BACKUP_STRATEGY_NUMERICS §13).
 ```
 
 ### Forbidden expansion

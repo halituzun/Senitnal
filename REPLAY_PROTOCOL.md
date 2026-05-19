@@ -760,7 +760,7 @@ ReplaySessionStatusChangedEvent
 
 ### Eski legacy: `REPLAY_SESSION_COMPLETED`
 
-F event catalog'da `REPLAY_SESSION_COMPLETED` vardı. K bunu `REPLAY_SESSION_STATUS_CHANGED` (new_status: completed) altına alır. F event catalog'u patch'lenir.
+F event catalog'da eski `REPLAY_SESSION_COMPLETED` vardı; K bunu `REPLAY_SESSION_STATUS_CHANGED` (new_status: completed) altına aldı. **F v0.1 §19 canonical:** `REPLAY_SESSION_COMPLETED` artık valid değil; `REPLAY_SESSION_STATUS_CHANGED` + `new_status: completed` field discipline kullanılır (F event_type discipline pattern).
 
 ### Permanence policy
 

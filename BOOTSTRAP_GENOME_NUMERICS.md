@@ -854,6 +854,38 @@ Geri dönüş ANCAK aşağıdaki iki kanaldan biri uygulanırsa mümkün:
 Bu iki kanal dışında phase rollback YASAK.
 ```
 
+### restore_birth phase davranışı — rollback DEĞİL, state continuation
+
+Same-identity `restore_birth` phase rollback değildir; M0 + complete M1 chain
+yüklenmesi sayesinde **önceki phase state'in devamı** olur. Yani:
+
+```
+restore_birth path:
+    M0 + M1 fully restored (R §12 same-identity preconditions all satisfied)
+    → phase state M0 snapshot'tan okunur ve resume edilir
+    → bu bir "rollback" değil, "interrupted continuation"
+    → monotonicity invariant ihlal edilmez
+
+clean_birth path:
+    → yeni boot_phase başlangıcı (genesis)
+    → monotonicity invariant trivial satisfied (no prior phase)
+
+restore_with_missing_history path:
+    → restricted phase'e geçiş (ROLLBACK; iki resmi kanaldan biri)
+    → full identity claim forbidden; restricted mode invariants aktif
+
+fork_birth path:
+    → yeni instance_id, foreign provenance permanent
+    → new instance own boot_phase (no rollback from source; source unchanged)
+
+migration_birth path:
+    → constitutional shift sonrası yeni cycle boot_phase
+    → ROLLBACK (iki resmi kanaldan ikincisi; constitutional re-genesis)
+```
+
+Restore_birth bu listede **rollback kategorisinde değil**; phase monotonicity
+invariant trivially satisfied (önceki phase state restore'dan önce yazılmıştı).
+
 ### Kilit cümleler
 
 > **Phase monotonic.**

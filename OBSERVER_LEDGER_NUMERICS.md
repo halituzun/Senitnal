@@ -632,7 +632,8 @@ observer.permanent.hash_chain_verification_cadence_ms:
 observer.permanent.verify_on_read_required
     value: true
     allowed_range: {true}
-    change_class: forbidden
+    change_class_if_increased: forbidden
+    change_class_if_decreased: forbidden
     rationale: "Critical reader (replay, audit, restore) hash-chain
                 verification olmadan permanent log okuyamaz."
 ```
@@ -677,7 +678,8 @@ NumericEntry: observer.permanence.permanent_ttl_ms
     unit: enum
     allowed_range: {lifetime}    # tek değer
     directionality: neutral
-    change_class: forbidden
+    change_class_if_increased: forbidden
+    change_class_if_decreased: forbidden
     rationale: "Permanent event'in TTL'i yoktur. retention = lifetime.
                 v0.1 constitutional."
 ```
@@ -748,7 +750,8 @@ observer.storage.tier_cold.retention_ms:       lifetime
 NumericEntry: observer.storage.tier_transition_must_be_lossless
     value: true
     allowed_range: {true}
-    change_class: forbidden
+    change_class_if_increased: forbidden
+    change_class_if_decreased: forbidden
     rationale: "Hot → warm → cold transition lossless compaction kapsamında.
                 Tier değişimi event content değiştiremez (§17 compaction
                 kuralları). Tier ayrımı operational; permanence garantisi
@@ -802,7 +805,8 @@ Bunlar için:
 observer.human_alert.suppression_window_ms.<critical_type>:
     value: 0
     allowed_range: {0}        # constitutional, hiç suppress edilemez
-    change_class: forbidden
+    change_class_if_increased: forbidden
+    change_class_if_decreased: forbidden
     rationale: "Critical alert'ler süresiz snooze edilemez. Her event
                 ayrı alert."
 ```
@@ -824,7 +828,8 @@ observer.human_alert.suppression_window_ms.<non_critical_type>:
 NumericEntry: observer.human_alert.first_alert_immediate
     value: true
     allowed_range: {true}
-    change_class: forbidden
+    change_class_if_increased: forbidden
+    change_class_if_decreased: forbidden
     rationale: "İlk alert spam koruması başlasa bile kesin gönderilir.
                 Suppression sadece sonraki tekrarlar için (batch summary)."
 ```
@@ -1052,7 +1057,8 @@ F §6 ve burada §10/§11/§13 compaction disiplinin sayısal tarafı.
 NumericEntry: observer.compaction.lossless_required
     value: true
     allowed_range: {true}
-    change_class: forbidden
+    change_class_if_increased: forbidden
+    change_class_if_decreased: forbidden
     rationale: "Compaction lossless olmak zorunda. v0.1 constitutional invariant.
                 Storage layout değişebilir; event content değişmez."
 ```
@@ -1063,7 +1069,8 @@ NumericEntry: observer.compaction.lossless_required
 NumericEntry: observer.compaction.hash_verify_before_and_after_required
     value: true
     allowed_range: {true}
-    change_class: forbidden
+    change_class_if_increased: forbidden
+    change_class_if_decreased: forbidden
     rationale: "Compaction process invariant: pre_hash = compute(segment),
                 compaction(segment) → new_layout, post_hash = compute(reconstruct(new_layout)).
                 pre_hash != post_hash → ABORT compaction + critical alert."

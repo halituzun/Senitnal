@@ -813,7 +813,7 @@ MEMORY_WRITE_VERIFIED          # status: candidate → verified
 MEMORY_WRITE_QUARANTINED       # status: candidate → quarantined
 ```
 
-OBSERVER_LEDGER_SCHEMA event catalog buna göre güncellenir (yan patch).
+OBSERVER_LEDGER_SCHEMA event catalog (F §19) ve permanence policy table (F §10) bu canonical değişikliğe göre güncellenmiş durumda; eski isimler F'de listede yok.
 
 ---
 

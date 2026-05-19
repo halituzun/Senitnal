@@ -306,8 +306,26 @@ LLM yorumu **kalıcı inanç değildir**. Observer kaydı kalıcıdır.
 >
 > Birine "evet" ise ihlal.
 
-### Alt-spec referansı
-`HumanIntentEvent`'in çekirdeğe ingress sınırı için bkz. [`WORLD_INGRESS.md`](./WORLD_INGRESS.md) §11.
+### Alt-spec referansları — Madde 6'nın katman-katman yansıması
+
+LLM yetkisinin sınırı tek belgede dağılmaz; her katmanda ayrı bir spec/numerics
+artifact ile sıkılaştırılır. Madde 6 bunların **anayasal kaynağıdır**:
+
+| Katman | Belge | Madde 6 Yansıması |
+|--------|-------|-------------------|
+| Ingress (compiler) | `WORLD_INGRESS.md` §11 + `INGRESS_COMPILER_SPEC.md` §6 + `INGRESS_COMPILER_NUMERICS.md` §16 | LLM HumanIntentEvent ingress profile zayıf cap; learned_mappings KAPALI |
+| Adapter contract | `ADAPTER_MANIFEST_SPEC.md` §4, §8 (incompatible pairs) | LLM intent_relay constitutional adapter type değildir; execute/memory_writer/recall_provider ile incompatible pair |
+| Adapter trust | `ADAPTER_TRUST_NUMERICS.md` §15 | `intent_relay_trust_cannot_satisfy_execute_min_band = true` + memory_writer + recall_provider, üç constitutional invariant |
+| Memory write | `MEMORY_WRITE_GATE.md` §6, §15 + `MEMORY_WRITE_GATE_NUMERICS.md` §18 | LLM M2 candidate üretemez; world_claim auto-verified write yasak |
+| Recall | `RECALL_PROTOCOL.md` §5 + `RECALL_PROTOCOL_NUMERICS.md` §8 | LLM RecallEvent üretemez; ranking score semantic_judgment_forbidden constitutional |
+| Observer ledger | `OBSERVER_LEDGER_NUMERICS.md` §15 | LLM M1 read scope restricted enum_set; her read M1_READ_AUDIT_RECORDED canonical event |
+| Deontic | `DEONTIC_GATE.md` §8 Rule 4 | LLM execution adapter'a doğrudan yol yok |
+| Numerics | `NUMERICS_GOVERNANCE.md` Violation Test 11 | LLM numeric value üretemez/değiştiremez |
+
+> *Madde 6 bu sekiz katmanın anayasal kaynağıdır. Herhangi bir katmandaki LLM
+> sınırı gevşeyecekse Madde 6'nın "Forbidden" listesinin sayısal yansımasını
+> ihlal etmiş olur — `safety_weakening` veya `forbidden` change_class
+> gerektirir; sessiz patch yapılamaz.*
 
 ---
 
