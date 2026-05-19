@@ -620,18 +620,20 @@ replay_protocol.outcome_alignment.required_outcome_ref_count: 1
     rationale: "Default 1; outcome confidence_band < medium ise effective_min = 2."
 ```
 
-### Cross-artifact dependency — staleness
+### Cross-artifact dependency — staleness (P canonical, P yazıldı)
 
 ```
 outcome_alignment.max_wait_ms
-    Cross-artifact dependency:
-        Bu key, owning memory/recall numerics artifact'inin (RECALL_PROTOCOL_NUMERICS
-        veya MEMORY_WRITE_GATE_NUMERICS, yazıldığında) staleness threshold'unu
-        aşamaz. Conceptual dependency; canonical bağ ilgili artifact yazıldığında
-        kurulur.
-        
-        Şimdilik: outcome_alignment.max_wait_ms <= MEMORY_CONTRACT staleness
-        disciplini (B §11) — outcome stale ise alignment'a sayılmaz.
+    dependencies:
+        - target_key: memory_write.epistemic_staleness_threshold_ms.<owning_subject_class>
+          relationship: computed_less_than_or_equal
+          expression: "replay_protocol.outcome_alignment.max_wait_ms
+                       <= memory_write.epistemic_staleness_threshold_ms.<owning_subject_class>"
+          rationale: "Outcome'un ait olduğu subject_class'ın staleness
+                      threshold'unu aşan outcome alignment'a katkı sağlayamaz.
+                      P §8 canonical kaynak. T (RECALL_PROTOCOL_NUMERICS)
+                      sonradan recall-side staleness numeric'leri ekleyecek,
+                      ama epistemic_staleness_threshold_ms her zaman P'de."
 ```
 
 ### Hard rule — external outcome (numeric değil, protocol invariant)
@@ -902,8 +904,8 @@ max_replay_survival_weight_in_verification < outcome_alignment_weight_in_verific
 ```
 ingress_calibration_replay_delta_cap ≤ N.per_mapping_daily_delta_cap × 0.30
                                        (computed_less_than_or_equal)
-outcome_alignment.max_wait_ms        ≤ owning memory/recall staleness threshold
-                                       (conceptual, canonical bağ ilgili artifact'e)
+outcome_alignment.max_wait_ms        ≤ P.epistemic_staleness_threshold_ms.<owning_subject_class>
+                                       (computed_less_than_or_equal; P §8 canonical)
 restore_budget_continuity = required → L (BACKUP_STRATEGY) RestoreManifest
 replay_survival_weight integration   → G (MEMORY_WRITE_GATE) §8 verification matrix
 ```
@@ -1066,7 +1068,7 @@ O kapanırken cevaplanmamış bırakılan sorular:
 - **Production değerler için signed artifact içeriği** → Sentinel implementation
 - **`replay_can_trigger_replay_max_chain_depth = 0` istisnası mümkün mü?** → Hayır; v0.1 constitutional. İleride ihtiyaç doğarsa REPLAY_PROTOCOL.md spec revision (numeric artifact yetmez).
 - **Sleep cycle ile fatigue recovery'nin tam matematiği** → BOOTSTRAP_GENOME_NUMERICS.md (S) ile koordine edilecek
-- **Outcome alignment staleness threshold canonical kaynağı** → RECALL_PROTOCOL_NUMERICS.md (T) veya MEMORY_WRITE_GATE_NUMERICS.md (P) yazıldığında karara bağlanacak
+- **Outcome alignment staleness threshold canonical kaynağı** → KAPANDI: P §8 `epistemic_staleness_threshold_ms.<subject_class>` canonical kaynak; T sonradan recall-side staleness numeric'lerini ekleyecek ama P canonical kalır
 - **Replay cycle boundary tanımı** (cycle nerede başlar/biter?) → BOOTSTRAP_GENOME §17 sleep/wake transition ile birlikte
 - **Higher-order ablation'a izin verecek constitutional amendment paths** → REPLAY_PROTOCOL.md v0.2'de tartışılacak
 

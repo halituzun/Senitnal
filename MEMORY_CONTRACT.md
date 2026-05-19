@@ -301,6 +301,8 @@ Gate **yargı yapmaz, koşul kontrol eder**. Tamamen sayısal/mekanik kurallar �
 Bu kurallar `MEMORY_WRITE_GATE.md` belgesinde sayısal eşiklerle tanımlanacak. Gate hiçbir koşulda "bu kayıt mantıklı mı?" diye semantik yargı yapmaz.
 
 > *Tam epistemic test seti, subject_class × evidence axes verification matrix, self-deception detection mekaniği, silent gate kuralı ve `MEMORY_RECORD_STATUS_CHANGED` canonical event'i için bkz. [`MEMORY_WRITE_GATE.md`](./MEMORY_WRITE_GATE.md). Memory Write Gate deontic gate'in alt türü **değildir** — action-risk vs epistemic-risk ayrımı için bkz. MEMORY_WRITE_GATE §4.*
+>
+> *Per-subject_class numeric eşikler — `candidate_max_age_ms`, `quarantine_max_age_ms`, `epistemic_staleness_threshold_ms`, `refresh_required_window_ms`, evidence axis minimums, contradiction band'leri, self-deception ratio cap'leri, replay/outcome weight'leri — için bkz. [`MEMORY_WRITE_GATE_NUMERICS.md`](./MEMORY_WRITE_GATE_NUMERICS.md) (P). P canonical kaynak: M2 subject_class TTL'leri, staleness ve verification eşikleri burada.*
 
 ---
 

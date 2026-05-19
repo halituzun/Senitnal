@@ -279,7 +279,7 @@ Her numeric değer aşağıdaki şemada **eksiksiz** yaşar:
 NumericEntry
 ├── key                         # örn. "replay.max_iterations"
 ├── value
-├── unit                        # count | ms | bytes | ratio | percentage | ...
+├── unit                        # count | ms | bytes | ratio | percentage | enum | enum_set | band_name | ...
 ├── allowed_range
 │   ├── min
 │   └── max
@@ -297,6 +297,31 @@ NumericEntry
 
 Hiçbir field default değer kabul etmez. Her NumericEntry **tüm field'ları explicit** taşımak zorunda.
 
+### Enum and enum_set NumericEntry convention
+
+Bazı NumericEntry'ler sayı değil, kapalı bir liste taşır (örn. P §18
+`auto_verified_human_subject_classes`). Bunlar için:
+
+```
+unit: enum            # tek değer, allowed_range = canonical enum
+unit: enum_set        # set, allowed_range = subset_of_<canonical_enum>
+unit: band_name       # band kategorisi (clear / mild / moderate / high / critical)
+
+For enum_set:
+    increase = set expansion   (üyeler eklenir)
+    decrease = set contraction (üyeler çıkarılır)
+
+For enum / band_name:
+    increase / decrease = enum sırasına göre (ör. clear→critical artış yönü)
+
+Directionality, change_class semantiği numeric değerlerle aynı:
+    lower_is_stricter → set expansion = safety_weakening
+                       set contraction = safety_tightening
+```
+
+Bu convention tek bir tipi enum'a açar; semantik (M §10 directionality + §7
+change_class) değişmez.
+
 ### Forbidden
 
 - Directionality'siz NumericEntry
@@ -304,6 +329,7 @@ Hiçbir field default değer kabul etmez. Her NumericEntry **tüm field'ları ex
 - Unit'siz NumericEntry
 - Owning_spec_ref'siz NumericEntry
 - Change_class'siz NumericEntry
+- Unit `enum_set` ama allowed_range subset constraint olmadan
 
 ---
 

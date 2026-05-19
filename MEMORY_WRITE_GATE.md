@@ -227,6 +227,8 @@ CandidateMemoryRecord
 
 ## 8. Subject Class × Evidence Axes Verification Matrix
 
+> *Bu bölümün sayısal eşikleri (per (subject_class, evidence_axis) `min_threshold` değerleri) `MEMORY_WRITE_GATE_NUMERICS.md` (P) §9-10'da. G-bridge kuralı: G matrix'inde tanımlı her (subject_class, evidence_axis) çiftinin P'de bir NumericEntry'e karşılık gelmek zorunda; eksik kombinasyon → P artifact validation REJECT. Numeric threshold olmayan çift verified üretmez.*
+
 ### Principle
 
 Verified statüsü için gerekli evidence kombinasyonu **subject_class'a göre değişir**. Tek üniversal AND/OR yoktur. Her subject_class kendi matrix satırına tabidir.
@@ -424,6 +426,8 @@ Kesin değerler `MEMORY_WRITE_GATE_NUMERICS.md` veya implementation konusu. G sa
 
 ## 10. Evidence Requirements
 
+> *Evidence eksenlerinin per-subject minimum sayıları, temporal separation kuralları, cross-source distinctness ve causal_ref zorunlulukları için bkz. `MEMORY_WRITE_GATE_NUMERICS.md` (P) §10-13. `min_evidence_count` = independent source count (aynı kaynaktan 5 ölçüm = 1); `min_observation_temporal_separation_ms` single-session bias'a karşı koruma.*
+
 Verification için temel evidence eksenleri (matrix'in girdileri):
 
 ### Evidence eksenleri
@@ -545,6 +549,8 @@ if staleness_ms > max_staleness_threshold[subject_class]:
 ---
 
 ## 13. Self-Deception Detection Mechanism
+
+> *Self-deception risk numerics (`max_internal_only_ref_ratio.<subject_class>`, `external_corroboration_min_count.<subject_class>`, internal/external ref temporal separation) için bkz. `MEMORY_WRITE_GATE_NUMERICS.md` (P) §16. L bridge: L §10 `internal_only_refs` / `external_corroboration_refs` ayrımı P'de sayısal threshold'a dönüşür. Self-deception-prone subject_class'lar (narrative_claim / causal_explanation / decision_rationale) için `external_corroboration_min_count >= 1` zorunlu.*
 
 ### Principle
 
