@@ -368,9 +368,13 @@ Bkz. §16 detay.
 ### Empty matching set
 
 Hiç rule eşleşmezse:
-- `neural_seed.payload_seed = empty` (toplam intensity 0)
-- Çekirdeğe duyusal event yine ulaşır ama payload tone sıfır
-- M1'e `INGRESS_NO_RULE_MATCH` event yazılır (audit) — yeni event tipi gerekebilir
+- **Core-facing `neural_seed` üretilmez.**
+- Çekirdeğe boş veya sıfır-tonlu duyusal event basılmaz.
+- M1'e `INGRESS_NO_RULE_MATCH` event yazılır (audit).
+- Event observer/provenance tarafında görünür kalır.
+- Bu durum **debug/audit sinyalidir**, core stimulus değildir.
+
+H §16'daki `RECALL_RESULT_EMPTY` pattern'iyle tutarlı: failure audit edilir, çekirdeğe "yokluk payload'ı" basılmaz. Eğer yokluk basıncı gerekirse (örn. uzun süre input gelmiyor), bu dolaylı olarak self-field / contradiction / unresolved_intention tarafında doğal yaşanır — ingress üzerinden değil.
 
 ### Forbidden
 
@@ -903,6 +907,8 @@ INGRESS_NO_RULE_MATCH                       → ingress family
     - Evet ise ihlal. Audit'te kalır.
 18. **Aggregation yapılıyor mu (multi-source pre-merge)?** (§18)
     - Evet ise ihlal. Dedup serbest, aggregation yasak.
+19. **No-rule-match durumunda çekirdeğe empty/zero payload event gönderiliyor mu?** (§10)
+    - Evet ise ihlal. Audit M1'de kalır; core'a yokluk/boş ton basılmaz.
 
 ---
 
