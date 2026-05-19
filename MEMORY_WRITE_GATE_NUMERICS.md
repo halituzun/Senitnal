@@ -233,11 +233,24 @@ M2 subject_class:
     signed_administrative_reference
     operator_decision_record
     deontic_kill_switch_action_record
-    foreign_instance_origin (provenance metadata, B §10)
     numerics_artifact_reference (P §20)
 ```
 
 Her subject için yukarıdaki numeric set'in **tamamı veya G §8 matrix'inde tanımlı subset**'i zorunlu. Eksik → P artifact validation REJECT.
+
+### Provenance metadata — NOT subject_class
+
+```
+Provenance metadata (B §10), not subject_class:
+    foreign_instance_origin
+```
+
+`foreign_instance_origin` **subject_class değil; provenance metadata field**'idir.
+Bu yüzden kendi TTL / evidence / contradiction numeric satırını **almaz**.
+Import edilen foreign kayıtlar orijinal subject_class'larını korur
+(`source_trust`, `structured_fact`, vb.) ve `foreign_instance_origin`'i
+provenance olarak taşır. L §10 foreign_instance_origin provenance
+permanence kuralı korunur.
 
 ### Forbidden
 
@@ -738,7 +751,11 @@ narrative_claim:
     
 deontic_policy:
     promote_max:       clear
-    demote_required:   clear_violated (i.e. mild or higher contradiction)
+    demote_required:   mild
+    interpretation:    "mild or higher contradiction demotes / blocks
+                        activation; canonical band 'mild' = clear violated
+                        for deontic policies (DEONTIC §18 emergency_revert
+                        epistemic counterpart)"
 
 causal_explanation:
     promote_max:       clear
@@ -1149,7 +1166,8 @@ M §11 fail-safe strict mode P'ye uygulanır.
 Missing memory_write numerics artifact veya invalid load:
     → verified status üretimi DISABLED
     → only candidate / quarantined / rejected / expired status'leri çalışır
-    → mevcut verified kayıtlar dokunulmaz (read-only)
+    → existing verified records remain readable, but no new verified
+      promotion / supersede / active transition is allowed
     → yeni promotion'lar bekletilir (artifact valid olana dek)
     → NUMERICS_FAILSAFE_ACTIVATED event tetiklenir
     → Manual intervention until valid numerics artifact loaded
@@ -1353,6 +1371,8 @@ P artifact'ı validation sırasında **REJECT** edilmesi gereken durumlar:
 28. **LLM tarafından üretilen veya değiştirilen P numeric.** Madde 6 ihlali.
 29. **Dependency declarationsız P numeric.** §22 ihlali.
 30. **Foreign provenance native provenance'a dönüştürülmüş kayıt verified.** B §10 / L ihlali.
+31. **`foreign_instance_origin` subject_class gibi numeric matrix row aldı.** §5 ihlali (provenance metadata, subject_class değil).
+32. **deontic_policy demote_required non-canonical band değeri (`clear_violated` gibi).** §14 ihlali (canonical set: clear/mild/moderate/high/critical).
 
 **Artifact-level violations** (1-30, validation aşaması):
 `MEMORY_RECORD_STATUS_CHANGED(target=artifact, new_status=rejected, reason=numerics_validation_failed)`.
@@ -1380,7 +1400,7 @@ Bu sorular cevaplanmadan implementation aşamasına geçilmez.
 
 ---
 
-## Çekirdek özet — 16 karar + 30 violation tests
+## Çekirdek özet — 16 karar + 32 violation tests
 
 ### 16 karar
 
@@ -1401,7 +1421,7 @@ Bu sorular cevaplanmadan implementation aşamasına geçilmez.
 15. `numerics_artifact_reference` candidate TTL en kısa olmalı; verified human signature gerek.
 16. Missing numerics → strict_no_verified mode (verified üretimi DISABLED, audit-safe).
 
-### 30 violation tests
+### 32 violation tests
 
 §25'te listelendi.
 
