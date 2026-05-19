@@ -317,11 +317,13 @@ adapter_trust.hard_gates:
 ### Hard gate immutable values
 
 ```
-adapter_trust.hard_gates.signature_validity_required:
+adapter_trust.hard_gates.manifest_signature_validity_required:
     value: true
     allowed_range: {true}
     change_class_if_increased: forbidden
     change_class_if_decreased: forbidden
+    (canonical key — composition'da geçen "signature_validity" terimi
+     bu key'in kısa adıdır; artifact'te uzun canonical form kullanılır)
 
 adapter_trust.hard_gates.manifest_hash_integrity_required:
     value: true
@@ -478,7 +480,7 @@ NumericEntry:
     key: adapter_trust.min_band_for_capability.execute
     value: verified
     unit: enum (band_name)
-    allowed_range: {verified, high_explicit_emergency}
+    allowed_range: {verified}
     directionality: higher_is_stricter
     change_class_if_increased: safety_tightening
     change_class_if_decreased: safety_weakening
@@ -590,31 +592,68 @@ adapter_trust.channel_binding.violation_count_to_quarantine:
 adapter_trust.channel_binding.violation_count_to_revoke:
     lower_is_stricter
 
-adapter_trust.channel_binding.critical_violation_immediate_revoke:
+adapter_trust.channel_binding.critical_violation_immediate_action:
     value: true
     allowed_range: {true}
     change_class_if_increased: forbidden
     change_class_if_decreased: forbidden
-    rationale: "Critical violations bypass clean-window/recovery; tek
-                girişim immediate revoke."
+    rationale: "Critical violations bypass clean-window/recovery;
+                tek girişim immediate action (quarantine OR revoke,
+                violation tipine göre — bkz. iki sınıf aşağıda)."
 ```
 
-### Critical violations list
+### Critical violations split — quarantine vs revoke
+
+Her critical violation aynı şiddette değil. İki sınıf:
 
 ```
-adapter_emits_neural_seed
-intent_relay_attempts_execution
-execute_attempts_memory_write
-memory_writer_attempts_recall_provider
-recall_provider_attempts_intent_relay
-any forbidden capability pair attempt
-adapter_attempts_self_trust_promotion
+critical_quarantine_reasons (immediate quarantine; recovery via
+                              reverification + human approval mümkün):
+    manifest_hash_mismatch
+    signature_mismatch
+    channel_binding_critical_violation (recoverable cases)
+    rate_burst_violation (severe sustained)
+
+critical_revoke_reasons (immediate REVOKE; terminal status, no recovery;
+                          re-registration only via new adapter_id):
+    neural_seed_emission_attempt
+    intent_relay_execution_attempt
+    self_trust_promotion_attempt
+    forbidden_capability_pair_attempt
+    execute_attempts_memory_write
+    memory_writer_attempts_recall_provider
+    recall_provider_attempts_intent_relay
+```
+
+### Two constitutional invariants
+
+```
+adapter_trust.critical_quarantine_immediate:
+    value: true
+    allowed_range: {true}
+    change_class_if_increased: forbidden
+    change_class_if_decreased: forbidden
+    rationale: "Critical quarantine reasons clean-window bypass;
+                immediate quarantine + manual review pending."
+
+adapter_trust.critical_revoke_immediate:
+    value: true
+    allowed_range: {true}
+    change_class_if_increased: forbidden
+    change_class_if_decreased: forbidden
+    rationale: "Critical revoke reasons terminal; recovery yok.
+                Neural seed emission ve trust laundering girişimleri
+                bu sınıfta."
 ```
 
 ### Forbidden
 
-- `critical_violation_immediate_revoke = false`
+- `critical_quarantine_immediate = false`
+- `critical_revoke_immediate = false`
 - Critical violation'ı normal demotion rate'le işleme
+- Revoke reasons'ı quarantine'a indirgeme (örn. neural_seed_emission
+  için clean window beklemek)
+- Quarantine reasons'a revoke'tan recovery path açma
 
 ---
 
@@ -632,7 +671,7 @@ adapter_trust.incompatible_capability_pairs:
         {execute, memory_writer},
         {recall_provider, memory_writer},
         {intent_relay, memory_writer},
-        {intent_relay, recall_provider}
+        {intent_relay, recall_provider}     # I §8'e safety_tightening extension
     ]
     
     allowed_range: must include all I §8 pairs (subset cannot drop a pair)
@@ -640,6 +679,12 @@ adapter_trust.incompatible_capability_pairs:
     change_class_if_increased: safety_tightening
     change_class_if_decreased: safety_weakening
 ```
+
+> *`intent_relay + recall_provider` çifti U'nun I §8'e eklediği safety_tightening
+> extension'dır. I §8'de de bu pair canonical listede yazılı (LLM translator
+> + M2 recall coupling = indirect intent shaping; self-deception kapısı).
+> Bu pair'i U'dan çıkarmak veya I §8'den silmek symmetric safety_weakening
+> sayılır; ikisi senkron tutulur.*
 
 ### Override constitutional immutable
 
@@ -811,10 +856,14 @@ Memory writer adapter doğrudan verified yapamaz; P verification matrix uygulan�
 ```
 adapter_trust.intent_relay.max_capability_band:
     value: medium
-    allowed_range: {medium, high_non_executing}
+    allowed_range: {medium}
     directionality: lower_is_stricter
     change_class_if_increased: safety_weakening
     change_class_if_decreased: safety_tightening
+    rationale: "Intent relay capability band tavanı medium. Translation
+                quality artırma talepleri ayrı metric ile (örn.
+                adapter_trust.intent_relay.translation_quality_score)
+                yapılır; capability band yükselmesin."
 
 adapter_trust.intent_relay_trust_cannot_satisfy_execute_min_band:
     value: true
@@ -1164,11 +1213,14 @@ adapter_trust.reverification_cadence_ms:
 adapter_trust.expired_trust_default_behavior:
     unit: enum
     value: quarantined
-    allowed_range: {quarantined, low_band}
-    directionality: lower_is_stricter
-    change_class_if_increased: safety_weakening
-    rationale: "Expired trust default = quarantined (suspend);
-                low_band optional but riskier."
+    allowed_range: {quarantined}
+    directionality: neutral
+    change_class_if_increased: forbidden
+    change_class_if_decreased: forbidden
+    rationale: "v0.1: expired trust → quarantined (suspend) only.
+                'low' band'a düşme bile bazı capability'leri (observe)
+                açık bırakırdı; bu gevşeklik kapatıldı. Reverification
+                gerçekleşene kadar suspend."
 ```
 
 ### Refresh required windows (P bridge)
@@ -1252,7 +1304,7 @@ asymmetry:
     band_demotion_threshold < band_promotion_threshold
 
 hard gates (each {tek değer} constitutional):
-    signature_validity_required = true
+    manifest_signature_validity_required = true
     manifest_hash_integrity_required = true
     neural_seed_emission_count_max = 0
     revoke_required_on_neural_seed_emission = true
@@ -1435,7 +1487,8 @@ U artifact'ı validation sırasında **REJECT** edilmesi gereken durumlar:
 13. **`manifest_hash_validation_required = false`.** §9 ihlali.
 14. **`signature_mismatch_quarantine_required = false`.** §9 ihlali.
 15. **`runtime_manifest_mutation_allowed = true`.** §9 constitutional ihlali.
-16. **`critical_violation_immediate_revoke = false`.** §10 ihlali.
+16. **`critical_quarantine_immediate = false` veya `critical_revoke_immediate = false`.** §10 ihlali (iki sınıf invariant).
+16b. **Revoke reason'ı quarantine'a indirgeme** (örn. neural_seed_emission_attempt için clean window). §10, §17 ihlali.
 17. **`capability_incompatibility_override_allowed = true`.** §11 constitutional ihlali.
 18. **Forbidden capability pair set'ten kaldırılmış.** §11 ihlali (set contraction = weakening).
 19. **Isolated execute (observe companion olmadan).** §12 ihlali (I §7).
@@ -1474,7 +1527,7 @@ Canonical `ADAPTER_MANIFEST_STATUS_CHANGED` + reason field; new event tipi yok.
 U kapanırken cevaplanmamış bırakılan sorular:
 
 - **Exact production values** (band cutoffs, demote/promote delta, rate limits) → signed artifact + implementation
-- **`high_explicit_emergency` band** — `min_band_for_capability.execute` allowed_range'de geçiyor; bu bandın anlamı / kullanım koşulları → I spec revision veya implementation
+- **`high_explicit_emergency` band semantik** — v0.1'de canonical band listesinde değil ve execute allowed_range = {verified}; ileride emergency execution path tartışılırsa I spec revision gerek; v0.1 patch sonrası U bu bandı kullanmıyor
 - **Forked adapter recovery path** — fork sonrası foreign adapter_trust quarantined start; promotion için minimum koşul nedir? → operational + implementation
 - **Multi-signature requirement for U artifact updates** → M §13 open question
 - **Trust signal composition weighting** — multiplicative composition'da soft scores'a weight verilmeli mi? Şu an her soft score eşit; differential weight için review gerekir → implementation + safety review

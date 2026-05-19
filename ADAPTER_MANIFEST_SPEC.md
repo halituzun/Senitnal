@@ -311,6 +311,12 @@ recall_provider + memory_writer:
 intent_relay + memory_writer:
     LLM'in M2'ye yazma kanalı olmamalı (Madde 6).
     LLM zaten payload yazamaz; M2 yazımı için ayrı kanal gerek.
+
+intent_relay + recall_provider:
+    LLM translator ile M2 recall provider aynı adapter'da olamaz.
+    Aksi halde translator user intent'i şekillendirirken M2'yi okur;
+    indirect recall/intent coupling = self-deception kapısı.
+    Madde 6 + Madde 7 koruması (U §11 safety_tightening extension).
 ```
 
 ### Validity check
