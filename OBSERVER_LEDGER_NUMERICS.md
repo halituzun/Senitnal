@@ -192,11 +192,16 @@ observer.ring_buffer.window_ms.ledger_meta:   ~long         # observer-level eve
 ```
 observer.ring_buffer.window_ms.<family>
     directionality: bidirectional_sensitive
-    change_class_if_increased: operational_no_behavior_change (kaynak riski; audit kazancı)
-    change_class_if_decreased: safety_weakening (audit yüzeyi kaybı)
+    change_class_if_increased: safety_weakening
+        (storage/compute pressure → potential failsafe pressure → audit
+         disipliniyi dolaylı zayıflatır)
+    change_class_if_decreased: safety_weakening
+        (audit context kaybı → evidence loss)
     
     rationale: "Çok kısa = audit kaybı. Çok uzun = storage/compute riski.
-                Asimetri: kısalmak audit'i zayıflatır (weakening); uzamak
+                İkisi de sıradan operational change değil; allowed_range
+                .min ve .max uçları sınırlar; aradaki her hareket güvenlik
+                değerlendirmesi gerektirir.
                 resource problemi (audit-neutral)."
 ```
 
@@ -223,9 +228,9 @@ NumericEntry:
     unit: ms
     allowed_range: {min: 60_000, max: 86_400_000}    # 1 dk - 24 saat
     directionality: bidirectional_sensitive
-    change_class_if_increased: operational_no_behavior_change
+    change_class_if_increased: safety_weakening
     change_class_if_decreased: safety_weakening
-    requires_human_approval: true (for decrease)
+    requires_human_approval: true (any change; both directions safety_weakening)
     dependencies:
         - target_key: observer.ring_buffer.min_event_lifetime_in_buffer_ms.deontic
           relationship: must_be_greater_than_or_equal
@@ -269,21 +274,37 @@ constitutional_families:
     → no sampling, no compaction beyond lossless
 ```
 
-### Family retention tier per F §10 permanence policy
+### Permanence policy is event_type-level, not family-level
 
 ```
 Retention tier ≠ permanence policy. Tier = ring buffer disipliniyle ilgili.
-Permanence = event'in lifetime garantisi (§12).
+Permanence = event_TYPE'ın lifetime garantisi (§12).
 
-Bir family hem permanent (lifetime) hem high_frequency (ring buffer sampling)
-OLAMAZ. Permanent event sampling'e girmez (§9 invariant).
+Event_family sadece audit grouping; permanence/sampling sınıflaması
+event_TYPE seviyesinde uygulanır. Aynı family içinde farklı event_type'lar
+farklı permanence policy taşıyabilir.
+
+Örnek:
+    ingress family:
+        OBSERVATION_INGESTED              → ring_buffer_only / sampled OK
+        HUMAN_INTENT_INGESTED             → permanent
+        RECALL_EVENT_INGESTED             → permanent
+    replay family:
+        SLEEP_REPLAY_SYNAPSE_UPDATE       → ring_buffer_only (high-rate)
+        REPLAY_SESSION_STATUS_CHANGED     → permanent
+
+Invariant (event_type-level):
+    Aynı event_type AYNI ANDA high_frequency sampled path ve permanent
+    sampled path olamaz. Permanent event_type sampling'e girmez.
+    Ring_buffer_only high-frequency event_type deterministic sampling'e
+    girebilir.
 ```
 
 ### Forbidden
 
-- Family without explicit retention tier
-- High_frequency family + permanent permanence kombinasyonu
-- Permanent family için ring buffer window < permanent_log segment age
+- Event_family için global permanence kuralı dayatma (event_type-level uygulanır)
+- Aynı event_type'ın hem high_frequency sampled hem permanent declared olması
+- Permanent event_type ring buffer window < permanent_log segment age (geometric impossibility)
 
 ---
 
@@ -330,7 +351,11 @@ high_frequency (WORKSPACE_PULSE / OBSERVATION_INGESTED bulk):
 
 ```
 pre_window_ms / post_window_ms:    bidirectional_sensitive
-                                   (kısa = pre-context kaybı; uzun = resource)
+                                   change_class_if_increased: safety_weakening
+                                       (storage pressure → potential failsafe)
+                                   change_class_if_decreased: safety_weakening
+                                       (pre/post-context kaybı → evidence loss)
+                                   ikisi de operational değil, safety-touching
 max_event_count:                   lower_is_stricter
                                    allowed_range.min >= 3 (snapshot 1-2 event'e düşmemeli)
 ```
@@ -344,9 +369,12 @@ NumericEntry:
     unit: ms
     allowed_range: {min: 600_000, max: 7_200_000}    # 10 dk - 2 saat
     directionality: bidirectional_sensitive
-    change_class_if_increased: operational_no_behavior_change
+    change_class_if_increased: safety_weakening
+        (storage pressure → potential failsafe; both directions touch
+         safety boundary)
     change_class_if_decreased: safety_weakening
-    requires_human_approval: true (for decrease)
+        (pre-context kaybı → evidence loss)
+    requires_human_approval: true (any change; both directions safety_weakening)
     dependencies:
         - target_key: observer.snapshot.pre_window_ms.operational
           relationship: must_be_greater_than_or_equal
@@ -379,7 +407,7 @@ snapshot içi sampling:
 
 ### Disciplines
 
-Snapshot içinde sampling sadece **high_frequency family pre/post window'larında**, ve sadece **WORKSPACE_PULSE gibi** sahnesinin "background context" event'leri için. Constitutional/operational event'lerin **kendisi** asla sample edilmez.
+Snapshot içinde sampling sadece **high-frequency event_type'lar için** (ring_buffer_only declared olanlar), ve sadece **WORKSPACE_PULSE gibi** sahnesinin "background context" event'leri için. Constitutional/operational event_type'ların **kendisi** asla sample edilmez (event_family fark etmez).
 
 Pratikte snapshot disciplini şu kuralla işler:
 
@@ -445,15 +473,24 @@ observer_selected       # subjective filtering
 random_unseeded         # auditable değil
 ```
 
-### Default = none (missing entry)
+### Production artifact requirement vs runtime strict fallback
 
 ```
-Artifact validation rule:
-    if sampling.strategy.<family> entry missing → strategy = none (full capture)
-    if explicit → must be in canonical_strategy_list
+Production signed artifact (M no-default rule):
+    Her event_family için sampling.strategy.<family> explicit NumericEntry
+    OLMAK ZORUNDA. Eksik entry → P artifact validation REJECT.
+
+Runtime strict fallback (only if numerics missing/invalid entirely):
+    Q §20 fail-safe strict mode kapsamında: strategy = none, full capture.
+    Bu fallback ARTIFACT VALIDATION PASS anlamına gelmez; sadece sistem
+    sıfır numerics ile dakika dakika koşamaması için strict koruma.
 ```
 
-Fail-safe yön: gevşeklik default değil.
+> **Strict fallback is not a default NumericEntry.**
+
+M §9 no-default rule korunur: artifact içinde eksik entry kabul edilmez.
+Runtime fallback yalnız "hiç numerics yok" senaryosunda devreye girer ve
+NUMERICS_FAILSAFE_ACTIVATED event'i basılır.
 
 ### Rate thresholds
 
@@ -477,7 +514,7 @@ LEDGER_STATE_CHANGED(reason=sampling_activated, affected_family=<X>,
     permanence: permanent
 ```
 
-Yeni canonical event yok — F'ye eklenen `LEDGER_STATE_CHANGED` reuse + reason field (yan güncelleme F'de).
+`LEDGER_STATE_CHANGED` operational state change/violation için tek canonical event (Q §22). Sampling activation operational state change'dir; ayrı event tipi yok.
 
 ### Sampling summary entry (canonical reuse)
 
@@ -856,18 +893,44 @@ Forbidden families for LLM read:
     foreign_instance_origin metadata
 ```
 
-### LLM read always audited
+### Read audit discipline — canonical event ayrımı
+
+Normal read ≠ ledger state change. Normal M1 read'leri **ayrı canonical
+event** ile audit'lenir; `LEDGER_STATE_CHANGED` sadece **violation veya
+operational state change** için.
 
 ```
-Every LLM M1 read → LEDGER_STATE_CHANGED(reason=llm_m1_read,
-                                          reader_id=<...>,
-                                          scope=<families>,
-                                          batch_size=<count>,
-                                          query_hash=<...>)
-    permanence: permanent
+Normal read audit — canonical event:
+    M1_READ_AUDIT_RECORDED
+        event_family: ledger_meta
+        reader_type:     human | llm | replay | summarizer | external_audit
+        reader_id
+        scope            (event_families read)
+        batch_size
+        window_ms
+        query_hash
+    permanence (per reader_type, F §10):
+        human, external_audit:    permanent
+        llm:                       permanent (Madde 6 koruması)
+        replay, summarizer:        permanent
+        internal high-frequency:   ring_buffer_only (batch)
 
-Forbidden: LLM read without audit event.
+Read violation / throttling / scope failure — LEDGER_STATE_CHANGED:
+    LEDGER_STATE_CHANGED(reason=read_limit_exceeded)
+    LEDGER_STATE_CHANGED(reason=llm_read_scope_violation)
+    LEDGER_STATE_CHANGED(reason=meta_event_recursion_blocked)
 ```
+
+> *Normal read audit ≠ ledger state change.*
+> *Read violation / throttling / scope failure = ledger state change.*
+
+`M1_READ_AUDIT_RECORDED` yeni canonical event olarak F'ye eklenir (yan
+güncelleme); tek event + `reader_type` discriminator field discipline
+(F event_type discipline: event_family kategori değil, tek lifecycle
+event + ayırt edici field).
+
+Forbidden: LLM read without `M1_READ_AUDIT_RECORDED`; scope violation
+silent drop.
 
 ### Directionality
 
@@ -1103,7 +1166,7 @@ M §11 fail-safe strict mode Q'ya uygulanır.
 Missing observer_ledger numerics artifact veya invalid load:
     → Permanent log writes CONTINUE (silent drop yasak; constitutional)
     → Ring buffer window M defaults'a düşer
-    → Sampling DISABLED for all families (default = none)
+    → Sampling DISABLED for all families (strict fallback = full capture, no sampling)
     → LLM M1 reads BLOCKED (no scope restriction artifact = no read)
     → Human reads continue (audit purpose)
     → Compaction PAUSED (no compaction without numerics)
@@ -1205,9 +1268,14 @@ Bağımlı numerics atomic artifact içinde değişir. Tek key değişikliği ba
 
 ## 22. Audit Events and M2 Reference
 
-Q **bir yeni canonical event tanımlar** (F'ye eklenecek): `LEDGER_STATE_CHANGED`. Diğer audit yolları F + M canonical event'lerini reuse eder.
+Q **iki yeni canonical event tanımlar** (F'ye eklenecek):
 
-### New canonical event (F'ye eklenecek, yan güncelleme)
+1. `LEDGER_STATE_CHANGED` — operational state change / violation (reason field)
+2. `M1_READ_AUDIT_RECORDED` — normal read audit (reader_type field)
+
+Diğer audit yolları F + M canonical event'lerini reuse eder.
+
+### New canonical event 1 — LEDGER_STATE_CHANGED (operational state / violation)
 
 ```
 LEDGER_STATE_CHANGED
@@ -1222,7 +1290,7 @@ LEDGER_STATE_CHANGED
 │   ├── tier_transition_performed
 │   ├── hash_chain_mismatch
 │   ├── read_limit_exceeded
-│   ├── llm_m1_read
+│   ├── llm_read_scope_violation
 │   ├── meta_event_recursion_blocked
 │   ├── foreign_event_rejected_unknown_source
 │   ├── human_alert_batch_summary
@@ -1254,6 +1322,34 @@ LEDGER_STATE_CHANGED
     → permanent
 ```
 
+### New canonical event 2 — M1_READ_AUDIT_RECORDED (normal read audit)
+
+```
+M1_READ_AUDIT_RECORDED
+├── event_type: M1_READ_AUDIT_RECORDED
+├── event_family: ledger_meta
+├── reader_type: human | llm | replay | summarizer | external_audit | internal_high_frequency
+├── reader_id
+├── scope                   # event_families / event_types read
+├── batch_size
+├── window_ms
+├── query_hash
+└── numeric_artifact_ref
+```
+
+### Permanence policy for M1_READ_AUDIT_RECORDED
+
+```
+(M1_READ_AUDIT_RECORDED, reader_type=human)              → permanent
+(M1_READ_AUDIT_RECORDED, reader_type=external_audit)     → permanent
+(M1_READ_AUDIT_RECORDED, reader_type=llm)                → permanent
+                                                            (Madde 6 koruması)
+(M1_READ_AUDIT_RECORDED, reader_type=replay)             → permanent
+(M1_READ_AUDIT_RECORDED, reader_type=summarizer)         → permanent
+(M1_READ_AUDIT_RECORDED, reader_type=internal_high_frequency)
+                                                          → ring_buffer_only (batch)
+```
+
 ### Reused events
 
 ```
@@ -1264,7 +1360,11 @@ NUMERICS_VERSION_MISMATCH_DETECTED      (F §19, ledger_meta)
 
 ### F event type discipline
 
-Q yeni ledger violation tipleri için **yeni event tipi üretmez**; `LEDGER_STATE_CHANGED` + reason field discipline. Bu O ve P'de kurulan disiplinin Q yansıması.
+Q **iki canonical event** ekler — biri lifecycle/violation (`LEDGER_STATE_CHANGED`
++ reason field), diğeri normal read audit (`M1_READ_AUDIT_RECORDED` +
+reader_type field). Her ikisi F event_type discipline'a uyar: tek event
++ ayırt edici field, alt durumlar event_type türetmez. Normal read audit
+≠ ledger state change disiplini Q'nun önemli ayrımı.
 
 ### M2 reference
 
@@ -1313,7 +1413,7 @@ Q artifact'ı validation sırasında **REJECT** edilmesi gereken durumlar:
 11. **Critical alert `suppression_window_ms > 0`.** §14 ihlali (constitutional).
 12. **`first_alert_immediate = false`.** §14 ihlali.
 13. **LLM read limit >= human read limit.** §15 dependency ihlali.
-14. **LLM M1 read audit event'i yok.** §15 ihlali.
+14. **LLM M1 read `M1_READ_AUDIT_RECORDED` event'i yok.** §15, §22 ihlali (normal read audit canonical event ile yapılır, LEDGER_STATE_CHANGED ile değil).
 15. **LLM scope expansion to forbidden families.** §15 ihlali.
 16. **Foreign event cap'siz reception.** §16 ihlali.
 17. **Foreign event whitelist bypass (unknown source kabul).** §16 ihlali.
@@ -1331,6 +1431,9 @@ Q artifact'ı validation sırasında **REJECT** edilmesi gereken durumlar:
 29. **Tier_cold.retention_ms != lifetime.** §13 ihlali.
 30. **LLM tarafından üretilen veya değiştirilen Q numeric.** Madde 6 ihlali.
 31. **Dependency declarationsız Q numeric.** §21 ihlali.
+32. **Event_family için global permanence kuralı dayatılmış.** §6 ihlali (permanence event_type-level uygulanır, event_family sadece audit grouping).
+33. **Normal M1 read `LEDGER_STATE_CHANGED` ile audit'lenmiş** (M1_READ_AUDIT_RECORDED yerine). §15, §22 ihlali — normal read audit ≠ ledger state change.
+34. **Production artifact'ta sampling.strategy.<family> entry eksik** ama runtime strict fallback "default" olarak kullanılmış. §9 ihlali (M no-default kuralı; missing entry → REJECT, runtime fallback artifact pass anlamına gelmez).
 
 **Artifact-level violations** (1-31, validation aşaması):
 `MEMORY_RECORD_STATUS_CHANGED(target=artifact, new_status=rejected, reason=numerics_validation_failed)`.
@@ -1356,7 +1459,7 @@ Bu sorular cevaplanmadan implementation aşamasına geçilmez.
 
 ---
 
-## Çekirdek özet — 16 karar + 31 violation tests
+## Çekirdek özet — 16 karar + 34 violation tests
 
 ### 16 karar
 
@@ -1364,7 +1467,7 @@ Bu sorular cevaplanmadan implementation aşamasına geçilmez.
 2. Sampling is not lossless compaction; sampling deterministic lossy condensation only for ring_buffer high-frequency families.
 3. Permanent events are never sampled.
 4. Sampling strategy enum'dan; semantic_importance/llm_selected/observer_selected/random_unseeded forbidden.
-5. Sampling default = none (missing entry = full capture).
+5. Production artifact: sampling.strategy.<family> her family için explicit NumericEntry zorunlu (M no-default); eksik = REJECT. Runtime strict fallback (numerics yok) → strategy=none full capture, ama bu "default" değil failsafe.
 6. Permanent log lossless invariant constitutional (`{true}` allowed_range).
 7. Compaction hash verify before-and-after invariant constitutional; mismatch → abort + critical alert.
 8. Permanence policy monotonic; downgrade (weakening direction) forbidden across artifact versions.
@@ -1377,17 +1480,24 @@ Bu sorular cevaplanmadan implementation aşamasına geçilmez.
 15. Snapshot pre/post window hierarchy: constitutional ≥ operational ≥ high_frequency.
 16. Missing Q numerics → strict audit-safe mode (permanent writes continue; sampling/compaction/tier_transition/LLM read disabled).
 
-### 31 violation tests
+### 34 violation tests
 
 §24'te listelendi.
 
-### Yan güncelleme — F'ye yeni canonical event eklenir
+### Yan güncelleme — F'ye iki yeni canonical event eklenir
 
 ```
 LEDGER_STATE_CHANGED (ledger_meta family)
-    Tek canonical ledger-level operational state change event;
-    reason field discipline (sampling_activated, compaction_*, storage_pressure_*,
-    llm_m1_read, meta_event_recursion_blocked, foreign_event_*, alert_batch_summary).
+    Ledger operational state change / violation event;
+    reason field discipline (sampling_activated, compaction_*, hash_*,
+    storage_pressure_failsafe, tier_transition_performed, read_limit_exceeded,
+    llm_read_scope_violation, meta_event_recursion_blocked, foreign_event_*,
+    human_alert_batch_summary, failsafe_activated).
+
+M1_READ_AUDIT_RECORDED (ledger_meta family)
+    Normal M1 read audit event; tek event + reader_type discriminator
+    (human / llm / replay / summarizer / external_audit / internal_high_frequency).
+    Normal read audit ≠ ledger state change disiplini.
 ```
 
 ### Damıtma — son cümleler

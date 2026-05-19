@@ -132,7 +132,7 @@ Bu rol ayrımı MEMORY_CONTRACT §11'deki ("Observer Relationship") ve §14'teki
 
 ## 6. Ledger Layers — Ring Buffer vs Permanent Log
 
-> *Bu bölümün sayısal değerleri — ring_buffer.window_ms per family, min_event_lifetime_in_buffer_ms, permanent.segment_max_bytes/events/age, hash_chain_checkpoint_interval, sampling strategy enum, lossless_required + hash_verify constitutional invariants — `OBSERVER_LEDGER_NUMERICS.md` (Q) §5-13'te. Permanence policy monotonic invariant: declared permanent veya permanent_with_snapshot weakening direction'a downgrade edilemez (Q §12).*
+> *Bu bölümün sayısal değerleri — ring_buffer.window_ms per family, min_event_lifetime_in_buffer_ms, permanent.segment_max_bytes/events/age, hash_chain_checkpoint_interval, sampling strategy enum, lossless_required + hash_verify constitutional invariants — `OBSERVER_LEDGER_NUMERICS.md` (Q) §5-13'te. Permanence policy event_type-level uygulanır (event_family sadece audit grouping) ve monotonic invariant taşır: declared permanent veya permanent_with_snapshot weakening direction'a downgrade edilemez (Q §6, §12). Q iki yeni canonical event ekledi: `LEDGER_STATE_CHANGED` (operational state change / violation, reason field) ve `M1_READ_AUDIT_RECORDED` (normal read audit, reader_type field). Normal read audit ≠ ledger state change.*
 
 `MEMORY_CONTRACT.md` M1'i iki katmanlı tanımlıyor. F bu yapıyı sıkılaştırır.
 
@@ -386,16 +386,23 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 (LEDGER_STATE_CHANGED, reason=compaction_hash_mismatch)    → permanent_with_snapshot + human_alert
 (LEDGER_STATE_CHANGED, reason=hash_chain_mismatch)         → permanent_with_snapshot + human_alert
 (LEDGER_STATE_CHANGED, reason=failsafe_activated)          → permanent_with_snapshot + human_alert
+(LEDGER_STATE_CHANGED, reason=llm_read_scope_violation)    → permanent_with_snapshot + human_alert
 (LEDGER_STATE_CHANGED, reason=foreign_event_rejected_unknown_source) → permanent
 (LEDGER_STATE_CHANGED, reason=meta_event_recursion_blocked)→ permanent
 (LEDGER_STATE_CHANGED, *)                                  → permanent
+(M1_READ_AUDIT_RECORDED, reader_type=human)                → permanent
+(M1_READ_AUDIT_RECORDED, reader_type=external_audit)       → permanent
+(M1_READ_AUDIT_RECORDED, reader_type=llm)                  → permanent
+(M1_READ_AUDIT_RECORDED, reader_type=replay)               → permanent
+(M1_READ_AUDIT_RECORDED, reader_type=summarizer)           → permanent
+(M1_READ_AUDIT_RECORDED, reader_type=internal_high_frequency) → ring_buffer_only (batch)
 (WAKE_TO_SLEEP_TRANSITION, *)                → permanent
 (SLEEP_TO_WAKE_TRANSITION, *)                → permanent
 (LEDGER_COMPACTION_PERFORMED, *)             → permanent
 (ADAPTER_MANIFEST_STATUS_CHANGED, *)         → permanent
 (ADAPTER_MANIFEST_STATUS_CHANGED, new_status=revoked OR reason=security_incident OR reason=kill_switch_event) → permanent_with_snapshot + human_alert
-(meta-events for human/LLM read, *)          → permanent
-(meta-events for internal high-frequency read, *) → ring_buffer_only (batch)
+(meta-events for human/LLM read, *)          → see M1_READ_AUDIT_RECORDED entries above (canonical event)
+(meta-events for internal high-frequency read, *) → see M1_READ_AUDIT_RECORDED reader_type=internal_high_frequency
 ```
 
 > *Kesin değerler implementation. F sadece policy yapısını ve örnekleri anayasallaştırır.*
@@ -845,16 +852,22 @@ FORGETTING_ATTACK_SUSPECTED           # forgetting attack pattern alarm
 NUMERICS_ARTIFACT_STATUS_CHANGED      # numerics artifact lifecycle (NUMERICS_GOVERNANCE.md §20)
 NUMERICS_VERSION_MISMATCH_DETECTED    # restore sonrası version uyumsuzluğu
 NUMERICS_FAILSAFE_ACTIVATED           # missing/invalid numerics → strict mode
-LEDGER_STATE_CHANGED                  # ledger-level operational state change (ledger_meta family)
+LEDGER_STATE_CHANGED                  # ledger operational state change / violation (ledger_meta family)
                                        # tek canonical event + reason field discipline:
                                        # sampling_activated / sampling_summary_written /
                                        # compaction_performed / compaction_hash_mismatch /
                                        # hash_chain_mismatch / tier_transition_performed /
                                        # storage_pressure_failsafe / read_limit_exceeded /
-                                       # llm_m1_read / meta_event_recursion_blocked /
+                                       # llm_read_scope_violation / meta_event_recursion_blocked /
                                        # foreign_event_rejected_unknown_source /
                                        # human_alert_batch_summary / failsafe_activated
                                        # bkz. OBSERVER_LEDGER_NUMERICS.md §22
+M1_READ_AUDIT_RECORDED                 # normal M1 read audit (ledger_meta family)
+                                       # tek canonical event + reader_type discriminator field:
+                                       # human / llm / replay / summarizer /
+                                       # external_audit / internal_high_frequency
+                                       # normal read audit ≠ ledger state change
+                                       # bkz. OBSERVER_LEDGER_NUMERICS.md §15, §22
 ```
 
 ### Yeni event ekleme
