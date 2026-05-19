@@ -470,7 +470,7 @@ replay_protocol.eligibility_trace_window_ms:      ~600_000     # 10 dakika
 
 ```
 Replay update cannot reach synapses outside eligibility_trace_window.
-Pencere dışı synaps update girişimi → REPLAY_OUT_OF_TRACE_VIOLATION audit event.
+Pencere dışı synaps update girişimi → `REPLAY_SESSION_STATUS_CHANGED(new_status=failed, reason=out_of_trace_violation)`.
 ```
 
 ### Forbidden
@@ -940,14 +940,35 @@ NUMERICS_FAILSAFE_ACTIVATED
     family: ledger_meta
 ```
 
-### Replay-spesifik audit events (zaten K §17'de tanımlı, O sadece referans verir)
+### Replay-spesifik audit events — canonical reuse (K §17/§18)
+
+O **yeni replay event tipi tanımlamaz**. Replay numerics ihlalleri tek
+canonical lifecycle event'i (`REPLAY_SESSION_STATUS_CHANGED`) **explicit
+reason field** ile taşır:
 
 ```
-REPLAY_SESSION_STATUS_CHANGED        (K §17)
-REPLAY_OUT_OF_TRACE_VIOLATION        (K §11 — eligibility trace violation)
-REPLAY_BUDGET_EXHAUSTED              (K §9)
-REPLAY_RECURSIVE_TRIGGER_BLOCKED     (K §10 sandbox — §19 numeric karşılığı)
+REPLAY_SESSION_STATUS_CHANGED
+    new_status: failed
+    reason:     out_of_trace_violation        # eligibility_trace_window dışı update girişimi (§11)
+
+REPLAY_SESSION_STATUS_CHANGED
+    new_status: budget_exhausted
+    reason:     budget_exhausted              # §5-7 budget caps
+
+REPLAY_SESSION_STATUS_CHANGED
+    new_status: aborted
+    reason:     recursive_trigger_blocked     # §19 chain_depth=0 ihlali girişimi
 ```
+
+### Kural (F event type discipline yansıması)
+
+> *Replay numerics violations do not introduce new canonical event types.*
+> *They are recorded as `REPLAY_SESSION_STATUS_CHANGED` with explicit
+> `reason` fields.*
+
+`failed` durumda permanence = `permanent_with_snapshot` (F §10);
+`budget_exhausted` ve `aborted` durumlarında permanence = `permanent`
+(K §17/F §19 zaten tanımlı, O ek event tipi getirmez).
 
 ### M2 reference
 
@@ -1007,7 +1028,33 @@ O artifact'ı validation sırasında **REJECT** edilmesi gereken durumlar:
 21. **Dependency declarationsız replay numeric eklenmiş.** §21 ihlali.
 22. **Habituation frequency_cap aşımı (cycle başına > 2 attention replay).** §12 ihlali.
 
-Hepsi `MEMORY_RECORD_STATUS_CHANGED` → `rejected` (G §8 numerics artifact verification matrix satırı) ile sonlanır.
+**Artifact-level violations** (1-22, validation aşaması):
+`MEMORY_RECORD_STATUS_CHANGED` → `rejected` (G §8 numerics artifact
+verification matrix satırı). Artifact aktive edilmez.
+
+**Runtime violations** (artifact valid ama replay session caps'leri aştı /
+sandbox'ı zorladı): yeni canonical event yok; tek lifecycle event'i +
+reason field:
+
+```
+Eligibility trace window dışı sinaps update girişimi
+    → REPLAY_SESSION_STATUS_CHANGED(new_status=failed,
+                                    reason=out_of_trace_violation)
+    permanence: permanent_with_snapshot
+
+Replay budget exhausted
+    → REPLAY_SESSION_STATUS_CHANGED(new_status=budget_exhausted,
+                                    reason=budget_exhausted)
+    permanence: permanent
+
+Recursive replay trigger (chain_depth violation)
+    → REPLAY_SESSION_STATUS_CHANGED(new_status=aborted,
+                                    reason=recursive_trigger_blocked)
+    permanence: permanent
+```
+
+Bu F'deki **event type discipline** (tek canonical event + reason field;
+yeni event tipi yok) ile uyumlu.
 
 ---
 
