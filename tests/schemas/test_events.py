@@ -24,6 +24,7 @@ from sentinel.types.events import (
     ShockSeverity,
     ShockSource,
 )
+from sentinel.types.memory import SubjectClass
 
 # ---------------------------------------------------------------------------
 # Closed enum sets
@@ -115,11 +116,12 @@ class TestRecallEventValid:
             **_base_kwargs(),  # type: ignore[arg-type]
             source_record_id="rec-001",
             record_status=RecallRecordStatus.VERIFIED,
-            subject_class="source_trust",
+            subject_class=SubjectClass.SOURCE_TRUST,
             age_ms=120_000,
             contradiction_risk=0.05,
         )
         assert evt.event_type == IngressEventType.RECALL
+        assert evt.subject_class == SubjectClass.SOURCE_TRUST
 
     @pytest.mark.parametrize("status", list(RecallRecordStatus))
     def test_all_record_statuses_accepted(self, status: RecallRecordStatus) -> None:
@@ -128,11 +130,64 @@ class TestRecallEventValid:
             **_base_kwargs(),  # type: ignore[arg-type]
             source_record_id="rec-002",
             record_status=status,
-            subject_class="procedural",
+            subject_class=SubjectClass.PROCEDURAL,
             age_ms=0,
             contradiction_risk=0.0,
         )
         assert evt.record_status == status
+
+    @pytest.mark.parametrize("subject_class", list(SubjectClass))
+    def test_every_subject_class_accepted(self, subject_class: SubjectClass) -> None:
+        """Every canonical SubjectClass value is type-accepted on RecallEvent.
+
+        (Suppression / candidate restrictions live in Phase 8 / T §14.)
+        """
+        evt = RecallEvent(
+            **_base_kwargs(),  # type: ignore[arg-type]
+            source_record_id="rec-003",
+            record_status=RecallRecordStatus.VERIFIED,
+            subject_class=subject_class,
+            age_ms=0,
+            contradiction_risk=0.0,
+        )
+        assert evt.subject_class == subject_class
+
+    def test_foreign_instance_origin_rejected_as_subject_class(self) -> None:
+        """foreign_instance_origin is provenance metadata, not a subject_class.
+
+        Bound by `SubjectClass` enum — string passes through model_validate
+        but is rejected because it is not a canonical SubjectClass member.
+        """
+        with pytest.raises(ValidationError):
+            RecallEvent.model_validate(
+                {
+                    "event_id": "evt-0001",
+                    "occurred_at_ms": 1,
+                    "ttl_ms": 1,
+                    "confidence": 0.5,
+                    "source_record_id": "rec-001",
+                    "record_status": "verified",
+                    "subject_class": "foreign_instance_origin",
+                    "age_ms": 0,
+                    "contradiction_risk": 0.0,
+                }
+            )
+
+    def test_invalid_subject_class_string_rejected(self) -> None:
+        with pytest.raises(ValidationError):
+            RecallEvent.model_validate(
+                {
+                    "event_id": "evt-0001",
+                    "occurred_at_ms": 1,
+                    "ttl_ms": 1,
+                    "confidence": 0.5,
+                    "source_record_id": "rec-001",
+                    "record_status": "verified",
+                    "subject_class": "totally_made_up",
+                    "age_ms": 0,
+                    "contradiction_risk": 0.0,
+                }
+            )
 
 
 # ---------------------------------------------------------------------------

@@ -37,6 +37,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from sentinel.types.memory import SubjectClass  # noqa: TC001 (Pydantic runtime needs)
+
 # ---------------------------------------------------------------------------
 # Closed event-type enumeration
 # ---------------------------------------------------------------------------
@@ -163,13 +165,15 @@ class RecallEvent(IngressEventBase):
     """Recall from M2 to core (C §10, H §6).
 
     Core-originated RecallRequest produces this event after mechanical
-    ranking. Subject_class is one of the 16 B §3 values; we keep it as a
-    string here and let the memory schema (next phase) define the enum.
+    ranking. `subject_class` binds to the canonical 16-value
+    `SubjectClass` taxonomy defined in `sentinel/types/memory.py`
+    (MEMORY_CONTRACT §3); `foreign_instance_origin` is rejected here
+    because it is provenance metadata, not a subject_class (P §5).
     """
 
     event_type: Literal[IngressEventType.RECALL] = IngressEventType.RECALL
     source_record_id: str = Field(min_length=1)
     record_status: RecallRecordStatus
-    subject_class: str = Field(min_length=1)
+    subject_class: SubjectClass
     age_ms: int = Field(ge=0)
     contradiction_risk: float = Field(ge=0.0, le=1.0, allow_inf_nan=False)
