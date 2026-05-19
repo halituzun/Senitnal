@@ -365,6 +365,15 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 (REPLAY_SURVIVAL_EVALUATED, *)               → permanent
 (REPLAY_OUTCOME_ALIGNMENT_EVALUATED, *)      → permanent
 (COUNTERFACTUAL_ABLATION_PERFORMED, *)       → permanent
+(BACKUP_ARTIFACT_STATUS_CHANGED, *)          → permanent
+(RESTORE_OPERATION_STATUS_CHANGED, *)        → permanent
+(RESTORE_OPERATION_STATUS_CHANGED, reason=manual_emergency OR new_status=failed) → permanent + human_alert
+(M2_FOREIGN_MERGE_STATUS_CHANGED, *)         → permanent
+(M2_FOREIGN_MERGE_STATUS_CHANGED, new_status=rejected) → permanent_with_snapshot
+(M1_HISTORY_LOST_AT_RESTORE, *)              → permanent_with_snapshot + human_alert
+(FORK_FROM_INSTANCE, *)                      → permanent + human_alert
+(MIGRATION_FROM_INSTANCE, *)                 → permanent + human_alert
+(FORGETTING_ATTACK_SUSPECTED, *)             → permanent_with_snapshot + human_alert
 (WAKE_TO_SLEEP_TRANSITION, *)                → permanent
 (SLEEP_TO_WAKE_TRANSITION, *)                → permanent
 (LEDGER_COMPACTION_PERFORMED, *)             → permanent
@@ -749,6 +758,7 @@ MEMORY_WRITE_PROPOSED
 MEMORY_RECORD_STATUS_CHANGED       # canonical for status transitions
                                     # (replaces MEMORY_WRITE_GATE_PASSED/REJECTED/VERIFIED/QUARANTINED;
                                     #  old_status/new_status as fields — see MEMORY_WRITE_GATE.md §17)
+M2_FOREIGN_MERGE_STATUS_CHANGED    # foreign instance M2 import lifecycle (BACKUP_STRATEGY.md §18)
 RECALL_REQUEST_SENT
 RECALL_RESULT_EMPTY                # failure audit (RECALL_PROTOCOL.md §16)
 RECALL_SUPPRESSED                  # individual record suppressed (cooldown/habituation/status)
@@ -811,6 +821,12 @@ REPLAY_SESSION_STATUS_CHANGED         # replay session lifecycle canonical event
                                        # bkz. REPLAY_PROTOCOL.md §18
 COUNTERFACTUAL_ABLATION_PERFORMED     # counterfactual ablation audit detail (audit-of-replay artifact)
                                        # bkz. REPLAY_PROTOCOL.md §15
+BACKUP_ARTIFACT_STATUS_CHANGED        # backup artifact lifecycle (BACKUP_STRATEGY.md §20)
+RESTORE_OPERATION_STATUS_CHANGED      # restore operation lifecycle
+M1_HISTORY_LOST_AT_RESTORE            # degraded identity critical event (restore_with_missing_history)
+FORK_FROM_INSTANCE                    # fork_birth audit event
+MIGRATION_FROM_INSTANCE               # migration_birth audit event (constitutional shift sonrası)
+FORGETTING_ATTACK_SUSPECTED           # forgetting attack pattern alarm
 ```
 
 ### Yeni event ekleme

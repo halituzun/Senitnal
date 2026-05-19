@@ -346,7 +346,7 @@ Kritik ayrım:
 
 **Restore kuralı:** M0+M1 birlikte restore edilirse aynı varlık. Sadece M0 restore edilirse yeni varlık (M1 yoksa narrative continuity kırılır).
 
-> *Restore senaryolarının `birth_mode` ayrımı (`clean_birth`/`restore_birth`/`fork_birth`/`migration_birth`) ve constitutional shift policy için bkz. [`BOOTSTRAP_GENOME.md`](./BOOTSTRAP_GENOME.md) §23. Constitutional hash değiştiğinde sessiz upgrade yoktur; `genesis_affecting` shift yaşayan Sentinel'e uygulanmaz, `migration_birth` gerektirir.*
+> *Restore senaryolarının `birth_mode` ayrımı (`clean_birth`/`restore_birth`/`fork_birth`/`migration_birth`/`restore_with_missing_history`) ve constitutional shift policy için bkz. [`BOOTSTRAP_GENOME.md`](./BOOTSTRAP_GENOME.md) §23. Constitutional hash değiştiğinde sessiz upgrade yoktur; `genesis_affecting` shift yaşayan Sentinel'e uygulanmaz, `migration_birth` gerektirir. Tam backup şeması, modular artifacts + RestoreManifest, identity continuity matrix, replay-derived trace provenance, foreign M2 merge kuralları ve forgetting attack defense için bkz. [`BACKUP_STRATEGY.md`](./BACKUP_STRATEGY.md).*
 
 ---
 
@@ -367,8 +367,8 @@ Bu belgenin **sonraki sürümlerinde** çözülecek açık sorular:
   Counterfactual ablation bounded (single-variable default, pairwise causal-linked, higher-order yasak). `replay_survival_score` ≠ `outcome_alignment_score` (sentetik vs gerçek). Replay M2'ye doğrudan yazmaz, sadece Memory Write Gate'e evidence axis sağlar.
   
   Açık kalan: cross-channel evidence paylaşımı, replay outcome alignment lag tolerance, multi-instance replay (cross-restore identity ile bağlantılı).
-- **Cross-restore identity:** Bir sistem M0+M1 backup'tan restore edildi. M2'sini başka bir sistemin M2'siyle birleştirmek istiyoruz (örn. iki Sentinel instance). Bu identity hakkı verir mi yoksa "kontamine" mi sayılır?
-- **Forgetting attack:** Düşman bir aktör M2'ye yığınla expire-talebi gönderirse sistemin retention policy'si nasıl davranır? "Cognitive denial-of-service"e karşı sınır ne?
+- **Cross-restore identity:** *(L tarafından cevap)* Foreign M2 merge = knowledge transfer, identity continuity vermez. Whitelist (`bootstrap_reference`, `structured_fact`, `procedural`, `adapter_manifest_reference`, `signed_administrative_reference`, `source_trust`) + blacklist (narrative/causal/decision_rationale/episodic vs.). Foreign records `foreign_instance_origin` provenance'ını kalıcı taşır. Detaylar [`BACKUP_STRATEGY.md`](./BACKUP_STRATEGY.md) §18.
+- **Forgetting attack:** *(L tarafından cevap)* M2 expire/delete M1 history'yi silemez. `FORGETTING_ATTACK_SUSPECTED` event pattern-based audit alarm. M1 coarse permanent log silinemez. Detaylar [`BACKUP_STRATEGY.md`](./BACKUP_STRATEGY.md) §19.
 
 Bu sorular cevaplanmadan implementation aşamasına geçilmez. Cevaplar ileride ayrı belge revizyonları olarak gelir.
 

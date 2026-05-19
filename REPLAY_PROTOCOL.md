@@ -135,6 +135,8 @@ Madde 1'in replay seviyesindeki yansıması: ayrı `SleepReplayEngine`, `Attenti
 
 > *Replay M2'ye doğrudan yazmaz. Replay sadece evidence axis sağlar; M2 yazımı her zaman Memory Write Gate'ten geçer.*
 
+> *Replay-derived M0 trace'lerinin backup artifact'te nasıl provenance ile korunduğu için bkz. [`BACKUP_STRATEGY.md`](./BACKUP_STRATEGY.md) §17.*
+
 ---
 
 ## 6. Replay Inputs

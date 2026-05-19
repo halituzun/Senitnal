@@ -815,12 +815,15 @@ CONSTITUTIONAL_SHIFT_EVENT
 
 ```
 birth_mode:
-    clean_birth      → önceki sistem yok
-    restore_birth    → M0+M1 backup'tan dönüş (aynı varlık)
-    fork_birth       → mevcut Sentinel'in M0+M1'inden türeyen yeni varlık
-    migration_birth  → genesis_affecting constitutional shift sonrası yeni doğum
-                       (tetikleyen CONSTITUTIONAL_SHIFT_AVAILABLE event'ine geri link taşır)
+    clean_birth                       → önceki sistem yok
+    restore_birth                     → M0+M1 backup'tan dönüş (aynı varlık)
+    restore_with_missing_history      → M0 var, M1 kayıp (degraded identity, restricted operational mode)
+    fork_birth                        → mevcut Sentinel'in M0+M1'inden türeyen yeni varlık
+    migration_birth                   → genesis_affecting constitutional shift sonrası yeni doğum
+                                        (tetikleyen CONSTITUTIONAL_SHIFT_AVAILABLE event'ine geri link taşır)
 ```
+
+> *Restore senaryolarının tam matrix'i, BackupArtifact şeması, RestoreManifest atomic composition, foreign M2 merge kuralları ve forgetting attack defense için bkz. [`BACKUP_STRATEGY.md`](./BACKUP_STRATEGY.md).*
 
 ### `birth_mode` ↔ `compatibility_class` cross-link
 
