@@ -562,7 +562,7 @@ critical internal shock
 - Domain-spesifik mapping aile (`btc_volatility → urgency × 1.5`)
 
 ### Devir
-Sayısal katsayılar `INGRESS_COMPILER_SPEC.md` konusudur.
+Tam biçimsel RuleFamily formatı, weighted blend conflict resolution, rate caps ve rule family lifecycle için bkz. [`INGRESS_COMPILER_SPEC.md`](./INGRESS_COMPILER_SPEC.md). Kesin sayısal katsayılar `INGRESS_COMPILER_NUMERICS.md` konusudur.
 
 ---
 

@@ -400,6 +400,8 @@ Forbidden: Binance + BTCTurk + news → "market_state = flash_crash" aggregation
 
 Çoklu source pre-merge edilmez. Her event ayrı compile edilir, payload_seed olarak ayrı akar, **çelişki çekirdeğin içinde yaşanır** (Madde 4'le uyumlu).
 
+> *Compiler'ın tam biçimsel sözleşmesi — RuleFamily format, weighted blend conflict resolution, rate caps, drift control, rule family lifecycle (active/deprecated/archived) — için bkz. [`INGRESS_COMPILER_SPEC.md`](./INGRESS_COMPILER_SPEC.md).*
+
 ---
 
 ## 14. Bootstrap Rules
@@ -445,7 +447,7 @@ Sebep: tek-terim mapping sistemi "her kritik şey panik" zihniyetine sokar. Doğ
 
 ### Bootstrap kuralları nerede yaşar
 
-`BOOTSTRAP_GENOME.md` ve `INGRESS_COMPILER_SPEC.md` (ileride yazılacak). Bu belge sadece mekanizmayı tanımlar, sayısal parametreleri değil.
+Bootstrap rule kavramsal aileleri `BOOTSTRAP_GENOME.md` §19'da. Tam biçimsel RuleFamily formatı, condition band'lar, scalar modifiers, payload composition ve conflict resolution için bkz. [`INGRESS_COMPILER_SPEC.md`](./INGRESS_COMPILER_SPEC.md) §8-12. Kesin sayısal değerler `INGRESS_COMPILER_NUMERICS.md` konusu.
 
 ---
 
@@ -485,6 +487,8 @@ ile kayar. Yani compiler mapping de doku, config değil.
 
 ### Kural
 > *Ingress mapping config değildir. Ingress mapping dokudur.*
+
+> *Learned mapping update kuralları (outcome/replay evidence zorunluluğu, asymmetric strengthening/dampening rates, drift control, `COMPILER_MAPPING_UPDATED` audit event) için bkz. [`INGRESS_COMPILER_SPEC.md`](./INGRESS_COMPILER_SPEC.md) §14-15.*
 
 ---
 

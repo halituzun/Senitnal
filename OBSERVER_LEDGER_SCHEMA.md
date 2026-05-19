@@ -354,6 +354,10 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 (INGRESS_DEDUP_REJECTED, *)                  → ring_buffer_only
 (INGRESS_TTL_EXPIRED, *)                     → ring_buffer_only
 (COMPILER_MAPPING_UPDATED, *)                → permanent
+(COMPILER_RULE_FAMILY_STATUS_CHANGED, *)     → permanent
+(COMPILER_RULE_FAMILY_STATUS_CHANGED, new_status=archived) → permanent_with_snapshot
+(COMPILER_DRIFT_WARNING, *)                  → permanent + human_alert
+(INGRESS_NO_RULE_MATCH, *)                   → ring_buffer_only
 (SLEEP_REPLAY_SYNAPSE_UPDATE, *)             → ring_buffer_only
 (ATTENTION_REPLAY_HABITUATION_UPDATE, *)     → ring_buffer_only
 (REPLAY_SESSION_COMPLETED, *)                → permanent
@@ -758,7 +762,9 @@ HUMAN_INTENT_INGESTED
 INTERNAL_SHOCK_INGESTED
 INGRESS_DEDUP_REJECTED
 INGRESS_TTL_EXPIRED
-COMPILER_MAPPING_UPDATED
+INGRESS_NO_RULE_MATCH              # compiler: hiç matching rule yok (INGRESS_COMPILER_SPEC.md §10)
+COMPILER_MAPPING_UPDATED           # learned mapping delta / calibration update (INGRESS_COMPILER_SPEC.md §14)
+COMPILER_DRIFT_WARNING             # global drift cap aşıldı (INGRESS_COMPILER_SPEC.md §15)
 SOURCE_TRUST_STATUS_CHANGED
 ```
 
@@ -793,6 +799,8 @@ LEDGER_COMPACTION_PERFORMED
 ADAPTER_MANIFEST_STATUS_CHANGED       # adapter lifecycle canonical event
                                        # (ADAPTER_REGISTERED/VERIFIED/ACTIVE/REVOKED ayrı tip değil;
                                        #  old_status/new_status field — bkz. ADAPTER_MANIFEST_SPEC.md §14)
+COMPILER_RULE_FAMILY_STATUS_CHANGED   # bootstrap rule family lifecycle (active/deprecated/archived)
+                                       # bkz. INGRESS_COMPILER_SPEC.md §17
 ```
 
 ### Yeni event ekleme
