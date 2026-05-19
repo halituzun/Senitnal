@@ -132,6 +132,8 @@ Bu rol ayrımı MEMORY_CONTRACT §11'deki ("Observer Relationship") ve §14'teki
 
 ## 6. Ledger Layers — Ring Buffer vs Permanent Log
 
+> *Bu bölümün sayısal değerleri — ring_buffer.window_ms per family, min_event_lifetime_in_buffer_ms, permanent.segment_max_bytes/events/age, hash_chain_checkpoint_interval, sampling strategy enum, lossless_required + hash_verify constitutional invariants — `OBSERVER_LEDGER_NUMERICS.md` (Q) §5-13'te. Permanence policy monotonic invariant: declared permanent veya permanent_with_snapshot weakening direction'a downgrade edilemez (Q §12).*
+
 `MEMORY_CONTRACT.md` M1'i iki katmanlı tanımlıyor. F bu yapıyı sıkılaştırır.
 
 ### Fine-grain Ring Buffer
@@ -380,6 +382,13 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 (NUMERICS_ARTIFACT_STATUS_CHANGED, reason=emergency_revert) → permanent_with_snapshot + human_alert
 (NUMERICS_VERSION_MISMATCH_DETECTED, *)      → permanent + human_alert
 (NUMERICS_FAILSAFE_ACTIVATED, *)             → permanent_with_snapshot + human_alert
+(LEDGER_STATE_CHANGED, reason=storage_pressure_failsafe)   → permanent_with_snapshot + human_alert
+(LEDGER_STATE_CHANGED, reason=compaction_hash_mismatch)    → permanent_with_snapshot + human_alert
+(LEDGER_STATE_CHANGED, reason=hash_chain_mismatch)         → permanent_with_snapshot + human_alert
+(LEDGER_STATE_CHANGED, reason=failsafe_activated)          → permanent_with_snapshot + human_alert
+(LEDGER_STATE_CHANGED, reason=foreign_event_rejected_unknown_source) → permanent
+(LEDGER_STATE_CHANGED, reason=meta_event_recursion_blocked)→ permanent
+(LEDGER_STATE_CHANGED, *)                                  → permanent
 (WAKE_TO_SLEEP_TRANSITION, *)                → permanent
 (SLEEP_TO_WAKE_TRANSITION, *)                → permanent
 (LEDGER_COMPACTION_PERFORMED, *)             → permanent
@@ -836,6 +845,16 @@ FORGETTING_ATTACK_SUSPECTED           # forgetting attack pattern alarm
 NUMERICS_ARTIFACT_STATUS_CHANGED      # numerics artifact lifecycle (NUMERICS_GOVERNANCE.md §20)
 NUMERICS_VERSION_MISMATCH_DETECTED    # restore sonrası version uyumsuzluğu
 NUMERICS_FAILSAFE_ACTIVATED           # missing/invalid numerics → strict mode
+LEDGER_STATE_CHANGED                  # ledger-level operational state change (ledger_meta family)
+                                       # tek canonical event + reason field discipline:
+                                       # sampling_activated / sampling_summary_written /
+                                       # compaction_performed / compaction_hash_mismatch /
+                                       # hash_chain_mismatch / tier_transition_performed /
+                                       # storage_pressure_failsafe / read_limit_exceeded /
+                                       # llm_m1_read / meta_event_recursion_blocked /
+                                       # foreign_event_rejected_unknown_source /
+                                       # human_alert_batch_summary / failsafe_activated
+                                       # bkz. OBSERVER_LEDGER_NUMERICS.md §22
 ```
 
 ### Yeni event ekleme

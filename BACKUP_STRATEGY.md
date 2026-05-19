@@ -237,6 +237,8 @@ Hepsi snapshot'ta birleşik, tutarlı.
 
 ## 8. M1 Append-only Log Backup
 
+> *M1 ledger'ın iç sayısal disiplini (permanent log segment'leri, hash-chain checkpoint cadence, lossless compaction invariant, tier transition, storage pressure failsafe) için bkz. [`OBSERVER_LEDGER_NUMERICS.md`](./OBSERVER_LEDGER_NUMERICS.md) (Q) §10-13, §18-19. Backup tarafı L kapsamında; Q M1'in iç tutulma kurallarını sayısallaştırır. Foreign event reception caps (Q §16) L §22 forgetting attack defense'in observer ledger tarafıdır.*
+
 ### Principle
 
 > **M1 backup is continuous, not periodic.**

@@ -61,6 +61,8 @@ Sistemin **tarihinin kanıt defteri**.
 `SPIKE_BURST`, `ASSEMBLY_CANDIDATE_BORN`, `ASSEMBLY_STABILIZED`, `ASSEMBLY_MERGED`, `ASSEMBLY_SPLIT`, `ASSEMBLY_SUPPRESSED`, `ASSEMBLY_RECALLED`, `ASSEMBLY_PROMOTED_TO_IDEA`, `ASSEMBLY_DECAYED`, `ASSEMBLY_PRUNED`, `CONTRADICTION_PEAK`, `INTENTION_FORMED`, `INTENTION_SUPPRESSED`, `WORKSPACE_PULSE`, `DEONTIC_BLOCKED`, `DEONTIC_BYPASS_ATTEMPT`, `DEONTIC_POLICY_STATUS_CHANGED`, `KILL_SWITCH_ACTIVATED`, `MEMORY_WRITE_PROPOSED`, `MEMORY_RECORD_STATUS_CHANGED`, `M2_FOREIGN_MERGE_STATUS_CHANGED`, `RECALL_REQUEST_SENT`, `RECALL_EVENT_INGESTED`, `OUTCOME_RECEIVED`, `WAKE_TO_SLEEP_TRANSITION`, `SLEEP_TO_WAKE_TRANSITION`, `REPLAY_SESSION_STATUS_CHANGED`, `SELF_GENESIS` (bir kez, doğumda), `CONSTITUTIONAL_SHIFT_APPLIED`, `BACKUP_ARTIFACT_STATUS_CHANGED`, `RESTORE_OPERATION_STATUS_CHANGED`, `FORGETTING_ATTACK_SUSPECTED`.
 
 > *Tam event catalog ve permanence policy için bkz. [`OBSERVER_LEDGER_SCHEMA.md`](./OBSERVER_LEDGER_SCHEMA.md) §10 ve §19. Eski isimler (`MEMORY_WRITE_GATE_PASSED/REJECTED`, `REPLAY_SESSION_COMPLETED`) canonical değildir; `MEMORY_RECORD_STATUS_CHANGED` ve `REPLAY_SESSION_STATUS_CHANGED` altında `old_status`/`new_status` field'larıyla yaşar.*
+>
+> *Ring buffer window per family, permanent log segment caps, hash-chain checkpoint cadence, sampling strategy enum (semantic seçim YASAK), permanence monotonic invariant ve missing-numerics strict mode için bkz. [`OBSERVER_LEDGER_NUMERICS.md`](./OBSERVER_LEDGER_NUMERICS.md) (Q). Permanent event sampling'e tabi değil; lifetime retention; lossless compaction allowed.*
 
 - **Yazıcı:** Sadece sistemin kendisi (observer dinler ve yazar, sormaz, müdahale etmez).
 - **Okuyucu:** İnsanlar (audit), LLM tercüman (rapor), explicit memory adapter (özet üretmek için).
