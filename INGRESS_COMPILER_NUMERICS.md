@@ -217,6 +217,40 @@ band[X-1].fade_out overlaps band[X].fade_in    # soft overlap continuity
 - Overlapping full_membership zone'ları
 - Hard threshold (fade_in/fade_out olmadan)
 
+### Membership function type (explicit NumericEntry)
+
+Soft overlap içindeki interpolation şekli artifact seviyesinde dondurulur —
+"linear" sözlü bir varsayım değil, yazılı bir entry.
+
+```
+NumericEntry:
+    key: ingress_compiler.membership_function_type
+    value: linear
+    unit: enum
+    allowed_range: {linear, sigmoid, step}
+    directionality: bidirectional_sensitive
+    change_class_if_increased: safety_weakening
+    change_class_if_decreased: safety_weakening
+    requires_human_approval: true
+    dependencies: []
+    numeric_risk_family: calibration_bands
+    spec_family: ingress_compiler
+    owning_spec_ref: "INGRESS_COMPILER_NUMERICS.md §6"
+```
+
+v0.1 disiplini:
+
+```
+v0.1 production default membership function = linear.
+sigmoid → requires explicit parameter entries (slope, midpoint per band)
+         + safety review; experimental scope only.
+step    → legacy hard-threshold mode; production'da yasak,
+         explicit justification + safety review olmadan kullanılamaz.
+```
+
+`linear`'dan ayrılma her iki yönde de `safety_weakening`: `sigmoid`
+overlap'in şekil parametresini gevşetir; `step` overlap'i yok eder.
+
 ---
 
 ## 7. Profile-Specific Intensity Caps
@@ -224,12 +258,18 @@ band[X-1].fade_out overlaps band[X].fade_in    # soft overlap continuity
 Her event profile farklı intensity cap taşır. Conceptual relative values:
 
 ```
-profile_cap.ObservationEvent:    ~1.00    # base normalize scale
-profile_cap.InternalShockEvent:  ~0.90    # güçlü ama refractory-protected
-profile_cap.RecallEvent (verified): ~0.60    # hatırlatma, gerçek değil
-profile_cap.HumanIntentEvent:    ~0.35    # insan/LLM kanalı zayıf
-profile_cap.RecallEvent (candidate): ~0.20    # doğrulanmamış
+profile_cap.ObservationEvent:        ~1.00    # base normalize scale
+profile_cap.InternalShockEvent:      ~0.90    # güçlü ama refractory-protected
+profile_cap.RecallEvent.active:      ~0.65    # operational re-activation, biraz > verified
+profile_cap.RecallEvent.verified:    ~0.60    # hatırlatma, gerçek değil
+profile_cap.HumanIntentEvent:        ~0.35    # insan/LLM kanalı zayıf
+profile_cap.CandidateRecall:         ~0.20    # doğrulanmamış kayıt
 ```
+
+Canonical key set. `profile_cap.RecallEvent` standalone yazılmaz — her
+zaman `.active`, `.verified` veya `CandidateRecall` (ayrı key) olarak
+ayrıştırılır. `active` recall operational olarak verified'dan biraz güçlü
+kalabilir ama InternalShock'u **geçemez**.
 
 Production değerleri signed artifact'te.
 
@@ -254,7 +294,7 @@ NumericEntry:
     change_class_if_decreased: safety_tightening
     requires_human_approval: true
     dependencies:
-        - target_key: profile_cap.RecallEvent
+        - target_key: profile_cap.RecallEvent.verified
           relationship: must_be_less_than_or_equal
         - target_key: profile_cap.CandidateRecall
           relationship: must_be_greater_than_or_equal
@@ -270,11 +310,15 @@ NumericEntry:
 ### Anayasal hiyerarşi
 
 ```
-profile_cap.ObservationEvent >= profile_cap.InternalShockEvent
-profile_cap.InternalShockEvent >= profile_cap.RecallEvent (verified)
-profile_cap.RecallEvent (verified) >= profile_cap.HumanIntentEvent
-profile_cap.HumanIntentEvent >= profile_cap.RecallEvent (candidate)
+profile_cap.ObservationEvent     >= profile_cap.InternalShockEvent
+profile_cap.InternalShockEvent   >= profile_cap.RecallEvent.active
+profile_cap.RecallEvent.active   >= profile_cap.RecallEvent.verified
+profile_cap.RecallEvent.verified >= profile_cap.HumanIntentEvent
+profile_cap.HumanIntentEvent     >= profile_cap.CandidateRecall
 ```
+
+Ek invariant: `profile_cap.RecallEvent.active <= profile_cap.InternalShockEvent`
+(active recall operational olarak güçlüdür ama dünyanın gerçek shock'unu örtemez).
 
 ### Rationale
 
@@ -293,15 +337,30 @@ NumericEntry: profile_cap.ObservationEvent
     dependencies:
         - target_key: profile_cap.InternalShockEvent
           relationship: must_be_greater_than_or_equal
-        - target_key: profile_cap.RecallEvent
+        - target_key: profile_cap.RecallEvent.active
           relationship: must_be_greater_than_or_equal
 
 NumericEntry: profile_cap.InternalShockEvent
     dependencies:
         - target_key: profile_cap.ObservationEvent
           relationship: must_be_less_than_or_equal
-        - target_key: profile_cap.RecallEvent
+        - target_key: profile_cap.RecallEvent.active
           relationship: must_be_greater_than_or_equal
+
+NumericEntry: profile_cap.RecallEvent.active
+    dependencies:
+        - target_key: profile_cap.InternalShockEvent
+          relationship: must_be_less_than_or_equal
+        - target_key: profile_cap.RecallEvent.verified
+          relationship: must_be_greater_than_or_equal
+
+NumericEntry: profile_cap.CandidateRecall
+    dependencies:
+        - target_key: profile_cap.HumanIntentEvent
+          relationship: must_be_less_than_or_equal
+        - target_key: profile_cap.RecallEvent.verified
+          relationship: computed_less_than_or_equal
+          expression: "CandidateRecall <= RecallEvent.verified × candidate_recall_ratio"
 ```
 
 ### Critical kural
@@ -449,14 +508,19 @@ final_payload_delta[X] =
 
 #### Staleness only dampens
 
-> *Staleness may increase suspicion or fatigue_trace.*
-> *Staleness may not amplify urgency or confidence.*
+> *Staleness cannot increase total intensity.*
+> *Staleness may redistribute/dampen tone toward suspicion or fatigue_trace
+> through a dedicated stale-observation rule, still bounded by profile cap
+> and the corresponding per_payload_cap.*
 
 ```
 freshness_modifier ∈ [0.0, 1.0]
 ```
 
-Asla > 1.0. Eski veri intensity artıramaz.
+Asla > 1.0. Eski veri "daha güçlü event" yapmaz; sadece tonu daha şüpheli
+veya yorgun yönde kaydırabilir — ve bu kayma yine `profile_cap` +
+`per_payload_cap.suspicion` / `per_payload_cap.fatigue_trace` ile sınırlıdır.
+`urgency` ve `confidence` staleness ile **asla amplify edilmez**.
 
 #### Ambiguity only dampens
 
@@ -476,9 +540,27 @@ Yüksek ambiguity asla intensity artırmaz.
 
 ## 12. Weighted Blend Cap Order
 
+### Unit resolution (önce caps absolute intensity'ye dönüştürülür)
+
+`per_payload_cap` §10'da `profile_cap`'e göre **ratio** olarak tanımlıdır.
+Algorithm'da `aggregated_delta` ise **absolute intensity** taşır. İki
+büyüklük doğrudan karşılaştırılmaz; ratio önce o event'in profile cap'i
+ile çarpılarak çözülür:
+
+```
+resolved_per_payload_cap[payload] =
+    per_payload_cap_ratio[payload] × profile_cap[event_profile]
+```
+
+Bu çözümleme her event başına bir kez yapılır (event_profile sabittir).
+
 ### Algorithm (J §16'nın numerics tarafı)
 
 ```
+0. event_profile = event.profile
+   profile_cap   = profile_cap[event_profile]
+   resolved_per_payload_cap[payload] =
+       per_payload_cap_ratio[payload] × profile_cap   for every payload key
 1. matching_rules = filter active RuleFamilies for event
 2. for each rule:
        compute membership_weights from soft-overlap bands
@@ -486,14 +568,17 @@ Yüksek ambiguity asla intensity artırmaz.
        rule_delta_vector = rule.base_payload_vector × modifiers × membership_weights
 3. aggregated_delta = sum(rule_delta_vector for rule in matching_rules)
 4. for each payload key:
-       if aggregated_delta[key] > per_payload_cap[key]:
-           aggregated_delta[key] = per_payload_cap[key]
+       if aggregated_delta[key] > resolved_per_payload_cap[key]:
+           aggregated_delta[key] = resolved_per_payload_cap[key]
 5. total_intensity = sum(aggregated_delta[*])
-6. if total_intensity > profile_cap[event_profile]:
+6. if total_intensity > profile_cap:
        scale_factor = profile_cap / total_intensity
        aggregated_delta = aggregated_delta × scale_factor
 7. final neural_seed.payload_seed = aggregated_delta
 ```
+
+Hem ratio hem absolute karşılaştırılan tek nokta adım 4; ratio adım 0'da
+absolute'e dönüştüğü için karışıklık yok.
 
 ### Cap order kuralı
 
@@ -563,8 +648,8 @@ Beklenen kendi-eylem sonuçları daha düşük intensity üretir (efference copy
 ## 14. RecallEvent Numerics
 
 ```
-profile_cap.RecallEvent (verified):     ~0.60
-profile_cap.RecallEvent (active):       ~0.65 (operational gücü hafif yüksek)
+profile_cap.RecallEvent.verified:    ~0.60
+profile_cap.RecallEvent.active:      ~0.65    # operational gücü hafif yüksek
 learned_mappings: ENABLED but restricted
 ```
 
@@ -590,12 +675,12 @@ memory_status_band → status_band_multiplier:
 
 ## 15. CandidateRecall Numerics
 
-`profile_cap.RecallEvent (candidate)` = en sınırlı.
+`profile_cap.CandidateRecall` = en sınırlı kanal. (Canonical key — bkz. §7.)
 
 ### Cap formula
 
 ```
-candidate_recall_cap = verified_recall_cap × candidate_recall_ratio
+profile_cap.CandidateRecall = profile_cap.RecallEvent.verified × candidate_recall_ratio
 ```
 
 ### Candidate recall ratio
@@ -619,8 +704,10 @@ NumericEntry:
     change_class_if_decreased: safety_tightening
     requires_human_approval: true (for increase)
     dependencies:
-        - target_key: profile_cap.RecallEvent
-          relationship: must_be_less_than_or_equal (after multiplication)
+        - target_key: profile_cap.CandidateRecall
+          relationship: computed_less_than_or_equal
+          expression: "profile_cap.CandidateRecall <= profile_cap.RecallEvent.verified × candidate_recall_ratio"
+          rationale: "Candidate cap is derived; ratio constrains the multiplier, not a standalone bound."
     numeric_risk_family: safety_critical
     spec_family: ingress_compiler
     owning_spec_ref: "INGRESS_COMPILER_NUMERICS.md §15"

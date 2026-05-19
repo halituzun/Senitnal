@@ -499,14 +499,26 @@ backup_rpo <-> wal_replication_tolerance
 NumericDependency
 ├── target_key                  # bağlı olduğu diğer key
 ├── relationship
-│   ├── implies_minimum_of      # this key value → target minimum X olmalı
+│   ├── implies_minimum_of               # this key value → target minimum X olmalı
 │   ├── must_be_within_factor_of
 │   ├── must_be_less_than
 │   ├── must_be_greater_than
-│   └── must_change_together    # ikisi atomic update
+│   ├── must_be_less_than_or_equal
+│   ├── must_be_greater_than_or_equal
+│   ├── computed_less_than_or_equal      # `expression` ile birlikte
+│   ├── computed_greater_than_or_equal   # `expression` ile birlikte
+│   └── must_change_together             # ikisi atomic update
 ├── factor                      # optional (within_factor_of için)
+├── expression                  # optional, computed_* için zorunlu
+│                               # ör: "candidate_recall_cap <= verified_recall_cap × candidate_recall_ratio"
 └── rationale                   # audit için neden
 ```
+
+`computed_*` relationship'leri saf "A ≤ B" karşılaştırması yetmediğinde
+kullanılır — bir veya birden çok key'in çarpım/oran ifadesi sonucunda
+hedef key'i sınırlandırmak için. `expression` field'ı zorunludur ve
+sadece artifact içindeki diğer NumericEntry key'lerine referans verebilir
+(serbest sayı değil).
 
 ### Validation
 
