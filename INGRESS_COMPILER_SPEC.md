@@ -916,15 +916,16 @@ INGRESS_NO_RULE_MATCH                       → ingress family
 
 ## 22. Open Questions
 
-J çerçevesi kapanırken cevaplanmamış bırakılan sorular:
+J çerçevesi kapanırken cevaplanmamış bırakılan sorular ve şu anki durumları:
 
-- **Kesin band sınırları** (magnitude_band, confidence_band, vs.) → `INGRESS_COMPILER_NUMERICS.md`
-- **Bootstrap rule katsayıları** (base_payload_vector büyüklükleri) → `INGRESS_COMPILER_NUMERICS.md`
-- **Profile-specific intensity caps sayısal değerleri** → `INGRESS_COMPILER_NUMERICS.md`
-- **Rate cap sayısal değerleri** (per_mapping_daily_delta_cap, vs.) → `INGRESS_COMPILER_NUMERICS.md`
+- **Kesin band sınırları** (magnitude_band, confidence_band, vs.) → **kapandı**, bkz. `INGRESS_COMPILER_NUMERICS.md` §3 (deterministic soft-overlap, linear membership)
+- **Bootstrap rule katsayıları** (base_payload_vector büyüklükleri) → **kapandı**, bkz. `INGRESS_COMPILER_NUMERICS.md` §6 (profile-relative payload magnitudes)
+- **Profile-specific intensity caps sayısal değerleri** → **kapandı**, bkz. `INGRESS_COMPILER_NUMERICS.md` §5 (Observation ~1.00 ≥ InternalShock ~0.90 ≥ RecallEvent verified ~0.60 ≥ HumanIntentEvent ~0.35 ≥ RecallEvent candidate ~0.20)
+- **Rate cap sayısal değerleri** (per_mapping_daily_delta_cap, vs.) → **kapandı**, bkz. `INGRESS_COMPILER_NUMERICS.md` §13 (learned mapping drift caps, asymmetric)
+- **Weighted blend cap order** (forced re-normalization?) → **kapandı**, bkz. `INGRESS_COMPILER_NUMERICS.md` §9 (event-cap → bootstrap blend → learned modulation → final clip; no re-normalization)
 - **Drift detection threshold** → Implementation
 - **Cleanup window süresi** (deprecated → archived) → Implementation
-- **Update direction asymmetry ratio** (false-positive dampening / strengthening rate oranı) → Implementation
+- **Update direction asymmetry ratio** (false-positive dampening / strengthening rate oranı) → **kavramsal cevap N §13'te** (weakening cap < strengthening cap); kesin sayısal değer implementation
 - **`INGRESS_NO_RULE_MATCH` event'inin gerçekten gerekli olup olmadığı** — debug için yararlı ama production'da gürültü olabilir
 - **Rule family versioning** — yeni version registered olduğunda eski active kalır mı, otomatik deprecated mi?
 
