@@ -87,6 +87,7 @@ subject_class:
   - procedural       (lookup tabloları, compatibility matrix)
   - incident         (anlık olaylar, hatalar)
   - source_trust     (kaynak güvenirlik kayıtları — bkz. WORLD_INGRESS §16)
+  - adapter_trust    (uzuv güvenirlik kayıtları — bkz. ADAPTER_MANIFEST_SPEC §11)
   - deontic_policy   (operasyonel hard-stop eşikleri — bkz. DEONTIC_GATE §7)
   - bootstrap_reference (kuruluş referansları — bkz. BOOTSTRAP_GENOME §20)
 ```

@@ -656,7 +656,7 @@ M2 (initial state, all subject_class = "bootstrap_reference")
 ├── world_ingress_ref
 ├── deontic_gate_ref
 ├── genome_artifact_ref
-├── adapter_manifest_refs (optional)
+├── adapter_manifest_refs (optional)        # immutable manifest hashes; bkz. ADAPTER_MANIFEST_SPEC.md
 └── operator_identity_ref
 ```
 
@@ -923,7 +923,7 @@ D çerçevesi kapanırken cevaplanmamış bırakılan ve sonraki belgelere devre
 - **Deontic gate başlangıç kuralları:** Hangi kategorik kısıtlar doğuştan vardır? → `DEONTIC_GATE.md` konusu.
 - **Ingress mapping katsayıları:** Sayısal mapping formülleri → `INGRESS_COMPILER_SPEC.md` konusu.
 - **Replay rhythm tetikleme eşikleri:** `eligibility_pool_saturation`, `contradiction_load_threshold`, `fatigue_accumulation` hangi sayısal seviyelerde tetiklenir? → Implementation konusu.
-- **Adapter manifest formatı:** Bootstrap M2'de `adapter_manifest_refs` neyi içerir? → `ADAPTER_MANIFEST_SPEC.md` konusu.
+- **Adapter manifest formatı:** *(I tarafından çözüldü)* Bootstrap M2'deki `adapter_manifest_refs` immutable signed manifest artifact'larının ref'leridir. Tam şema, capability bindings ve lifecycle için bkz. [`ADAPTER_MANIFEST_SPEC.md`](./ADAPTER_MANIFEST_SPEC.md).
 - **`proto_resonance_fields` detay:** Dokusal eğilim alanları nasıl matematiksel olarak tanımlanır? Implementation konusu, ama çok sıkı belirsiz bırakılırsa interpretation farkı yaratabilir.
 - **`migration_birth` kontinüite sınırı:** `migration_birth` ile doğan Sentinel'in M0'ı tamamen sıfır mı, yoksa eski Sentinel'in M0'ından migration yapılabilir mi (kısıtlı/seçici)? Bu MEMORY_CONTRACT §14'teki "cross-restore identity" sorusuyla bağlantılı.
 

@@ -225,8 +225,10 @@ Tek anda **tek active policy**. Yeni policy active olduğunda eski `superseded` 
     Stale data above threshold blocks action-relevant decisions.
 
 7.  No action if execution adapter lacks valid manifest snapshot.
-    Adapter must declare capabilities; gate checks against
-    declared bounds.
+    Adapter must declare capabilities via signed immutable manifest;
+    gate checks against declared bounds. Tam manifest şeması,
+    capability bindings ve execution capability hard constraint'leri
+    için bkz. `ADAPTER_MANIFEST_SPEC.md` §10.
 
 8.  No action if required audit path (M1 write) is unavailable.
     Without audit, action is silent — silent action is forbidden.

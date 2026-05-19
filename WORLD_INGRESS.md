@@ -190,7 +190,7 @@ ObservationEvent
 │   ├── venue
 │   ├── raw_payload_ref
 │   ├── observation_id_hash
-│   ├── adapter_capabilities_snapshot
+│   ├── adapter_capabilities_snapshot        # manifest hash ref; tam şema ADAPTER_MANIFEST_SPEC.md
 │   ├── received_at
 │   └── event_time
 │
@@ -803,7 +803,7 @@ Cevap verilemiyorsa ingress auditable değildir — anayasa ihlali.
 C kapanırken cevaplanmamış bırakılan ve sonraki belgelere devredilen sorular:
 
 - **Bootstrap mapping sayısal parametreleri:** Compiler'ın bootstrap_rules'unda hangi `magnitude × confidence × staleness` ağırlıkları hangi payload yoğunluğunu üretiyor? → `BOOTSTRAP_GENOME.md` ve `INGRESS_COMPILER_SPEC.md` konusu.
-- **Adapter manifest formatı:** Her adapter `adapter_capabilities_snapshot` üretiyor. Bu manifest'in tam şeması, capability listesi, yetki sınırları nasıl tanımlanır? → `ADAPTER_MANIFEST_SPEC.md` konusu.
+- **Adapter manifest formatı:** *(I tarafından çözüldü)* Tam şema, capability flags + channel bindings, capability incompatibility matrix, manifest immutability, AdapterTrustRecord ve `ADAPTER_MANIFEST_STATUS_CHANGED` canonical event için bkz. [`ADAPTER_MANIFEST_SPEC.md`](./ADAPTER_MANIFEST_SPEC.md).
 - **InternalShockEvent payload_seed büyüklükleri:** Severity bandına göre seed magnitudes nasıl ayarlanır? → `DEONTIC_GATE.md` veya `BOOTSTRAP_GENOME.md` konusu.
 - **Multi-source conflict resolution time scale:** Çekirdekte çelişki ne kadar süre yaşamalı? Otomatik replay tetikleyici eşik nedir? → `ATTENTION_WORKSPACE.md` §22'deki açık sorularla bağlantılı.
 - **SourceTrustRecord migration:** M2 schema versioning (MEMORY_CONTRACT §14) — yeni `subject_class` field'i eski kayıtlara nasıl migrate olur? Provenance nasıl korunur?

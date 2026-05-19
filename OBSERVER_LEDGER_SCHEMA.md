@@ -360,6 +360,8 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 (WAKE_TO_SLEEP_TRANSITION, *)                → permanent
 (SLEEP_TO_WAKE_TRANSITION, *)                → permanent
 (LEDGER_COMPACTION_PERFORMED, *)             → permanent
+(ADAPTER_MANIFEST_STATUS_CHANGED, *)         → permanent
+(ADAPTER_MANIFEST_STATUS_CHANGED, new_status=revoked OR reason=security_incident OR reason=kill_switch_event) → permanent_with_snapshot + human_alert
 (meta-events for human/LLM read, *)          → permanent
 (meta-events for internal high-frequency read, *) → ring_buffer_only (batch)
 ```
@@ -788,6 +790,9 @@ M1_LLM_REPORT_GENERATED
 M1_SUMMARY_GENERATED (= OBSERVER_SUMMARIZATION_EVENT)
 M1_REPLAY_READ_BATCH
 LEDGER_COMPACTION_PERFORMED
+ADAPTER_MANIFEST_STATUS_CHANGED       # adapter lifecycle canonical event
+                                       # (ADAPTER_REGISTERED/VERIFIED/ACTIVE/REVOKED ayrı tip değil;
+                                       #  old_status/new_status field — bkz. ADAPTER_MANIFEST_SPEC.md §14)
 ```
 
 ### Yeni event ekleme
