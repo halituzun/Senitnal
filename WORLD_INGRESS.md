@@ -496,6 +496,8 @@ ile kayar. Yani compiler mapping de doku, config değil.
 
 ## 16. SourceTrustRecord as M2 Subtype
 
+> *SourceTrust effective band hesabı için bkz. [`ADAPTER_TRUST_NUMERICS.md`](./ADAPTER_TRUST_NUMERICS.md) (U) §19: `source_trust.effective_band = min(source_trust.raw_band, adapter_trust.current_reliability_band)`. AdapterTrust SourceTrust'a ÜST TAVAN koyar (one-way constitutional). Kaynak iyi görünse bile taşıyıcı adapter quarantined ise effective trust düşer. N profile_cap.ObservationEvent intensity hesabı `effective_band` kullanır (raw değil).*
+
 ### Principle
 Source güvenirlik geçmişi **M2 alt-tipi** olarak yaşar. Yeni hafıza katmanı değildir.
 

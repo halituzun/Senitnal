@@ -404,6 +404,12 @@ Change classification (BOOTSTRAP §23 ile uyumlu):
 (LEDGER_COMPACTION_PERFORMED, *)             → permanent
 (ADAPTER_MANIFEST_STATUS_CHANGED, *)         → permanent
 (ADAPTER_MANIFEST_STATUS_CHANGED, new_status=revoked OR reason=security_incident OR reason=kill_switch_event) → permanent_with_snapshot + human_alert
+(ADAPTER_MANIFEST_STATUS_CHANGED, reason=neural_seed_emission_attempt)        → permanent_with_snapshot + human_alert
+(ADAPTER_MANIFEST_STATUS_CHANGED, reason=intent_relay_execution_attempt)      → permanent_with_snapshot + human_alert
+(ADAPTER_MANIFEST_STATUS_CHANGED, reason=self_trust_promotion_attempt)        → permanent_with_snapshot + human_alert
+(ADAPTER_MANIFEST_STATUS_CHANGED, reason=forbidden_capability_pair_attempt)   → permanent_with_snapshot + human_alert
+(ADAPTER_MANIFEST_STATUS_CHANGED, reason=manifest_hash_mismatch)              → permanent_with_snapshot + human_alert
+(ADAPTER_MANIFEST_STATUS_CHANGED, reason=signature_mismatch)                  → permanent_with_snapshot + human_alert
 (meta-events for human/LLM read, *)          → see M1_READ_AUDIT_RECORDED entries above (canonical event)
 (meta-events for internal high-frequency read, *) → see M1_READ_AUDIT_RECORDED reader_type=internal_high_frequency
 ```
@@ -844,6 +850,16 @@ LEDGER_COMPACTION_PERFORMED
 ADAPTER_MANIFEST_STATUS_CHANGED       # adapter lifecycle canonical event
                                        # (ADAPTER_REGISTERED/VERIFIED/ACTIVE/REVOKED ayrı tip değil;
                                        #  old_status/new_status field — bkz. ADAPTER_MANIFEST_SPEC.md §14)
+                                       # Adapter trust violation reasons (U reuse):
+                                       # manifest_hash_mismatch / signature_mismatch /
+                                       # channel_binding_violation / rate_burst_violation /
+                                       # neural_seed_emission_attempt (CRITICAL → revoke) /
+                                       # intent_relay_execution_attempt (CRITICAL → revoke) /
+                                       # self_trust_promotion_attempt (CRITICAL → revoke) /
+                                       # forbidden_capability_pair_attempt (CRITICAL → revoke)
+                                       # trust_band_promoted / trust_band_demoted /
+                                       # quarantine_review_pending / reverification_passed/failed
+                                       # bkz. ADAPTER_TRUST_NUMERICS.md (U) §24
 COMPILER_RULE_FAMILY_STATUS_CHANGED   # bootstrap rule family lifecycle (active/deprecated/archived)
                                        # bkz. INGRESS_COMPILER_SPEC.md §17
 REPLAY_SESSION_STATUS_CHANGED         # replay session lifecycle canonical event

@@ -965,7 +965,10 @@ replay_survival_weight.adapter_trust:
     value: 0
     allowed_range: {min: 0, max: 0}
     rationale: "Adapter trust signed manifest + execution audit gerektirir;
-                replay survival uygulanmaz."
+                replay survival uygulanmaz. Adapter trust sayısal omurgası
+                ADAPTER_TRUST_NUMERICS.md (U) §6-17'de — mechanical multiplicative
+                composition + hard gates + capability-specific min_band +
+                demotion/promotion double-layer asymmetry."
 
 replay_survival_weight.numerics_artifact_reference:
     value: 0

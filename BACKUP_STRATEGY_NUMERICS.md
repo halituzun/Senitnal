@@ -606,6 +606,8 @@ NumericEntry:
 
 ## 12. Same Identity Restore Thresholds
 
+> *Adapter trust continuity için bkz. [`ADAPTER_TRUST_NUMERICS.md`](./ADAPTER_TRUST_NUMERICS.md) (U) §20: `adapter_trust.restore_continuity_required = true` constitutional. Same-identity restore sonrası adapter_trust records M2'den devralınır (status/band/history korunur); pre-restore violations still counted. Reset = forgetting attack vektörü.*
+
 ### Constitutional immutable
 
 ```
@@ -768,6 +770,8 @@ backup.restore.missing_history.full_identity_claim_forbidden:
 ---
 
 ## 14. Fork Restore Numerics
+
+> *Fork sonrası adapter trust için bkz. [`ADAPTER_TRUST_NUMERICS.md`](./ADAPTER_TRUST_NUMERICS.md) (U) §20: `adapter_trust.fork_foreign_starts_quarantined = true` constitutional. Foreign adapter_trust native gibi devralınmaz; quarantined start + `foreign_instance_origin` provenance permanent. Forked instance trust'ı new clean windows + observations ile yeniden inşa eder.*
 
 ### Constitutional invariants
 

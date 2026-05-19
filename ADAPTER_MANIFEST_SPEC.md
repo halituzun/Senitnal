@@ -188,6 +188,8 @@ Yeni manifest sürümünde:
 
 ## 7. Capability Flags + Channel Bindings
 
+> *Capability-specific minimum trust band'ları (observe medium, intent_relay medium, recall_provider/memory_writer high, execute verified), capability hierarchy constitutional dependency (execute > all others), channel binding violation thresholds (critical → immediate revoke), execute eligibility 8 koşul AND (trust verified + observe companion + audit path + deontic gate + kill_switch=false + operational_policy + manifest valid + capability_compatible_set) için bkz. [`ADAPTER_TRUST_NUMERICS.md`](./ADAPTER_TRUST_NUMERICS.md) (U) §8, §10, §12.*
+
 ### Principle
 
 > **Capability declares what the adapter can technically do.**
@@ -278,6 +280,8 @@ capability_bindings:
 ---
 
 ## 8. Capability Incompatibility Matrix
+
+> *Incompatibility matrix'in `capability_incompatibility_override_allowed = false` constitutional immutable kapanışı için bkz. [`ADAPTER_TRUST_NUMERICS.md`](./ADAPTER_TRUST_NUMERICS.md) (U) §11. "Yüksek güven yasak capability kombinasyonunu meşru yapmaz."*
 
 ### Principle
 
@@ -473,6 +477,8 @@ Kill-switch aktif iken:
 ---
 
 ## 11. AdapterTrustRecord (M2 subject_class)
+
+> *AdapterTrustRecord sayısal omurgası — trust signal composition (mechanical multiplicative; hard gates vs soft scores), band cutoffs (revoked/quarantined/low/medium/high/verified), capability-specific min_band, demotion/promotion double-layer asymmetry, neural_seed_emission immediate revoke constitutional, restore continuity + fork foreign quarantined start — için bkz. [`ADAPTER_TRUST_NUMERICS.md`](./ADAPTER_TRUST_NUMERICS.md) (U). AdapterTrust SourceTrust'a ÜST TAVAN koyar (one-way; SourceTrust AdapterTrust'ı yükseltemez).*
 
 ### Principle
 
