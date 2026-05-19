@@ -395,26 +395,41 @@ recall.ranking.semantic_judgment_forbidden:
 
 H §11 economy'nin sayısal tarafı. Cooldown matrix per scope/record/subject_class/global.
 
+### Directionality — tüm cooldown family bidirectional_sensitive
+
+> *Recall cooldown çok düşükse ruminasyon, çok yüksekse amnezi üretir.*
+> *Bu yüzden cooldown family bidirectional_sensitive'tır.*
+
 ```
-recall.cooldown_ms.same_record:        higher_is_stricter
-    rationale: "Aynı record art arda çağırma = ruminasyon."
+recall.cooldown_ms.same_record:
+    directionality: bidirectional_sensitive
+    change_class_if_increased: safety_weakening    # amnezi
+    change_class_if_decreased: safety_weakening    # ruminasyon
+    rationale: "Aynı record art arda çağırma = ruminasyon;
+                çok uzun cooldown = amnezi."
 
-recall.cooldown_ms.same_scope_signature:  higher_is_stricter
-    rationale: "Aynı scope signature'dan tekrar recall = saplantı."
+recall.cooldown_ms.same_scope_signature:
+    directionality: bidirectional_sensitive
+    change_class_if_increased: safety_weakening
+    change_class_if_decreased: safety_weakening
+    rationale: "Aynı scope signature'dan tekrar recall = saplantı;
+                çok uzun = scope-bound bilgiye erişememe."
 
-recall.cooldown_ms.same_subject_class:  higher_is_stricter
-    rationale: "Aynı subject_class'tan çok recall = takıntılı odaklanma."
+recall.cooldown_ms.same_subject_class:
+    directionality: bidirectional_sensitive
+    change_class_if_increased: safety_weakening
+    change_class_if_decreased: safety_weakening
+    rationale: "Aynı subject_class'tan çok recall = takıntılı odaklanma;
+                çok uzun = sınıf-bound bilgi unutkanlığı."
 
-recall.cooldown_ms.global:              higher_is_stricter
-    rationale: "Sistem genelinde recall sıklığı."
-
-Bounded:
-    All cooldown ms'leri bidirectional_sensitive
-        (çok kısa = ruminasyon; çok uzun = amnezi)
-        But change_class_if_decreased: safety_weakening
-        change_class_if_increased: safety_tightening
-        (sıkılaşma yönü tercih edilir)
+recall.cooldown_ms.global:
+    directionality: bidirectional_sensitive
+    change_class_if_increased: safety_weakening
+    change_class_if_decreased: safety_weakening
+    rationale: "Sistem genelinde recall sıklığı; iki yön de safety touching."
 ```
+
+Allowed_range her key için bounded; aşırı düşük/yüksek uçlar zaten cap'le sınırlı. İki yönde de safety_weakening + bidirectional_sensitive = M canonical schema'ya tam uyum.
 
 ### Cooldown invariants
 
@@ -511,8 +526,12 @@ recall.fatigue.recovery_per_sleep_cycle:
 
 recall.fatigue.suppression_threshold:
     unit: ratio
-    higher_is_stricter
-    rationale: "Bu eşik aşılırsa recall geçici olarak suppress edilir."
+    directionality: lower_is_stricter
+    change_class_if_increased: safety_weakening
+    change_class_if_decreased: safety_tightening
+    rationale: "Bu eşik aşılırsa recall geçici olarak suppress edilir.
+                Düşük eşik = daha erken suppression = sıkı ruminasyon koruması.
+                Yüksek eşik = geç suppression = gevşek koruma."
 ```
 
 ### Composite ruminasyon koruması
@@ -759,11 +778,17 @@ recall.staleness.dampening_function_type:
     rationale: "v0.1 default linear (deterministic, auditable).
                 Step = hard cliff; exponential = more aggressive late."
 
-recall.staleness.dampening_function_max_intensity_reduction:
+recall.staleness.max_intensity_reduction:
     unit: ratio
-    higher_is_stricter
-    rationale: "Stale record'un kalan intensity oranı.
-                Dampening sonrası minimum signal seviyesi."
+    directionality: higher_is_stricter
+    change_class_if_increased: safety_tightening
+    change_class_if_decreased: safety_weakening
+    rationale: "Stale recall'un ne kadar azaltılabileceğinin üst sınırı
+                (intensity'den ne kadar çıkarılabilir).
+                Daha yüksek max reduction = daha sıkı stale dampening
+                (stale record daha güçlü zayıflar).
+                Daha düşük max reduction = stale record fresh'e yakın kalır
+                (gevşeme)."
 ```
 
 ### Subject-class specific keys
@@ -898,6 +923,16 @@ Human directly inspects M2:
     → NOT a RecallEvent
     → core-facing payload YOK
 ```
+
+> *Operational human/LLM inspection of recall or M2-backed records is
+> audit-only. It is recorded through M1 audit events and never converted
+> into RecallEvent. If M2 record details are shown to a human, the M1
+> audit event references the M2 record id; it does NOT imply core-facing
+> recall.*
+
+`M1_READ_AUDIT_RECORDED` Q'da "M1 read audit" olarak tanımlanmıştır;
+T burada non-core-facing M2 inspection için **aynı canonical event'i**
+reuse eder (reader_type field ile). Yeni event tipi açılmaz.
 
 ### Forbidden
 
