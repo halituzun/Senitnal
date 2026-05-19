@@ -33,6 +33,7 @@ What this module deliberately does NOT do:
 from __future__ import annotations
 
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -123,7 +124,7 @@ class ObservationEvent(IngressEventBase):
     abstract magnitudes the compiler can map deterministically.
     """
 
-    event_type: IngressEventType = Field(default=IngressEventType.OBSERVATION)
+    event_type: Literal[IngressEventType.OBSERVATION] = IngressEventType.OBSERVATION
     source_adapter_id: str = Field(min_length=1)
     source_reliability_band: int = Field(ge=0, le=5)
     magnitude_normalized: float = Field(ge=0.0, le=1.0, allow_inf_nan=False)
@@ -139,7 +140,7 @@ class HumanIntentEvent(IngressEventBase):
     observer/provenance side under M1 audit discipline.
     """
 
-    event_type: IngressEventType = Field(default=IngressEventType.HUMAN_INTENT)
+    event_type: Literal[IngressEventType.HUMAN_INTENT] = IngressEventType.HUMAN_INTENT
     intent_text_hash: str = Field(min_length=1)
     ambiguity_score: float = Field(ge=0.0, le=1.0, allow_inf_nan=False)
     human_confirmed: bool
@@ -152,7 +153,7 @@ class InternalShockEvent(IngressEventBase):
     compiler cannot be spammed (N §17).
     """
 
-    event_type: IngressEventType = Field(default=IngressEventType.INTERNAL_SHOCK)
+    event_type: Literal[IngressEventType.INTERNAL_SHOCK] = IngressEventType.INTERNAL_SHOCK
     shock_source: ShockSource
     severity: ShockSeverity
     refractory_key: str = Field(min_length=1)
@@ -166,7 +167,7 @@ class RecallEvent(IngressEventBase):
     string here and let the memory schema (next phase) define the enum.
     """
 
-    event_type: IngressEventType = Field(default=IngressEventType.RECALL)
+    event_type: Literal[IngressEventType.RECALL] = IngressEventType.RECALL
     source_record_id: str = Field(min_length=1)
     record_status: RecallRecordStatus
     subject_class: str = Field(min_length=1)

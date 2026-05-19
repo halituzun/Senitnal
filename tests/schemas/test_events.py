@@ -321,3 +321,80 @@ class TestImmutable:
         )
         with pytest.raises(ValidationError):
             setattr(evt, "severity", ShockSeverity.LOW)  # noqa: B010
+
+
+# ---------------------------------------------------------------------------
+# Discriminator invariant — envelope cannot wear another envelope's event_type
+# ---------------------------------------------------------------------------
+
+
+class TestEventTypeDiscriminatorFixed:
+    """Each envelope's event_type is a Literal — wrong values rejected.
+
+    This pins the schema invariant: ObservationEvent cannot pretend to be
+    a RecallEvent (and vice versa) by overriding event_type at construction.
+    """
+
+    def test_observation_event_rejects_wrong_event_type(self) -> None:
+        with pytest.raises(ValidationError):
+            ObservationEvent.model_validate(
+                {
+                    "event_type": "RecallEvent",
+                    "event_id": "evt-0001",
+                    "occurred_at_ms": 1,
+                    "ttl_ms": 1,
+                    "confidence": 0.5,
+                    "source_adapter_id": "echo",
+                    "source_reliability_band": 3,
+                    "magnitude_normalized": 0.4,
+                    "novelty_indicator": 0.2,
+                    "staleness_ms": 0,
+                }
+            )
+
+    def test_human_intent_event_rejects_wrong_event_type(self) -> None:
+        with pytest.raises(ValidationError):
+            HumanIntentEvent.model_validate(
+                {
+                    "event_type": "ObservationEvent",
+                    "event_id": "evt-0001",
+                    "occurred_at_ms": 1,
+                    "ttl_ms": 1,
+                    "confidence": 0.5,
+                    "intent_text_hash": "sha256:abc",
+                    "ambiguity_score": 0.3,
+                    "human_confirmed": True,
+                }
+            )
+
+    def test_internal_shock_event_rejects_wrong_event_type(self) -> None:
+        with pytest.raises(ValidationError):
+            InternalShockEvent.model_validate(
+                {
+                    "event_type": "HumanIntentEvent",
+                    "event_id": "evt-0001",
+                    "occurred_at_ms": 1,
+                    "ttl_ms": 1,
+                    "confidence": 0.5,
+                    "shock_source": "deontic_gate",
+                    "severity": "high",
+                    "refractory_key": "deontic:bypass_attempt",
+                }
+            )
+
+    def test_recall_event_rejects_wrong_event_type(self) -> None:
+        with pytest.raises(ValidationError):
+            RecallEvent.model_validate(
+                {
+                    "event_type": "InternalShockEvent",
+                    "event_id": "evt-0001",
+                    "occurred_at_ms": 1,
+                    "ttl_ms": 1,
+                    "confidence": 0.5,
+                    "source_record_id": "rec-001",
+                    "record_status": "verified",
+                    "subject_class": "source_trust",
+                    "age_ms": 0,
+                    "contradiction_risk": 0.0,
+                }
+            )
