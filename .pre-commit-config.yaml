@@ -1,0 +1,40 @@
+# Sentinel pre-commit hooks
+# Constitutional discipline: every commit passes lint + type check + invariants.
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright (strict type check)
+        entry: uv run pyright
+        language: system
+        types: [python]
+        pass_filenames: false
+        require_serial: true
+
+      - id: pytest-fast
+        name: pytest (fast suite)
+        entry: uv run pytest -x --no-header -q
+        language: system
+        pass_filenames: false
+        require_serial: true
+        stages: [pre-commit]
+
+      - id: forbidden-imports
+        name: forbidden imports (constitutional)
+        entry: bash -c '! grep -RE "^\s*(import|from)\s+(ccxt|openai|anthropic|langchain|web3|binance|btcturk)" sentinel/ tests/ 2>/dev/null'
+        language: system
+        pass_filenames: false
+
+      - id: forbidden-outputs
+        name: forbidden outputs (no BUY/SELL/EXECUTE)
+        entry: bash -c '! grep -RE "\"(BUY|SELL|EXECUTE_REAL|ORDER_SUBMIT)\"" sentinel/ 2>/dev/null'
+        language: system
+        pass_filenames: false

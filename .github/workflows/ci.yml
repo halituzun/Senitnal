@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Ruff lint
+        run: uv run ruff check .
+
+      - name: Ruff format check
+        run: uv run ruff format --check .
+
+      - name: Pyright type check
+        run: uv run pyright
+
+      - name: Pytest
+        run: uv run pytest
+
+      - name: Forbidden imports (constitutional)
+        run: |
+          # Madde 6: no LLM client libraries in MVP
+          # DEONTIC §8 Rule 1: no exchange API libraries in MVP
+          ! grep -RE "^\s*(import|from)\s+(ccxt|openai|anthropic|langchain|web3|binance|btcturk)" \
+              sentinel/ tests/ 2>/dev/null || (echo "FORBIDDEN IMPORT detected" && exit 1)
+
+      - name: Forbidden outputs (constitutional)
+        run: |
+          # MVP output set: {WAIT, BLOCK, MONITOR, NEED_RECALL, NO_ACTION}
+          # BUY / SELL / EXECUTE_REAL / ORDER_SUBMIT never appear as string literals
+          ! grep -RE "\"(BUY|SELL|EXECUTE_REAL|ORDER_SUBMIT)\"" sentinel/ 2>/dev/null \
+              || (echo "FORBIDDEN OUTPUT string literal detected" && exit 1)

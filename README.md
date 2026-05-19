@@ -84,7 +84,46 @@ Bu soruları sormayan sistem AGI değil, sadece otomasyondur.
 
 ---
 
-## Mevcut durum — Conceptual Documentation Phase
+## Mevcut durum — Build Phase (MVB)
+
+**Conceptual + numerics design phase kapandı.** 22 frozen draft v0.1 belge
++ 2 review + 1 build plan tamamlandı. **Implementation başladı.**
+
+Şu an: **Minimum Viable Brain (MVB)** inşası.
+
+```
+Implementation status:
+  ✓ Commit 1:  Project skeleton (pyproject.toml + CI + sentinel/ package layout)
+  ⏳ Phase 1:  Contracts as Code (Pydantic schemas + invariant test suite)
+  ⏳ Phase 2:  Observer Ledger (M1 JSONL + hash-chain)
+  ⏳ Phase 3:  Numerics Loader (8 dev fixtures + validation)
+  ⏳ Phase 4:  Ingress Compiler skeleton
+  ⏳ Phase 5:  Minimal M0 Tissue
+  ⏳ Phase 6:  Workspace Pulse
+  ⏳ Phase 7:  Gates (Deontic + Memory Write stubs)
+  ⏳ Phase 8:  Recall Skeleton
+  ⏳ Phase 9:  EchoAdapter
+  ⏳ Phase 10: End-to-end Dry Simulation
+```
+
+### MVP red lines (CI-enforced)
+
+```
+- No BUY/SELL/EXECUTE outputs (output set: {WAIT, BLOCK, MONITOR, NEED_RECALL, NO_ACTION})
+- No live exchange APIs (ccxt/binance/btcturk dependencies forbidden)
+- No LLM integration (openai/anthropic/langchain forbidden — Madde 6)
+- No M2 verified production (candidate-only writes in MVP)
+- No replay-driven memory update (replay engine DEFERRED)
+- No cross-instance / fork / migration paths
+```
+
+### Build references
+
+- [`docs/build/0001-minimum-viable-brain-plan.md`](./docs/build/0001-minimum-viable-brain-plan.md) — 10-phase implementation roadmap
+- [`docs/reviews/0001-phase-closure-consistency-review.md`](./docs/reviews/0001-phase-closure-consistency-review.md) — 22 belge cross-document GREEN
+- [`docs/reviews/0002-implementation-readiness.md`](./docs/reviews/0002-implementation-readiness.md) — readiness labels + open questions triage
+
+### Design phase — Tamamlanmış (22 belge frozen draft v0.1)
 
 **Henüz kod yok ve uzun süre olmayacak.** Proje şu an mimari ve felsefi tasarım aşamasındadır. Düşünmek, konuşmak, belgelemek; sonra inşa etmek. Bütün belgeler **Frozen Draft v0.1 / no implementation authority** statüsündedir — kod bunlardan değil, sonraki implementation belgelerinden türetilecektir.
 
