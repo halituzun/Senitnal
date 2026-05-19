@@ -57,8 +57,10 @@ Sistemin **tarihinin kanıt defteri**.
 
 **Köprü mekaniği:** Bir olay coarse-grain log'a yazıldığı an, ilgili fine-grain pencere snapshot olarak kalıcılaşır.
 
-**Coarse-grain log'a giren tipik event'ler:**
-`SPIKE_BURST`, `ASSEMBLY_CANDIDATE_BORN`, `ASSEMBLY_STABILIZED`, `ASSEMBLY_MERGED`, `ASSEMBLY_SPLIT`, `ASSEMBLY_SUPPRESSED`, `ASSEMBLY_RECALLED`, `ASSEMBLY_PROMOTED_TO_IDEA`, `ASSEMBLY_DECAYED`, `ASSEMBLY_PRUNED`, `CONTRADICTION_PEAK`, `INTENTION_FORMED`, `INTENTION_SUPPRESSED`, `DEONTIC_BLOCKED`, `DEONTIC_BYPASS_ATTEMPT`, `MEMORY_WRITE_PROPOSED`, `MEMORY_WRITE_GATE_PASSED`, `MEMORY_WRITE_GATE_REJECTED`, `RECALL_REQUEST_SENT`, `RECALL_EVENT_INGESTED`, `OUTCOME_RECEIVED`, `WAKE_TO_SLEEP_TRANSITION`, `SLEEP_TO_WAKE_TRANSITION`, `REPLAY_SESSION_COMPLETED`, `SELF_GENESIS` (bir kez, doğumda).
+**Coarse-grain log'a giren tipik event'ler (canonical):**
+`SPIKE_BURST`, `ASSEMBLY_CANDIDATE_BORN`, `ASSEMBLY_STABILIZED`, `ASSEMBLY_MERGED`, `ASSEMBLY_SPLIT`, `ASSEMBLY_SUPPRESSED`, `ASSEMBLY_RECALLED`, `ASSEMBLY_PROMOTED_TO_IDEA`, `ASSEMBLY_DECAYED`, `ASSEMBLY_PRUNED`, `CONTRADICTION_PEAK`, `INTENTION_FORMED`, `INTENTION_SUPPRESSED`, `WORKSPACE_PULSE`, `DEONTIC_BLOCKED`, `DEONTIC_BYPASS_ATTEMPT`, `DEONTIC_POLICY_STATUS_CHANGED`, `KILL_SWITCH_ACTIVATED`, `MEMORY_WRITE_PROPOSED`, `MEMORY_RECORD_STATUS_CHANGED`, `M2_FOREIGN_MERGE_STATUS_CHANGED`, `RECALL_REQUEST_SENT`, `RECALL_EVENT_INGESTED`, `OUTCOME_RECEIVED`, `WAKE_TO_SLEEP_TRANSITION`, `SLEEP_TO_WAKE_TRANSITION`, `REPLAY_SESSION_STATUS_CHANGED`, `SELF_GENESIS` (bir kez, doğumda), `CONSTITUTIONAL_SHIFT_APPLIED`, `BACKUP_ARTIFACT_STATUS_CHANGED`, `RESTORE_OPERATION_STATUS_CHANGED`, `FORGETTING_ATTACK_SUSPECTED`.
+
+> *Tam event catalog ve permanence policy için bkz. [`OBSERVER_LEDGER_SCHEMA.md`](./OBSERVER_LEDGER_SCHEMA.md) §10 ve §19. Eski isimler (`MEMORY_WRITE_GATE_PASSED/REJECTED`, `REPLAY_SESSION_COMPLETED`) canonical değildir; `MEMORY_RECORD_STATUS_CHANGED` ve `REPLAY_SESSION_STATUS_CHANGED` altında `old_status`/`new_status` field'larıyla yaşar.*
 
 - **Yazıcı:** Sadece sistemin kendisi (observer dinler ve yazar, sormaz, müdahale etmez).
 - **Okuyucu:** İnsanlar (audit), LLM tercüman (rapor), explicit memory adapter (özet üretmek için).
@@ -82,15 +84,38 @@ M2 kayıtları `subject_class` alanı ile alt-türlenebilir. Yeni hafıza katman
 
 ```
 subject_class:
-  - episodic         (insan/sistem olay kayıtları)
-  - structured_fact  (kalıcı dünya bilgileri)
-  - procedural       (lookup tabloları, compatibility matrix)
-  - incident         (anlık olaylar, hatalar)
-  - source_trust     (kaynak güvenirlik kayıtları — bkz. WORLD_INGRESS §16)
-  - adapter_trust    (uzuv güvenirlik kayıtları — bkz. ADAPTER_MANIFEST_SPEC §11)
-  - deontic_policy   (operasyonel hard-stop eşikleri — bkz. DEONTIC_GATE §7)
-  - bootstrap_reference (kuruluş referansları — bkz. BOOTSTRAP_GENOME §20)
+  - episodic                       (insan/sistem olay kayıtları)
+  - structured_fact                (kalıcı dünya bilgileri)
+  - procedural                     (lookup tabloları, compatibility matrix)
+  - incident                       (anlık olaylar, hatalar)
+  - source_trust                   (kaynak güvenirlik kayıtları — bkz. WORLD_INGRESS §16)
+  - adapter_trust                  (uzuv güvenirlik kayıtları — bkz. ADAPTER_MANIFEST_SPEC §11)
+  - adapter_manifest_reference     (signed adapter manifest ref'leri)
+  - deontic_policy                 (operasyonel hard-stop eşikleri — bkz. DEONTIC_GATE §7)
+  - bootstrap_reference            (kuruluş referansları — bkz. BOOTSTRAP_GENOME §20)
+  - signed_administrative_reference (imzalı yönetimsel ref'ler)
+  - operator_decision_record       (insan eylem kayıtları — bkz. MEMORY_WRITE_GATE §15)
+  - incident_human_record          (insan-bildirimli olay kayıtları)
+  - deontic_kill_switch_action_record (kill-switch eylem kayıtları)
+  - narrative_claim                (anlatı; self-deception riskine tabi)
+  - causal_explanation             (neden iddiası; self-deception riskine tabi)
+  - decision_rationale             (karar gerekçesi; self-deception riskine tabi)
 ```
+
+### M2 provenance
+
+M2 kayıtlarının provenance tipleri:
+
+```
+provenance:
+  human                       (insan tarafından doğrudan yazılmış)
+  observer                    (observer summarizer üretti — bkz. OBSERVER_LEDGER §5)
+  system                      (sistem kendi öğrenme süreçleriyle)
+  genesis                     (doğum sırasında bootstrap M2 injection)
+  foreign_instance_origin     (başka Sentinel instance'ından import edilmiş — bkz. BACKUP_STRATEGY §18)
+```
+
+> *`foreign_instance_origin` native provenance değildir. Her zaman `foreign_instance_id`, `foreign_record_id`, `original_provenance`, `imported_at` ve `import_status` ile birlikte taşınır. Foreign record kalıcı olarak foreign provenance taşır; native episodic memory'ye dönüşemez.*
 
 `SourceTrustRecord` (`subject_class = "source_trust"`) bu mekanizmanın ilk somut örneğidir. Yeni katman değildir; M2'nin bir alt-tipidir. CandidateMemoryRecord statü zinciri (§10) aynen geçerlidir.
 
@@ -115,7 +140,19 @@ LLM'in **konuşma bağlamı**.
 | M2 | Bilgi eksilir, kimlik korunur | Standart DB backup |
 | M3 | Konuşma tarzı sıfırlanır, kimlik dokunulmaz | Yedeklenmek zorunda değil |
 
-**M0 + M1 = ruh + tarih.** Restore stratejisi bu ikisi üzerine kurulur. Bir M0+M1 snapshot'undan dönen sistem **aynı varlık** sayılır; sadece M0 boş restore edilirse **yeni doğum** olur.
+**M0 + M1 = ruh + tarih.** Restore stratejisi bu ikisi üzerine kurulur.
+
+### Restore identity matrix
+
+| Restore senaryosu | Sonuç birth_mode | Identity continuity |
+|-------------------|------------------|---------------------|
+| M0 + M1 birlikte restore | `restore_birth` | **Aynı varlık devam eder** |
+| M0 var, M1 kayıp | `restore_with_missing_history` | **Degraded identity** (audit broken, operational restricted) |
+| M1 var, M0 kayıp | Yeni varlık (`clean_birth`) | **Tarih var ama varlık yok**; eski tarih sadece foreign audit |
+| M2 restore | Yan etki | **Bilgi restore, kimlik restore değil** |
+| M3 restore | Yan etki | **Konuşma kabuğu, kimlik değil** |
+
+> *Tam restore matrix, modular artifacts + RestoreManifest, foreign M2 merge kuralları, fork_birth/migration_birth detayları ve forgetting attack defense için bkz. [`BACKUP_STRATEGY.md`](./BACKUP_STRATEGY.md).*
 
 ---
 
