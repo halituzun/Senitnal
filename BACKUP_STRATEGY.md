@@ -176,6 +176,8 @@ RestoreManifest (atomic composition for a restore point)
 
 > *Restore sırasında numerics versioning ve sessiz uygulama yasağı için bkz. [`NUMERICS_GOVERNANCE.md`](./NUMERICS_GOVERNANCE.md) §19. RestoreManifest restore anındaki numerics ref'lerini taşır; sonraki numerics değişimleri ayrı workflow gerektirir.*
 
+> *Replay budget continuity için bkz. [`REPLAY_PROTOCOL_NUMERICS.md`](./REPLAY_PROTOCOL_NUMERICS.md) §7. **Restore sonrası replay budget reset YOK** — `max_sessions_per_cycle` ve `max_sessions_per_24h_window` sayaçları M1 segment'lerinden devralınır. Bu olmadan restore forgetting attack vektörüne (§22) replay spam kapısı açar.*
+
 ### Kritik kural
 
 > *Restore loads a RestoreManifest, not loose backup files.*

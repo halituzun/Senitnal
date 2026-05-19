@@ -855,6 +855,8 @@ Subsequent blocks under active kill_switch:
 
 J §13-15'in numerics tarafı. M0 ingress_calibration_traces'in drift sınırları.
 
+> *Replay'in compiler'a katkısı için bkz. [`REPLAY_PROTOCOL_NUMERICS.md`](./REPLAY_PROTOCOL_NUMERICS.md) §13: `ingress_calibration_replay_delta_cap <= per_mapping_daily_delta_cap × 0.30`. Replay N'in drift cap'lerini back-door'dan gevşetemez; N artifact'i replay'in cap'idir.*
+
 ```
 per_mapping_delta_cap (daily):           ~0.05    # tek mapping günde max %5 kayar
 per_payload_delta_cap (daily):           ~0.10    # tek payload kategorisi günde max %10

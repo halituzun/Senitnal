@@ -240,6 +240,8 @@ Her trigger M1'e `REPLAY_SESSION_STATUS_CHANGED` (new_status: requested) olarak 
 
 ## 9. Replay Budget and Cooldown
 
+> *Bu bölümün sayısal değerleri `REPLAY_PROTOCOL_NUMERICS.md` §5-7'de (max_session_duration_ms, max_events_per_session, max_counterfactual_branches, replay_cooldown_ms, fatigue_accum_rate, max_sessions_per_cycle + per_24h_window). Restore sonrası budget reset yok — M1 segment'inden devralınır (NUMERICS §7).*
+
 ### Budget components
 
 ```
@@ -546,6 +548,8 @@ Forbidden:
 
 ## 15. Counterfactual Ablation Rules
 
+> *Sayısal sınırlar `REPLAY_PROTOCOL_NUMERICS.md` §8-9: higher_order_ablation_max_order = 2 (v0.1 constitutional invariant, `forbidden` change_class), max_single_variable_ablations_per_session, max_pairwise_ablations_per_session ≤ single × 0.5 (computed dependency), pairwise_causal_link_score_min eşiği.*
+
 ### Principle
 
 > *Counterfactual replay = bounded ablation over recorded traces.*
@@ -618,6 +622,8 @@ CounterfactualAblationPerformedEvent
 ---
 
 ## 16. Replay Survival Score
+
+> *Sayısal eşikler `REPLAY_PROTOCOL_NUMERICS.md` §14, §16-17: min_replay_survival_score_for_evidence, min_replay_survival_sessions ≥ 2, min_session_separation_ms, max_replay_survival_weight_in_verification < outcome_alignment_weight_in_verification (real evidence dominance, computed dependency).*
 
 ### Tanım
 
