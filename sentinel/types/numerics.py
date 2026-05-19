@@ -4,8 +4,9 @@ Per NUMERICS_GOVERNANCE.md §6-12 and the patch rounds applied through
 phase closure:
 
 This module pins the closed enumerations (Commit 7a), the
-AllowedRange + NumericDependency schemas (Commit 7b), and the
-NumericEntry schema (Commit 7c). NumericsArtifact lands in 7d.
+AllowedRange + NumericDependency schemas (Commit 7b), the
+NumericEntry schema (Commit 7c), and the NumericsArtifact
+container (Commit 7d) that completes the Phase 1 numerics schema.
 
 Constitutional discipline:
     - Each enum is a closed set; widening requires spec revision
@@ -21,14 +22,25 @@ Constitutional discipline:
     - NumericEntry enforces M §9 no-default rule (12 required fields,
       `dependencies` may be `()` but the field itself is required) and
       schema-level value/unit/allowed_range compatibility
+    - NumericsArtifact bundles entries belonging to one spec_family;
+      enforces non-empty entries, unique keys, spec_family consistency
+      between artifact and entries, and the dev_only ↔ fixture_purpose
+      two-way invariant. `signed=False` with `dev_only=False` is
+      accepted at the schema layer (signature policy is a loader
+      concern landing in Phase 3)
+    - CompatibilityClass is intentionally narrower than ChangeClass:
+      it carries the artifact-level change posture (clarification /
+      safety_tightening / safety_weakening / genesis_affecting). It
+      does NOT include `constitutional_amendment` — amendments are a
+      separate workflow, not a compatibility class on a numerics
+      artifact
 
 What this module deliberately does NOT contain:
-    - NumericsArtifact (Commit 7d)
-    - CompatibilityClass (Commit 7d alongside artifact metadata)
     - No-default rule enforcement at the loader (Phase 3)
     - Dependency expression evaluation (Phase 3 validator)
     - Cycle detection in dependencies (Phase 3)
     - Cross-key dependency resolution (Phase 3)
+    - Signature verification (Phase 3 loader)
 """
 
 from __future__ import annotations
@@ -467,4 +479,81 @@ class NumericEntry(BaseModel):
                 "Both change_class fields FORBIDDEN require AllowedRangeSingle "
                 "(constitutional immutable invariant)"
             )
+        return self
+
+
+class CompatibilityClass(StrEnum):
+    """Artifact-level change posture per M §8.
+
+    Closed set of 4 values. Does NOT include `constitutional_amendment`:
+    amendments are a separate workflow (see governance docs), not a
+    compatibility class flag on a numerics artifact.
+    """
+
+    CLARIFICATION = "clarification"
+    SAFETY_TIGHTENING = "safety_tightening"
+    SAFETY_WEAKENING = "safety_weakening"
+    GENESIS_AFFECTING = "genesis_affecting"
+
+
+class NumericsArtifact(BaseModel):
+    """A numerics artifact bundling all NumericEntry rows for one spec_family.
+
+    Schema-layer invariants enforced:
+        - artifact_type is the literal "numerics_artifact" discriminator
+        - entries non-empty
+        - keys unique across entries
+        - every entry.spec_family equals artifact.spec_family
+        - dev_only ↔ fixture_purpose two-way:
+            * dev_only=True  → fixture_purpose required (non-empty)
+            * dev_only=False → fixture_purpose must be None
+        - signed=False with dev_only=False is ACCEPTED here; signature
+          policy is loader-side (Phase 3)
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True, strict=True)
+
+    artifact_type: Literal["numerics_artifact"] = "numerics_artifact"
+    spec_family: SpecFamily
+    owning_spec_ref: str = Field(min_length=1)
+    numerics_version: str = Field(min_length=1)
+    compatibility_class: CompatibilityClass
+    signed: bool
+    dev_only: bool
+    fixture_purpose: str | None
+    entries: tuple[NumericEntry, ...]
+
+    @model_validator(mode="after")
+    def _validate_entries_non_empty(self) -> Self:
+        if len(self.entries) == 0:
+            raise ValueError("entries must contain at least one NumericEntry")
+        return self
+
+    @model_validator(mode="after")
+    def _validate_unique_keys(self) -> Self:
+        seen: set[str] = set()
+        for entry in self.entries:
+            if entry.key in seen:
+                raise ValueError(f"duplicate entry key: {entry.key}")
+            seen.add(entry.key)
+        return self
+
+    @model_validator(mode="after")
+    def _validate_spec_family_consistency(self) -> Self:
+        for entry in self.entries:
+            if entry.spec_family is not self.spec_family:
+                raise ValueError(
+                    f"entry {entry.key!r} spec_family={entry.spec_family.value!r} "
+                    f"does not match artifact spec_family={self.spec_family.value!r}"
+                )
+        return self
+
+    @model_validator(mode="after")
+    def _validate_dev_only_fixture_purpose(self) -> Self:
+        if self.dev_only:
+            if self.fixture_purpose is None or self.fixture_purpose == "":
+                raise ValueError("dev_only=True requires non-empty fixture_purpose")
+        else:
+            if self.fixture_purpose is not None:
+                raise ValueError("dev_only=False forbids fixture_purpose; must be None")
         return self
