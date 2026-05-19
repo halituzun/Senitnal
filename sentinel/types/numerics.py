@@ -1,11 +1,11 @@
-"""Numerics governance enums and dependency models.
+"""Numerics governance enums, ranges, dependencies, and entry schema.
 
 Per NUMERICS_GOVERNANCE.md §6-12 and the patch rounds applied through
 phase closure:
 
-This module pins the closed enumerations (Commit 7a) and the
-AllowedRange + NumericDependency schemas (Commit 7b) that every numerics
-artifact must use. NumericEntry and NumericsArtifact land in 7c → 7d.
+This module pins the closed enumerations (Commit 7a), the
+AllowedRange + NumericDependency schemas (Commit 7b), and the
+NumericEntry schema (Commit 7c). NumericsArtifact lands in 7d.
 
 Constitutional discipline:
     - Each enum is a closed set; widening requires spec revision
@@ -18,14 +18,17 @@ Constitutional discipline:
       use the `single` variant
     - NumericDependency enforces conditional factor / expression presence
       depending on relationship type
+    - NumericEntry enforces M §9 no-default rule (12 required fields,
+      `dependencies` may be `()` but the field itself is required) and
+      schema-level value/unit/allowed_range compatibility
 
 What this module deliberately does NOT contain:
-    - NumericEntry (Commit 7c)
     - NumericsArtifact (Commit 7d)
     - CompatibilityClass (Commit 7d alongside artifact metadata)
-    - No-default rule enforcement (Phase 3 loader)
+    - No-default rule enforcement at the loader (Phase 3)
     - Dependency expression evaluation (Phase 3 validator)
     - Cycle detection in dependencies (Phase 3)
+    - Cross-key dependency resolution (Phase 3)
 """
 
 from __future__ import annotations
@@ -286,4 +289,182 @@ class NumericDependency(BaseModel):
             if self.factor is not None:
                 raise ValueError(f"relationship {rel.value!r} forbids `factor`")
 
+        return self
+
+
+# ---------------------------------------------------------------------------
+# NumericEntry — per M §8 no-default rule
+# ---------------------------------------------------------------------------
+
+
+# Value union covers every NumericUnit variant including enum_set (tuple of
+# canonical strings). Order matters for Pydantic strict-mode dispatch —
+# bool comes before int because bool is a subclass of int, and tuple comes
+# last so scalars take precedence.
+NumericValue = bool | int | float | str | tuple[str, ...]
+
+
+_INT_UNITS: frozenset[NumericUnit] = frozenset(
+    {NumericUnit.COUNT, NumericUnit.MS, NumericUnit.BYTES}
+)
+_FLOAT_UNITS: frozenset[NumericUnit] = frozenset({NumericUnit.RATIO, NumericUnit.PERCENTAGE})
+_STR_UNITS: frozenset[NumericUnit] = frozenset({NumericUnit.ENUM, NumericUnit.BAND_NAME})
+
+
+def _value_type_compatible(value: NumericValue, unit: NumericUnit) -> bool:
+    """Check that a value's concrete Python type matches the declared unit."""
+    if unit is NumericUnit.BOOL:
+        return type(value) is bool
+    if unit in _INT_UNITS:
+        return type(value) is int  # exclude bool, which is an int subclass
+    if unit in _FLOAT_UNITS:
+        if type(value) is bool:
+            return False
+        return isinstance(value, int | float) and (
+            not isinstance(value, float) or math.isfinite(value)
+        )
+    if unit in _STR_UNITS:
+        return isinstance(value, str)
+    if unit is NumericUnit.ENUM_SET:
+        # Pydantic strict mode has already validated `tuple[str, ...]` shape
+        # at the field-coercion boundary; here we only need to confirm the
+        # value reached this validator as a tuple rather than as a scalar.
+        return isinstance(value, tuple)
+    return False  # exhaustive
+
+
+def _value_in_min_max(value: NumericValue, rng: AllowedRangeMinMax) -> bool:
+    if not isinstance(value, int | float) or isinstance(value, bool):
+        return False
+    return rng.min <= value <= rng.max
+
+
+def _value_in_set(value: NumericValue, rng: AllowedRangeSet) -> bool:
+    return value in rng.values
+
+
+def _enum_set_in_set(value: tuple[str, ...], rng: AllowedRangeSet) -> bool:
+    """Every member of the entry's tuple must appear in the allowed set."""
+    return all(item in rng.values for item in value)
+
+
+def _value_equal_single(value: NumericValue, rng: AllowedRangeSingle) -> bool:
+    return value == rng.value
+
+
+class NumericEntry(BaseModel):
+    """One numeric entry in a NumericsArtifact (M §8 — no-default rule).
+
+    Every field is required at construction time. `dependencies` may be
+    an empty tuple `()`, but the field itself must be supplied by the
+    caller — no implicit default applies to absent declaration.
+
+    Schema-level guarantees (validators):
+        - value's concrete Python type matches the declared unit
+          (bool ↔ BOOL; int ↔ COUNT/MS/BYTES; int|float ↔ RATIO/PERCENTAGE;
+           str ↔ ENUM/BAND_NAME; tuple[str, ...] ↔ ENUM_SET)
+        - value is inside allowed_range:
+            MinMax  → min <= value <= max
+            Set     → value (scalar) OR every value-member (enum_set) ∈ values
+            Single  → value == range.value
+        - enum_set requires AllowedRangeSet; non-empty; no duplicates
+        - Constitutional immutable consistency:
+            single allowed_range ⇔ both change_class fields == FORBIDDEN
+            (one without the other is a schema error)
+
+    What this entry does NOT validate (later phases):
+        - Cross-key dependency resolution (Phase 3 loader)
+        - Dependency expression semantic correctness (Phase 3)
+        - Cycle detection across entries (Phase 3)
+        - Sign of change_class against directionality (artifact-level
+          governance check; may live in Phase 3 or as a separate
+          numerics validator extension)
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True, strict=True)
+
+    key: str = Field(min_length=1)
+    value: NumericValue
+    unit: NumericUnit
+    allowed_range: AllowedRange
+    directionality: Directionality
+    change_class_if_increased: ChangeClass
+    change_class_if_decreased: ChangeClass
+    requires_human_approval: bool
+    dependencies: tuple[NumericDependency, ...]
+    numeric_risk_family: NumericRiskFamily
+    spec_family: SpecFamily
+    owning_spec_ref: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _validate_value_unit_compatibility(self) -> Self:
+        if not _value_type_compatible(self.value, self.unit):
+            raise ValueError(
+                f"value type {type(self.value).__name__!r} is incompatible "
+                f"with unit {self.unit.value!r}"
+            )
+        # Extra check for enum_set: non-empty + no duplicates
+        if self.unit is NumericUnit.ENUM_SET:
+            assert isinstance(self.value, tuple)  # narrowed by _value_type_compatible
+            if len(self.value) == 0:
+                raise ValueError("enum_set value must be non-empty")
+            if len(set(self.value)) != len(self.value):
+                raise ValueError("enum_set value must not contain duplicates")
+        return self
+
+    @model_validator(mode="after")
+    def _validate_value_in_allowed_range(self) -> Self:
+        rng = self.allowed_range
+
+        if isinstance(rng, AllowedRangeMinMax):
+            if not _value_in_min_max(self.value, rng):
+                raise ValueError(
+                    f"value {self.value!r} not in min_max range [{rng.min}, {rng.max}]"
+                )
+        elif isinstance(rng, AllowedRangeSet):
+            if self.unit is NumericUnit.ENUM_SET:
+                assert isinstance(self.value, tuple)
+                if not _enum_set_in_set(self.value, rng):
+                    raise ValueError(
+                        f"enum_set value {self.value!r} contains members "
+                        f"outside the allowed set {rng.values!r}"
+                    )
+            else:
+                if not _value_in_set(self.value, rng):
+                    raise ValueError(f"value {self.value!r} not in allowed set {rng.values!r}")
+        elif not _value_equal_single(self.value, rng):
+            # rng narrowed to AllowedRangeSingle (only remaining variant)
+            raise ValueError(
+                f"value {self.value!r} does not match single allowed value {rng.value!r}"
+            )
+
+        return self
+
+    @model_validator(mode="after")
+    def _validate_enum_set_requires_set_range(self) -> Self:
+        if self.unit is NumericUnit.ENUM_SET and not isinstance(
+            self.allowed_range, AllowedRangeSet
+        ):
+            raise ValueError("unit=enum_set requires allowed_range of kind 'set'")
+        return self
+
+    @model_validator(mode="after")
+    def _validate_constitutional_immutable_consistency(self) -> Self:
+        is_single = isinstance(self.allowed_range, AllowedRangeSingle)
+        both_forbidden = (
+            self.change_class_if_increased is ChangeClass.FORBIDDEN
+            and self.change_class_if_decreased is ChangeClass.FORBIDDEN
+        )
+
+        if is_single and not both_forbidden:
+            raise ValueError(
+                "AllowedRangeSingle requires both change_class_if_increased "
+                "and change_class_if_decreased to be FORBIDDEN "
+                "(constitutional immutable invariant)"
+            )
+        if both_forbidden and not is_single:
+            raise ValueError(
+                "Both change_class fields FORBIDDEN require AllowedRangeSingle "
+                "(constitutional immutable invariant)"
+            )
         return self
