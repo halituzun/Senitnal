@@ -232,6 +232,22 @@ CANONICAL_EVENT_CATALOG: tuple[CanonicalEventDefinition, ...] = (
         severity_band=SeverityBand.LOW,
         source_ref="OBSERVER_LEDGER_SCHEMA.md §17",
     ),
+    CanonicalEventDefinition(
+        event_type="NUMERICS_VERSION_MISMATCH_DETECTED",
+        event_family=EventFamily.LEDGER_META,
+        permanence=EventPermanence.PERMANENT,
+        human_alert_required=False,
+        severity_band=SeverityBand.HIGH,
+        source_ref="NUMERICS_GOVERNANCE.md §13 + OBSERVER_LEDGER_NUMERICS.md §6",
+    ),
+    CanonicalEventDefinition(
+        event_type="NUMERICS_FAILSAFE_ACTIVATED",
+        event_family=EventFamily.LEDGER_META,
+        permanence=EventPermanence.PERMANENT_WITH_SNAPSHOT,
+        human_alert_required=True,
+        severity_band=SeverityBand.CRITICAL,
+        source_ref="NUMERICS_GOVERNANCE.md §13 + OBSERVER_LEDGER_NUMERICS.md §7",
+    ),
     # ---- REPLAY -----------------------------------------------------------
     CanonicalEventDefinition(
         event_type="REPLAY_SESSION_STATUS_CHANGED",
