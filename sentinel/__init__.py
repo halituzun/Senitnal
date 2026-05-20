@@ -111,6 +111,29 @@ from sentinel.gates.deontic import (
     evaluate_action,
     evaluate_action_with_audit,
 )
+from sentinel.governance.approval import (
+    HumanApprovalRecord,
+    HumanApprovalStatus,
+    is_human_approval_valid,
+)
+from sentinel.governance.decision import (
+    GovernanceDecisionKind,
+    GovernanceReason,
+    LiveGovernanceDecision,
+)
+from sentinel.governance.guard import (
+    GovernanceGuardContext,
+    evaluate_governance_guard,
+)
+from sentinel.governance.request import (
+    GovernanceRequestKind,
+    LiveGovernanceRequest,
+)
+from sentinel.governance.scope import (
+    GovernanceEnvironment,
+    GovernanceScopeKind,
+    LimitedLiveGovernanceScope,
+)
 from sentinel.integrations.gelal_jsonl import GelAlShadowJsonlAdapter
 from sentinel.integrations.gelal_sanitizer import (
     build_gelal_shadow_audit_payload,
@@ -231,6 +254,10 @@ from sentinel.runtime.gelal_shadow import (
     GelAlShadowBatchResult,
     run_gelal_shadow_file,
 )
+from sentinel.runtime.live_governance import (
+    LiveGovernanceBatchResult,
+    run_live_governance_file,
+)
 from sentinel.runtime.market_replay import (
     MarketReplayResult,
     run_market_jsonl_file,
@@ -294,6 +321,14 @@ __all__ = [
     "GelAlShadowEvaluationResult",
     "GelAlShadowEventType",
     "GelAlShadowJsonlAdapter",
+    "GovernanceDecisionKind",
+    "GovernanceEnvironment",
+    "GovernanceGuardContext",
+    "GovernanceReason",
+    "GovernanceRequestKind",
+    "GovernanceScopeKind",
+    "HumanApprovalRecord",
+    "HumanApprovalStatus",
     "InMemoryExplicitMemoryStore",
     "InMemoryPolicyStore",
     "InvariantCategory",
@@ -302,7 +337,11 @@ __all__ = [
     "InvariantViolation",
     "JsonlObserverLedger",
     "LatencyPatternPayload",
+    "LimitedLiveGovernanceScope",
     "LiquidityConditionPayload",
+    "LiveGovernanceBatchResult",
+    "LiveGovernanceDecision",
+    "LiveGovernanceRequest",
     "LocalJsonlMarketAdapter",
     "MarketObservationEnvelope",
     "MarketRegimeObservationPayload",
@@ -368,8 +407,10 @@ __all__ = [
     "evaluate_canary_veto",
     "evaluate_financial_policy",
     "evaluate_gelal_shadow_event",
+    "evaluate_governance_guard",
     "evaluate_paper_opportunity",
     "get_invariant",
+    "is_human_approval_valid",
     "list_invariants",
     "resolve_policy_conflicts",
     "route_observer_event",
@@ -377,6 +418,7 @@ __all__ = [
     "run_dry_simulation",
     "run_financial_memory_pipeline",
     "run_gelal_shadow_file",
+    "run_live_governance_file",
     "run_market_jsonl_file",
     "run_market_observations",
     "run_paper_copilot_file",
