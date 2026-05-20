@@ -88,7 +88,7 @@ class TestEmit:
 
         prov = ProvenanceRef(source_event_id="src-1")
         ev = emit_workspace_pulse(ledger, _pulse(), provenance=prov)
-        mix = cast(list[dict[str, object]], ev.payload["dominant_payload_mix"])
+        mix = cast("list[dict[str, object]]", ev.payload["dominant_payload_mix"])
         assert isinstance(mix, list)
         payloads = {str(seed["payload"]) for seed in mix}
         assert "urgency" in payloads
