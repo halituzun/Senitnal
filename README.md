@@ -4,7 +4,12 @@
 
 > Bir trading bot değil. Sonradan trading yeteneği takılabilecek bir yapay zihinsel çekirdek.
 
-**Status: Frozen Draft v0.1 — Conceptual documentation phase. No code yet.**
+**Status: MVB v0.1 shipped — Minimum Viable Brain pipeline runs end-to-end.**
+> Conceptual + numerics tasarım fazı (22 belge) kapandı; Phase 1-10
+> implementation tamamlandı; `python -m sentinel.runtime` synthetic
+> ObservationEvent → `SystemOutput.WAIT` üretiyor; M1 ledger hash
+> chain re-verifies; tüm constitutional red lines kod seviyesinde
+> kilitli.
 
 Sentinel'in amacı; sermaye korumacı, şüpheci, çelişkiyi taşıyabilen, kanıtsız kesinleşmeyen, kendi kararlarını gerekçelendiren bir AGI çekirdeği inşa etmektir.
 
@@ -84,27 +89,51 @@ Bu soruları sormayan sistem AGI değil, sadece otomasyondur.
 
 ---
 
-## Mevcut durum — Build Phase (MVB)
+## Mevcut durum — MVB v0.1 GREEN
 
 **Conceptual + numerics design phase kapandı.** 22 frozen draft v0.1 belge
-+ 2 review + 1 build plan tamamlandı. **Implementation başladı.**
-
-Şu an: **Minimum Viable Brain (MVB)** inşası.
++ 2 review + 1 build plan tamamlandı. **Implementation tamamlandı.**
 
 ```
 Implementation status:
-  ✓ Commit 1:  Project skeleton (pyproject.toml + CI + sentinel/ package layout)
-  ⏳ Phase 1:  Contracts as Code (Pydantic schemas + invariant test suite)
-  ⏳ Phase 2:  Observer Ledger (M1 JSONL + hash-chain)
-  ⏳ Phase 3:  Numerics Loader (8 dev fixtures + validation)
-  ⏳ Phase 4:  Ingress Compiler skeleton
-  ⏳ Phase 5:  Minimal M0 Tissue
-  ⏳ Phase 6:  Workspace Pulse
-  ⏳ Phase 7:  Gates (Deontic + Memory Write stubs)
-  ⏳ Phase 8:  Recall Skeleton
-  ⏳ Phase 9:  EchoAdapter
-  ⏳ Phase 10: End-to-end Dry Simulation
+  [+] Phase 1:  Contracts as Code      — 8 schema + 2 constitution modules
+  [+] Phase 2:  Observer Ledger        — catalog + hash chain + JSONL +
+                                          permanence + ring buffer + audit reader
+  [+] Phase 3:  Numerics Loader        — dev_only guard + 8 dev fixtures +
+                                          dependency validator
+  [+] Phase 4:  Ingress Compiler       — profile caps + soft overlap +
+                                          rules + compiler
+  [+] Phase 5:  Minimal M0 Tissue      — neuron + synapse + self_field +
+                                          proto_resonance + assembly + tissue
+  [+] Phase 6:  Workspace Pulse        — single mechanism, no pulse_type
+  [+] Phase 7:  Gates                  — deontic (11 declaratives) + memory
+                                          write (silent, candidate-only)
+  [+] Phase 8:  Recall Skeleton        — composite-AND trigger + top-1 +
+                                          candidate guard + audit
+  [+] Phase 9:  EchoAdapter            — signed mock + multiplicative trust +
+                                          neural-seed red line
+  [+] Phase 10: End-to-end Dry Sim     — runtime/dry_sim + CLI + integration
+                                          tests + forbidden-output guard
 ```
+
+## Hızlı başlangıç
+
+```bash
+# Bağımlılıkları kur (uv)
+uv sync
+
+# Tüm testler + tip kontrolü + lint
+uv run pytest
+uv run pyright
+uv run ruff check .
+
+# MVP dry simulation CLI
+uv run python -m sentinel.runtime --ledger /tmp/sentinel.jsonl
+# -> sentinel-mvp: output=WAIT audit_events=2 ledger=/tmp/sentinel.jsonl
+```
+
+Ledger her run'da hash-chain ile zincirlenir; `JsonlObserverLedger(path).verify()`
+on-disk chain'i yeniden doğrular.
 
 ### MVP red lines (CI-enforced)
 
@@ -122,6 +151,8 @@ Implementation status:
 - [`docs/build/0001-minimum-viable-brain-plan.md`](./docs/build/0001-minimum-viable-brain-plan.md) — 10-phase implementation roadmap
 - [`docs/reviews/0001-phase-closure-consistency-review.md`](./docs/reviews/0001-phase-closure-consistency-review.md) — 22 belge cross-document GREEN
 - [`docs/reviews/0002-implementation-readiness.md`](./docs/reviews/0002-implementation-readiness.md) — readiness labels + open questions triage
+- [`docs/reviews/0003-phase-1-contracts-as-code-review.md`](./docs/reviews/0003-phase-1-contracts-as-code-review.md) — Phase 1 closure
+- [`docs/reviews/0004-mvp-build-closure-review.md`](./docs/reviews/0004-mvp-build-closure-review.md) — MVP build closure (Phases 1-10 GREEN)
 
 ### Design phase — Tamamlanmış (22 belge frozen draft v0.1)
 
@@ -154,13 +185,14 @@ Implementation status:
 
 Sıralama tasarım sohbetinin akışına göre değişebilir.
 
-### Uzak hedef (kod aşaması)
+### Uzak hedef (MVB sonrası)
 
-- [ ] Minimum Viable Brain — hiçbir aksiyon almayan ama her input'a gerekçeli BLOCK/WAIT cevabı veren çekirdek
-- [ ] Echo Adapter — sahte uzuv, sadece test için
-- [ ] İlk gerçek adaptörler
-
-Kod aşamasına geçmeden önce yukarıdaki tasarım belgelerinin tamamlanması beklenir.
+- [+] Minimum Viable Brain — hiçbir aksiyon almayan ama her input'a gerekçeli BLOCK/WAIT cevabı veren çekirdek (v0.1 shipped)
+- [+] Echo Adapter — sahte uzuv, sadece test için (signed mock, observe-only)
+- [ ] İlk gerçek adaptörler (MVB sonrası ayrı tasarım fazı)
+- [ ] Replay engine (mvp_replay_enabled = false; ayrı tasarım fazı)
+- [ ] Memory verified writes (mvp_verified_disabled = false; ayrı tasarım fazı)
+- [ ] M0 learning (learning_enabled = false; ayrı tasarım fazı)
 
 ---
 
@@ -168,13 +200,33 @@ Kod aşamasına geçmeden önce yukarıdaki tasarım belgelerinin tamamlanması 
 
 ```
 Senitnal/
-├── README.md              # Bu dosya
-├── CONSTITUTION.md         # 7 maddelik anayasa
-├── MEMORY_CONTRACT.md      # M0-M3 hafıza sınırları
-├── LICENSE                # Apache 2.0
-├── .gitignore
-└── docs/                  # Detay belgeleri (yazılacak)
-    └── conversations/     # Tasarım konuşmalarının arşivi
+├── README.md                  # Bu dosya
+├── CONSTITUTION.md            # 7 maddelik anayasa
+├── MEMORY_CONTRACT.md         # M0-M3 hafıza sınırları
+├── LICENSE                    # Apache 2.0
+├── pyproject.toml             # uv + hatchling + pytest + pyright + ruff
+├── docs/
+│   ├── build/                 # Build plan + future implementation specs
+│   ├── reviews/               # Phase closure reviews (0001..0004)
+│   └── conversations/         # 22 frozen draft v0.1 design docs
+├── sentinel/
+│   ├── types/                 # 8 Pydantic schema modules (payload, neural_seed,
+│   │                          # events, observer, memory, numerics, adapters, workspace)
+│   ├── constitution/          # violations + invariants (44-row catalog)
+│   ├── observer/              # catalog + hash_chain + ledger + permanence +
+│   │                          # ring_buffer + audit_reader
+│   ├── numerics/              # loader + dependency_validator + fixtures/
+│   ├── ingress/               # profile_caps + soft_overlap + rules + compiler
+│   ├── m0/                    # neuron + synapse + self_field + proto_resonance +
+│   │                          # assembly + tissue
+│   ├── workspace/             # pulse (single mechanism)
+│   ├── gates/                 # deontic + memory_write
+│   ├── recall/                # protocol + ranking + candidate + audit
+│   ├── adapters/              # trust + echo + audit
+│   └── runtime/               # feature_flags + output + dry_sim + __main__
+└── tests/                     # 840+ tests (schemas, invariants, observer,
+                               # numerics, ingress, m0, workspace, gates,
+                               # recall, adapters, runtime, integration)
 ```
 
 ---
