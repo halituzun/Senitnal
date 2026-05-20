@@ -1,0 +1,39 @@
+{
+  "spec_family": "replay_protocol",
+  "owning_spec_ref": "REPLAY_PROTOCOL_NUMERICS.md@v0.1",
+  "numerics_version": "v0-dev",
+  "compatibility_class": "clarification",
+  "signed": false,
+  "dev_only": true,
+  "fixture_purpose": "MVP dry simulation only; load-only, replay disabled in MVP. Conceptual values from band ranges, not safety-tested.",
+  "entries": [
+    {
+      "key": "replay_protocol.mvp_replay_enabled",
+      "value": false,
+      "unit": "bool",
+      "allowed_range": {"kind": "single", "value": false},
+      "directionality": "neutral",
+      "change_class_if_increased": "forbidden",
+      "change_class_if_decreased": "forbidden",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "safety_critical",
+      "spec_family": "replay_protocol",
+      "owning_spec_ref": "REPLAY_PROTOCOL_NUMERICS.md §3"
+    },
+    {
+      "key": "replay_protocol.replay_session_max_duration_ms",
+      "value": 600000,
+      "unit": "ms",
+      "allowed_range": {"kind": "min_max", "min": 60000, "max": 3600000},
+      "directionality": "lower_is_stricter",
+      "change_class_if_increased": "safety_weakening",
+      "change_class_if_decreased": "safety_tightening",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "resource_limits",
+      "spec_family": "replay_protocol",
+      "owning_spec_ref": "REPLAY_PROTOCOL_NUMERICS.md §5"
+    }
+  ]
+}

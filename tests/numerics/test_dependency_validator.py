@@ -57,9 +57,7 @@ def _artifact(entries: tuple[NumericEntry, ...]) -> NumericsArtifact:
 def _dep(
     target: str, *, rel: RelationshipType = RelationshipType.MUST_BE_LESS_THAN
 ) -> NumericDependency:
-    return NumericDependency(
-        target_key=target, relationship=rel, rationale="unit test"
-    )
+    return NumericDependency(target_key=target, relationship=rel, rationale="unit test")
 
 
 class TestNoDependencies:

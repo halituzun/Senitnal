@@ -1,0 +1,53 @@
+{
+  "spec_family": "recall_protocol",
+  "owning_spec_ref": "RECALL_PROTOCOL_NUMERICS.md@v0.1",
+  "numerics_version": "v0-dev",
+  "compatibility_class": "clarification",
+  "signed": false,
+  "dev_only": true,
+  "fixture_purpose": "MVP dry simulation only; not for production. Conceptual values from band ranges, not safety-tested.",
+  "entries": [
+    {
+      "key": "recall_protocol.top_k_emitted_to_core",
+      "value": 1,
+      "unit": "count",
+      "allowed_range": {"kind": "single", "value": 1},
+      "directionality": "neutral",
+      "change_class_if_increased": "forbidden",
+      "change_class_if_decreased": "forbidden",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "safety_critical",
+      "spec_family": "recall_protocol",
+      "owning_spec_ref": "RECALL_PROTOCOL_NUMERICS.md §5"
+    },
+    {
+      "key": "recall_protocol.sustained_tension_required",
+      "value": true,
+      "unit": "bool",
+      "allowed_range": {"kind": "single", "value": true},
+      "directionality": "neutral",
+      "change_class_if_increased": "forbidden",
+      "change_class_if_decreased": "forbidden",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "safety_critical",
+      "spec_family": "recall_protocol",
+      "owning_spec_ref": "RECALL_PROTOCOL_NUMERICS.md §6"
+    },
+    {
+      "key": "recall_protocol.candidate_recall_ratio",
+      "value": 0.5,
+      "unit": "ratio",
+      "allowed_range": {"kind": "min_max", "min": 0.0, "max": 1.0},
+      "directionality": "higher_is_stricter",
+      "change_class_if_increased": "safety_tightening",
+      "change_class_if_decreased": "safety_weakening",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "calibration_bands",
+      "spec_family": "recall_protocol",
+      "owning_spec_ref": "RECALL_PROTOCOL_NUMERICS.md §14"
+    }
+  ]
+}

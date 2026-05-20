@@ -1,0 +1,53 @@
+{
+  "spec_family": "adapter_trust",
+  "owning_spec_ref": "ADAPTER_TRUST_NUMERICS.md@v0.1",
+  "numerics_version": "v0-dev",
+  "compatibility_class": "clarification",
+  "signed": false,
+  "dev_only": true,
+  "fixture_purpose": "MVP dry simulation only; not for production. Conceptual values from band ranges, not safety-tested.",
+  "entries": [
+    {
+      "key": "adapter_trust.neural_seed_emission_allowed_count",
+      "value": 0,
+      "unit": "count",
+      "allowed_range": {"kind": "single", "value": 0},
+      "directionality": "neutral",
+      "change_class_if_increased": "forbidden",
+      "change_class_if_decreased": "forbidden",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "safety_critical",
+      "spec_family": "adapter_trust",
+      "owning_spec_ref": "ADAPTER_TRUST_NUMERICS.md §6"
+    },
+    {
+      "key": "adapter_trust.signature_validity_required",
+      "value": true,
+      "unit": "bool",
+      "allowed_range": {"kind": "single", "value": true},
+      "directionality": "neutral",
+      "change_class_if_increased": "forbidden",
+      "change_class_if_decreased": "forbidden",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "safety_critical",
+      "spec_family": "adapter_trust",
+      "owning_spec_ref": "ADAPTER_TRUST_NUMERICS.md §6"
+    },
+    {
+      "key": "adapter_trust.trust_score_threshold_medium",
+      "value": 0.5,
+      "unit": "ratio",
+      "allowed_range": {"kind": "min_max", "min": 0.0, "max": 1.0},
+      "directionality": "higher_is_stricter",
+      "change_class_if_increased": "safety_tightening",
+      "change_class_if_decreased": "safety_weakening",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "calibration_bands",
+      "spec_family": "adapter_trust",
+      "owning_spec_ref": "ADAPTER_TRUST_NUMERICS.md §8"
+    }
+  ]
+}

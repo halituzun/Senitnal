@@ -1,0 +1,67 @@
+{
+  "spec_family": "bootstrap_genome",
+  "owning_spec_ref": "BOOTSTRAP_GENOME_NUMERICS.md@v0.1",
+  "numerics_version": "v0-dev",
+  "compatibility_class": "clarification",
+  "signed": false,
+  "dev_only": true,
+  "fixture_purpose": "MVP dry simulation only; not for production. Conceptual values from band ranges, not safety-tested.",
+  "entries": [
+    {
+      "key": "bootstrap_genome.stable_assembly_count_at_birth",
+      "value": 0,
+      "unit": "count",
+      "allowed_range": {"kind": "single", "value": 0},
+      "directionality": "neutral",
+      "change_class_if_increased": "forbidden",
+      "change_class_if_decreased": "forbidden",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "safety_critical",
+      "spec_family": "bootstrap_genome",
+      "owning_spec_ref": "BOOTSTRAP_GENOME_NUMERICS.md §8"
+    },
+    {
+      "key": "bootstrap_genome.initial_recallable_assembly_count",
+      "value": 0,
+      "unit": "count",
+      "allowed_range": {"kind": "single", "value": 0},
+      "directionality": "neutral",
+      "change_class_if_increased": "forbidden",
+      "change_class_if_decreased": "forbidden",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "safety_critical",
+      "spec_family": "bootstrap_genome",
+      "owning_spec_ref": "BOOTSTRAP_GENOME_NUMERICS.md §9"
+    },
+    {
+      "key": "bootstrap_genome.initial_memory_write_eligible_assembly_count",
+      "value": 0,
+      "unit": "count",
+      "allowed_range": {"kind": "single", "value": 0},
+      "directionality": "neutral",
+      "change_class_if_increased": "forbidden",
+      "change_class_if_decreased": "forbidden",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "safety_critical",
+      "spec_family": "bootstrap_genome",
+      "owning_spec_ref": "BOOTSTRAP_GENOME_NUMERICS.md §9"
+    },
+    {
+      "key": "bootstrap_genome.per_payload_seed_count_divergence_at_birth_max",
+      "value": 0,
+      "unit": "count",
+      "allowed_range": {"kind": "single", "value": 0},
+      "directionality": "neutral",
+      "change_class_if_increased": "forbidden",
+      "change_class_if_decreased": "forbidden",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "safety_critical",
+      "spec_family": "bootstrap_genome",
+      "owning_spec_ref": "BOOTSTRAP_GENOME_NUMERICS.md §8"
+    }
+  ]
+}

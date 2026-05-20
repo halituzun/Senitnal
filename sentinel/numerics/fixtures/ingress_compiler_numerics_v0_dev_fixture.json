@@ -1,0 +1,59 @@
+{
+  "spec_family": "ingress_compiler",
+  "owning_spec_ref": "INGRESS_COMPILER_NUMERICS.md@v0.1",
+  "numerics_version": "v0-dev",
+  "compatibility_class": "clarification",
+  "signed": false,
+  "dev_only": true,
+  "fixture_purpose": "MVP dry simulation only; not for production. Conceptual values from band ranges, not safety-tested.",
+  "entries": [
+    {
+      "key": "ingress_compiler.max_payload_intensity",
+      "value": 1.0,
+      "unit": "ratio",
+      "allowed_range": {"kind": "single", "value": 1.0},
+      "directionality": "neutral",
+      "change_class_if_increased": "forbidden",
+      "change_class_if_decreased": "forbidden",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "safety_critical",
+      "spec_family": "ingress_compiler",
+      "owning_spec_ref": "INGRESS_COMPILER_NUMERICS.md §6"
+    },
+    {
+      "key": "ingress_compiler.profile_cap.observation",
+      "value": 1.0,
+      "unit": "ratio",
+      "allowed_range": {"kind": "min_max", "min": 0.3, "max": 1.0},
+      "directionality": "higher_is_stricter",
+      "change_class_if_increased": "safety_tightening",
+      "change_class_if_decreased": "safety_weakening",
+      "requires_human_approval": true,
+      "dependencies": [],
+      "numeric_risk_family": "safety_critical",
+      "spec_family": "ingress_compiler",
+      "owning_spec_ref": "INGRESS_COMPILER_NUMERICS.md §7"
+    },
+    {
+      "key": "ingress_compiler.profile_cap.human_intent",
+      "value": 0.35,
+      "unit": "ratio",
+      "allowed_range": {"kind": "min_max", "min": 0.1, "max": 0.5},
+      "directionality": "higher_is_stricter",
+      "change_class_if_increased": "safety_tightening",
+      "change_class_if_decreased": "safety_weakening",
+      "requires_human_approval": true,
+      "dependencies": [
+        {
+          "target_key": "ingress_compiler.profile_cap.observation",
+          "relationship": "must_be_less_than",
+          "rationale": "HumanIntent cap must remain below Observation cap (profile hierarchy N §7)"
+        }
+      ],
+      "numeric_risk_family": "safety_critical",
+      "spec_family": "ingress_compiler",
+      "owning_spec_ref": "INGRESS_COMPILER_NUMERICS.md §7"
+    }
+  ]
+}
