@@ -199,6 +199,14 @@ CANONICAL_EVENT_CATALOG: tuple[CanonicalEventDefinition, ...] = (
         severity_band=SeverityBand.CRITICAL,
         source_ref="DEONTIC_GATE.md §11",
     ),
+    CanonicalEventDefinition(
+        event_type="CANARY_VETO_DECISION_RECORDED",
+        event_family=EventFamily.DEONTIC,
+        permanence=EventPermanence.PERMANENT,
+        human_alert_required=False,
+        severity_band=SeverityBand.HIGH,
+        source_ref="V8 canary micro-live veto layer build plan §17",
+    ),
     # ---- LEDGER_META ------------------------------------------------------
     CanonicalEventDefinition(
         event_type="NUMERICS_ARTIFACT_STATUS_CHANGED",
