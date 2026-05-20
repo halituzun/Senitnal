@@ -88,6 +88,9 @@ from sentinel.gates.deontic import (
     evaluate_action_with_audit,
 )
 from sentinel.observer.ledger import JsonlObserverLedger
+from sentinel.observer.permanence import EventPermanence
+from sentinel.observer.ring_buffer import ObserverRingBuffer
+from sentinel.observer.router import RoutingOutcome, route_observer_event
 from sentinel.recall.audit import (
     emit_recall_request,
     emit_recall_result_empty,
@@ -110,6 +113,7 @@ __all__ = [
     "DrySimResult",
     "EchoAdapter",
     "EventFamily",
+    "EventPermanence",
     "EventProfile",
     "InvariantCategory",
     "InvariantDefinition",
@@ -118,9 +122,11 @@ __all__ = [
     "JsonlObserverLedger",
     "NeuralSeed",
     "ObserverEvent",
+    "ObserverRingBuffer",
     "PayloadSeed",
     "PrimerPayload",
     "ProvenanceRef",
+    "RoutingOutcome",
     "SystemOutput",
     "TrustBand",
     "ViolationContext",
@@ -136,5 +142,6 @@ __all__ = [
     "evaluate_action_with_audit",
     "get_invariant",
     "list_invariants",
+    "route_observer_event",
     "run_dry_simulation",
 ]
