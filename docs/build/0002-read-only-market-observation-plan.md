@@ -621,3 +621,93 @@ The plan is intentionally complete enough to be approved or
 rejected on its own merits, without partial implementation
 clouding the decision.
 ```
+
+---
+
+## 20. V2A implementation status (post-plan)
+
+> Appended after the V2A phase landed. The plan above (§§1-19)
+> is unchanged; this section only records WHICH of the planned
+> surfaces became code and which remain documentation. See
+> `docs/reviews/0013-v2a-read-only-market-observation-implementation.md`
+> for the full implementation review.
+
+```
+Implemented in sentinel/adapters/market_observation.py:
+
+    MarketObservationEnvelope                       implemented
+        (frozen, extra='forbid', strict=True;
+         cross-field consistency validators for
+         best_ask >= best_bid, mid_price ≈ (bid+ask)/2,
+         spread_pct ≈ ((ask-bid)/mid)*100;
+         depth fields aggregated as bid_depth_10 /
+         ask_depth_10 / bid_value_10 / ask_value_10 —
+         no per-level book exposed.)
+
+    sanitize_market_observation_to_event(...)       implemented
+        (pure function; magnitude_normalized,
+         novelty_indicator, staleness_ms, confidence,
+         source_adapter_id; deterministic; bounded
+         in [0, 1]; no symbol / venue / source_system /
+         raw price / depth crosses the boundary.)
+
+    build_market_observation_audit_payload(...)     implemented
+        (pure dict[str, Any] builder; returns
+         observer-side payload suitable for
+         ObserverEvent.payload via route_observer_event;
+         excludes execution / account fields.)
+
+Tests in tests/adapters/test_market_observation.py: 38 passing.
+v0.1 suite unchanged: 877 -> 915 total.
+pyright strict: 0 errors. ruff + format: clean.
+
+NOT implemented in V2A (deferred to V2B or later, by design):
+
+    [-] ReadOnlyMarketAdapter manifest registration
+        (would emit ADAPTER_MANIFEST_STATUS_CHANGED;
+         requires new ObserverEvent catalog row reservation.)
+    [-] MARKET_OBSERVATION_ENVELOPE_RECEIVED catalog row
+    [-] MARKET_OBSERVATION_ENVELOPE_REJECTED catalog row
+    [-] observer audit helper that calls route_observer_event
+        with the envelope's audit payload
+    [-] dry_sim runtime extension to accept synthetic envelopes
+        (kept off the table to protect the canonical v0.1
+         output tuple: WAIT / audit=4 / permanent=2 / ring=0)
+    [-] synthetic fixture suite under tests/fixtures/
+        synthetic_market/
+    [-] Gel.Al export-file reader (file watch / queue consumer)
+    [-] external bridge process (would live in a sibling repo;
+        Sentinel repo still does not import any exchange SDK)
+    [-] property test asserting envelope-domain randomization
+        cannot leak labels into the Core ObservationEvent
+    [-] CI grep widening to include
+        requests/httpx/aiohttp/urllib3/socket on
+        `.github/workflows/ci.yml`
+        (V2A's tests assert these locally on the module
+         source; promoting to CI is a separate micro-PR.)
+
+NOT introduced in V2A (constitutional red lines, V2-permanent):
+
+    [×] live exchange SDK import inside sentinel/
+    [×] LLM SDK import inside sentinel/
+    [×] network library import inside sentinel/
+    [×] exchange API key field
+    [×] order side / quantity / amount / leverage / take_profit /
+        stop_loss / trade_intent / strategy_action fields
+        (rejected by extra='forbid')
+    [×] direct Sentinel-to-Gel.Al execution channel
+        (does not exist; not 'unused')
+    [×] forbidden output literal (BUY/SELL/EXECUTE_REAL/
+        ORDER_SUBMIT)
+    [×] NeuralSeed emission from this module
+    [×] memory verified-status write driven by market data
+    [×] production numerics matrix update driven by market data
+    [×] deontic gate bypass for market-derived signals
+    [×] replay-driven memory update
+    [×] cross-instance / fork / migration path
+```
+
+V2A is the data-shape layer. V2B (next planning gate) will
+introduce the catalog rows, the routing helper, and either
+the synthetic fixture suite or the Gel.Al export contract —
+chosen explicitly, gated on its own readiness review.
