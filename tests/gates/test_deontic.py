@@ -148,9 +148,7 @@ class TestDeclarativeCoverage:
         "declarative",
         list(DEONTIC_DECLARATIVES),
     )
-    def test_declarative_outcome_schema_accepts(
-        self, declarative: DeonticDeclarative
-    ) -> None:
+    def test_declarative_outcome_schema_accepts(self, declarative: DeonticDeclarative) -> None:
         outcome = DeonticOutcome(
             intent_id="probe",
             decision=DeonticDecision.BLOCK,

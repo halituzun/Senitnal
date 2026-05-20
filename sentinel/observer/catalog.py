@@ -257,6 +257,31 @@ CANONICAL_EVENT_CATALOG: tuple[CanonicalEventDefinition, ...] = (
         severity_band=SeverityBand.MEDIUM,
         source_ref="REPLAY_PROTOCOL.md §5",
     ),
+    # ---- INGRESS (recall protocol audit) ---------------------------------
+    CanonicalEventDefinition(
+        event_type="RECALL_REQUEST_EMITTED",
+        event_family=EventFamily.INGRESS,
+        permanence=EventPermanence.PERMANENT,
+        human_alert_required=False,
+        severity_band=SeverityBand.MEDIUM,
+        source_ref="RECALL_PROTOCOL.md §5",
+    ),
+    CanonicalEventDefinition(
+        event_type="RECALL_RESULT_EMPTY",
+        event_family=EventFamily.INGRESS,
+        permanence=EventPermanence.PERMANENT,
+        human_alert_required=False,
+        severity_band=SeverityBand.LOW,
+        source_ref="RECALL_PROTOCOL.md §20",
+    ),
+    CanonicalEventDefinition(
+        event_type="RECALL_TRIGGER_REJECTED",
+        event_family=EventFamily.INGRESS,
+        permanence=EventPermanence.PERMANENT,
+        human_alert_required=False,
+        severity_band=SeverityBand.LOW,
+        source_ref="RECALL_PROTOCOL.md §5, §19",
+    ),
 )
 
 
