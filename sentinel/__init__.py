@@ -73,6 +73,22 @@ from sentinel.adapters.trust import (
     TrustBand,
     compute_trust,
 )
+from sentinel.canary.candidate import (
+    CanaryCandidateAction,
+    CanaryCandidateSource,
+    CanaryEnvironment,
+)
+from sentinel.canary.evaluator import CanaryVetoContext, evaluate_canary_veto
+from sentinel.canary.limits import (
+    CanaryDecisionWindowState,
+    CanaryMicroLiveBounds,
+)
+from sentinel.canary.veto import (
+    CanaryVetoDecision,
+    VetoDecisionKind,
+    VetoReason,
+    VetoRequest,
+)
 from sentinel.constitution.invariants import (
     MVP_REQUIRED_INVARIANTS,
     InvariantCategory,
@@ -202,6 +218,10 @@ from sentinel.replay.session import (
     ReplaySessionStatus,
 )
 from sentinel.replay.survival import ReplaySurvivalEvidence
+from sentinel.runtime.canary_veto import (
+    CanaryVetoBatchResult,
+    run_canary_veto_file,
+)
 from sentinel.runtime.dry_sim import DrySimResult, run_dry_simulation
 from sentinel.runtime.financial_memory_pipeline import (
     FinancialMemoryPipelineResult,
@@ -235,6 +255,14 @@ __all__ = [
     "AdapterTrustRecord",
     "ApprovedActionIntent",
     "BlockClass",
+    "CanaryCandidateAction",
+    "CanaryCandidateSource",
+    "CanaryDecisionWindowState",
+    "CanaryEnvironment",
+    "CanaryMicroLiveBounds",
+    "CanaryVetoBatchResult",
+    "CanaryVetoContext",
+    "CanaryVetoDecision",
     "ConstitutionalViolation",
     "CounterfactualAblation",
     "CounterfactualAblationResult",
@@ -313,6 +341,9 @@ __all__ = [
     "SyntheticMarketAdapter",
     "SystemOutput",
     "TrustBand",
+    "VetoDecisionKind",
+    "VetoReason",
+    "VetoRequest",
     "ViolationContext",
     "__version__",
     "assert_invariant",
@@ -334,6 +365,7 @@ __all__ = [
     "emit_recall_trigger_rejected",
     "evaluate_action",
     "evaluate_action_with_audit",
+    "evaluate_canary_veto",
     "evaluate_financial_policy",
     "evaluate_gelal_shadow_event",
     "evaluate_paper_opportunity",
@@ -341,6 +373,7 @@ __all__ = [
     "list_invariants",
     "resolve_policy_conflicts",
     "route_observer_event",
+    "run_canary_veto_file",
     "run_dry_simulation",
     "run_financial_memory_pipeline",
     "run_gelal_shadow_file",
