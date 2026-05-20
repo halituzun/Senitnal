@@ -95,6 +95,19 @@ from sentinel.gates.deontic import (
     evaluate_action,
     evaluate_action_with_audit,
 )
+from sentinel.memory.builder import build_candidate_financial_memory_record
+from sentinel.memory.financial import (
+    ExecutionQualityObservationPayload,
+    LatencyPatternPayload,
+    LiquidityConditionPayload,
+    MarketRegimeObservationPayload,
+    SpreadWindowObservationPayload,
+)
+from sentinel.memory.store import InMemoryExplicitMemoryStore
+from sentinel.memory.write_path import (
+    FinancialMemoryWriteResult,
+    submit_financial_memory_candidate,
+)
 from sentinel.observer.ledger import JsonlObserverLedger
 from sentinel.observer.permanence import EventPermanence
 from sentinel.observer.ring_buffer import ObserverRingBuffer
@@ -104,7 +117,17 @@ from sentinel.recall.audit import (
     emit_recall_result_empty,
     emit_recall_trigger_rejected,
 )
+from sentinel.recall.financial import (
+    FinancialRecallRequest,
+    FinancialRecallScope,
+    build_financial_recall_event,
+    select_financial_recall_top_one,
+)
 from sentinel.runtime.dry_sim import DrySimResult, run_dry_simulation
+from sentinel.runtime.financial_memory_pipeline import (
+    FinancialMemoryPipelineResult,
+    run_financial_memory_pipeline,
+)
 from sentinel.runtime.market_replay import (
     MarketReplayResult,
     run_market_jsonl_file,
@@ -128,13 +151,22 @@ __all__ = [
     "EventFamily",
     "EventPermanence",
     "EventProfile",
+    "ExecutionQualityObservationPayload",
+    "FinancialMemoryPipelineResult",
+    "FinancialMemoryWriteResult",
+    "FinancialRecallRequest",
+    "FinancialRecallScope",
+    "InMemoryExplicitMemoryStore",
     "InvariantCategory",
     "InvariantDefinition",
     "InvariantSeverity",
     "InvariantViolation",
     "JsonlObserverLedger",
+    "LatencyPatternPayload",
+    "LiquidityConditionPayload",
     "LocalJsonlMarketAdapter",
     "MarketObservationEnvelope",
+    "MarketRegimeObservationPayload",
     "MarketReplayResult",
     "NeuralSeed",
     "ObserverEvent",
@@ -144,12 +176,15 @@ __all__ = [
     "ProvenanceRef",
     "RoutingOutcome",
     "SanitizedMarketProvenance",
+    "SpreadWindowObservationPayload",
     "SyntheticMarketAdapter",
     "SystemOutput",
     "TrustBand",
     "ViolationContext",
     "__version__",
     "assert_invariant",
+    "build_candidate_financial_memory_record",
+    "build_financial_recall_event",
     "build_market_observation_audit_payload",
     "compute_trust",
     "emit_manifest_status_changed",
@@ -163,7 +198,10 @@ __all__ = [
     "list_invariants",
     "route_observer_event",
     "run_dry_simulation",
+    "run_financial_memory_pipeline",
     "run_market_jsonl_file",
     "run_market_observations",
     "sanitize_market_observation_to_event",
+    "select_financial_recall_top_one",
+    "submit_financial_memory_candidate",
 ]

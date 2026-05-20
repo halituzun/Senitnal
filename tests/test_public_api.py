@@ -72,6 +72,28 @@ V2_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
     }
 )
 
+# V3 additive surface — financial M2 memory + recall.
+# Additive only; no v0.1 / V2 baseline removal.
+V3_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
+    {
+        "ExecutionQualityObservationPayload",
+        "FinancialMemoryPipelineResult",
+        "FinancialMemoryWriteResult",
+        "FinancialRecallRequest",
+        "FinancialRecallScope",
+        "InMemoryExplicitMemoryStore",
+        "LatencyPatternPayload",
+        "LiquidityConditionPayload",
+        "MarketRegimeObservationPayload",
+        "SpreadWindowObservationPayload",
+        "build_candidate_financial_memory_record",
+        "build_financial_recall_event",
+        "run_financial_memory_pipeline",
+        "select_financial_recall_top_one",
+        "submit_financial_memory_candidate",
+    }
+)
+
 
 class TestPublicApi:
     def test_all_listed_symbols_importable(self) -> None:
@@ -101,6 +123,17 @@ class TestPublicApi:
             f"V2 additive public API missing exports: {sorted(missing)}. "
             "Either add them to sentinel/__init__.py __all__, or update "
             "V2_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
+        )
+
+    def test_v3_additions_exported(self) -> None:
+        """V3 additive contract: every documented V3 symbol is exported."""
+        mod = importlib.import_module("sentinel")
+        current = set(mod.__all__)
+        missing = V3_PUBLIC_API_ADDITIONS - current
+        assert missing == set(), (
+            f"V3 additive public API missing exports: {sorted(missing)}. "
+            "Either add them to sentinel/__init__.py __all__, or update "
+            "V3_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
         )
 
     def test_no_internal_modules_in_export(self) -> None:
