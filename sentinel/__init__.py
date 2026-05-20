@@ -33,6 +33,10 @@ __version__ = "0.1.0"
 # remain available but may be reorganized in later phases.
 # ---------------------------------------------------------------------------
 
+from sentinel.adapters.audit import (
+    emit_manifest_status_changed,
+    emit_neural_seed_attempt_revoke,
+)
 from sentinel.adapters.echo import EchoAdapter
 from sentinel.adapters.trust import (
     AdapterTrustRecord,
@@ -62,6 +66,11 @@ from sentinel.gates.deontic import (
     evaluate_action_with_audit,
 )
 from sentinel.observer.ledger import JsonlObserverLedger
+from sentinel.recall.audit import (
+    emit_recall_request,
+    emit_recall_result_empty,
+    emit_recall_trigger_rejected,
+)
 from sentinel.runtime.dry_sim import DrySimResult, run_dry_simulation
 from sentinel.runtime.output import SystemOutput
 from sentinel.types.neural_seed import EventProfile, NeuralSeed, ProvenanceRef
@@ -96,6 +105,11 @@ __all__ = [
     "__version__",
     "assert_invariant",
     "compute_trust",
+    "emit_manifest_status_changed",
+    "emit_neural_seed_attempt_revoke",
+    "emit_recall_request",
+    "emit_recall_result_empty",
+    "emit_recall_trigger_rejected",
     "evaluate_action",
     "evaluate_action_with_audit",
     "get_invariant",

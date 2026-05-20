@@ -1,7 +1,7 @@
 """Recall protocol audit emission helpers.
 
 Per RECALL_PROTOCOL.md §5 + §20 and the Phase 8 / Phase 10 build
-plan: every recall trigger evaluation must produce exactly one of
+plan: every recall trigger evaluation produces exactly one of
 three audit events:
 
     RECALL_TRIGGER_REJECTED     trigger conditions failed
@@ -10,12 +10,22 @@ three audit events:
                                 audit only; no core-facing payload)
 
 Constitutional discipline:
-    - Exactly one event per evaluation. Callers don't get to skip
-      audit
+    - Exactly one event per evaluation. The canonical MVP pipeline
+      (`run_dry_simulation`) honors this contract; future trigger
+      sites MUST call one of these emit helpers immediately after
+      `check_recall_trigger`
     - RECALL_RESULT_EMPTY is audit-only by design: the core never
       sees an absence event — the absence IS the signal
     - All payloads pass through `assert_no_forbidden_literal` so
       execution verbs cannot leak from a rejection reason
+
+Wired callers (v0.1):
+    - `sentinel.runtime.dry_sim.run_dry_simulation` emits
+      RECALL_TRIGGER_REJECTED after every recall trigger check
+      (canonical MVP scenario always fails the trigger).
+    The RECALL_REQUEST_EMITTED and RECALL_RESULT_EMPTY paths are
+    not exercised in MVP (top-1 ranking and candidate provider
+    integration land in later phases).
 """
 
 from __future__ import annotations

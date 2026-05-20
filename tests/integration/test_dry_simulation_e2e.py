@@ -57,8 +57,39 @@ class TestEndToEnd:
         )
         events = ledger.read_all()
         types = [e.event_type for e in events]
+        # Canonical MVP run touches all four audit paths.
+        assert "ADAPTER_MANIFEST_STATUS_CHANGED" in types
         assert "OBSERVATION_INGESTED" in types
         assert "WORKSPACE_PULSE" in types
+        assert "RECALL_TRIGGER_REJECTED" in types
+        # Deontic gate is not invoked by default.
+        assert "DEONTIC_BLOCKED" not in types
+
+    def test_deontic_opt_in_emits_block(self, ledger: JsonlObserverLedger) -> None:
+        adapter = EchoAdapter.default()
+        result = run_dry_simulation(
+            ledger=ledger,
+            adapter=adapter,
+            observation_magnitude=0.8,
+            exercise_deontic_gate=True,
+        )
+        assert result.output is SystemOutput.WAIT
+        events = ledger.read_all()
+        types = [e.event_type for e in events]
+        assert "DEONTIC_BLOCKED" in types
+        assert ledger.verify() is True
+
+    def test_adapter_activation_opt_out(self, ledger: JsonlObserverLedger) -> None:
+        adapter = EchoAdapter.default()
+        run_dry_simulation(
+            ledger=ledger,
+            adapter=adapter,
+            observation_magnitude=0.8,
+            emit_adapter_activation=False,
+        )
+        events = ledger.read_all()
+        types = [e.event_type for e in events]
+        assert "ADAPTER_MANIFEST_STATUS_CHANGED" not in types
 
     def test_output_is_in_mvp_set(self, ledger: JsonlObserverLedger) -> None:
         adapter = EchoAdapter.default()
@@ -103,15 +134,38 @@ class TestRunsAcrossMagnitudes:
 
 
 class TestStableAuditCount:
-    def test_two_audit_events_per_run(self, ledger: JsonlObserverLedger) -> None:
+    def test_canonical_run_emits_four_audit_events(self, ledger: JsonlObserverLedger) -> None:
         adapter = EchoAdapter.default()
         result = run_dry_simulation(
             ledger=ledger,
             adapter=adapter,
             observation_magnitude=0.8,
         )
-        # OBSERVATION_INGESTED + WORKSPACE_PULSE = 2 events recorded
-        # in the result; ledger may contain more if other code wrote
-        # before this fixture, but it should be exactly 2 in isolation.
-        assert len(result.audit_event_ids) == 2
-        assert len(ledger.read_all()) == 2
+        # ADAPTER_MANIFEST_STATUS_CHANGED + OBSERVATION_INGESTED +
+        # WORKSPACE_PULSE + RECALL_TRIGGER_REJECTED = 4 audit events
+        # in the canonical run (deontic gate path opt-in only).
+        assert len(result.audit_event_ids) == 4
+        assert len(ledger.read_all()) == 4
+
+    def test_deontic_opt_in_adds_fifth_event(self, ledger: JsonlObserverLedger) -> None:
+        adapter = EchoAdapter.default()
+        result = run_dry_simulation(
+            ledger=ledger,
+            adapter=adapter,
+            observation_magnitude=0.8,
+            exercise_deontic_gate=True,
+        )
+        assert len(result.audit_event_ids) == 5
+        assert len(ledger.read_all()) == 5
+
+    def test_minimal_run_emits_three_events(self, ledger: JsonlObserverLedger) -> None:
+        adapter = EchoAdapter.default()
+        result = run_dry_simulation(
+            ledger=ledger,
+            adapter=adapter,
+            observation_magnitude=0.8,
+            emit_adapter_activation=False,
+        )
+        # Without adapter activation: observation + pulse + recall = 3
+        assert len(result.audit_event_ids) == 3
+        assert len(ledger.read_all()) == 3

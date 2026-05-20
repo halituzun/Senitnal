@@ -44,6 +44,13 @@ def should_emit_pulse(
 
     `coherence_threshold` must be in [0.0, 1.0]; otherwise raises
     ValueError.
+
+    Not used by `run_dry_simulation` — the MVP scenario always emits
+    a pulse so the canonical M1 audit trail includes WORKSPACE_PULSE
+    regardless of coherence. This helper is the decision primitive
+    a future stateful runtime can use to gate emission behind a
+    coherence-cross threshold (build plan §11 done def: 'Single
+    WORKSPACE_PULSE per coherence threshold cross').
     """
     if not (0.0 <= coherence_threshold <= 1.0):
         raise ValueError(f"coherence_threshold {coherence_threshold!r} outside [0.0, 1.0]")

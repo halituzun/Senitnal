@@ -23,7 +23,7 @@ class TestCli:
         assert ledger_path.exists()
         out = capsys.readouterr().out
         assert "output=WAIT" in out
-        assert "audit_events=2" in out
+        assert "audit_events=4" in out
 
     def test_creates_parent_dir(self, tmp_path: Path) -> None:
         ledger_path = tmp_path / "nested" / "subdir" / "sim.jsonl"
@@ -38,6 +38,6 @@ class TestCli:
         main(["--ledger", str(ledger_path)])
         main(["--ledger", str(ledger_path)])
         events = JsonlObserverLedger(ledger_path).read_all()
-        # 2 events per run, 2 runs = 4 events; chain re-verifies
-        assert len(events) == 4
+        # 4 events per canonical run, 2 runs = 8 events; chain re-verifies
+        assert len(events) == 8
         assert JsonlObserverLedger(ledger_path).verify() is True

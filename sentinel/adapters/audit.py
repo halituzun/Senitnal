@@ -1,12 +1,11 @@
 """Adapter manifest / trust audit emission helpers.
 
 Per ADAPTER_MANIFEST_SPEC.md §9 and ADAPTER_TRUST_NUMERICS.md §6,
-two ledger events live in this module's domain:
-
-    ADAPTER_MANIFEST_STATUS_CHANGED — every transition of an
-        adapter manifest's status (e.g. ACTIVE -> REVOKED) must be
-        audited; the reason is recorded with the constitutional
-        red-line code when applicable.
+the canonical ledger event in this module's domain is
+`ADAPTER_MANIFEST_STATUS_CHANGED` — every transition of an adapter
+manifest's status (e.g. CANDIDATE -> ACTIVE, ACTIVE -> REVOKED) is
+audited; the reason is recorded with the constitutional red-line
+code when applicable.
 
 The functions here are pure: they take an adapter id + a reason +
 a target status and append exactly one observer event. Callers are
@@ -18,6 +17,15 @@ Constitutional discipline:
       the canonical record of a Phase 9 red-line breach
     - All reason strings pass through `assert_no_forbidden_literal`
       so execution verbs cannot leak from a justification text
+
+Wired callers (v0.1):
+    - `sentinel.runtime.dry_sim.run_dry_simulation` emits a
+      CANDIDATE -> ACTIVE activation transition for the EchoAdapter
+      on every canonical run (opt-out via emit_adapter_activation
+      keyword). The neural-seed-attempt revoke path is exercised
+      via unit test only in v0.1 (no MVP code path actually invokes
+      `EchoAdapter.emit_neural_seed_directly`; calling it raises
+      the constitutional red line, which the test verifies).
 """
 
 from __future__ import annotations
