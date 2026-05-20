@@ -55,6 +55,23 @@ V01_PUBLIC_API_BASELINE: frozenset[str] = frozenset(
     }
 )
 
+# V2 additive surface — read-only market observation adapters.
+# Per v0.1 contract, ADDITIONS to the public API are tolerated; the
+# drift test below only fails on REMOVAL of a baseline symbol.
+V2_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
+    {
+        "LocalJsonlMarketAdapter",
+        "MarketObservationEnvelope",
+        "MarketReplayResult",
+        "SanitizedMarketProvenance",
+        "SyntheticMarketAdapter",
+        "build_market_observation_audit_payload",
+        "run_market_jsonl_file",
+        "run_market_observations",
+        "sanitize_market_observation_to_event",
+    }
+)
+
 
 class TestPublicApi:
     def test_all_listed_symbols_importable(self) -> None:
@@ -73,6 +90,17 @@ class TestPublicApi:
             f"v0.1 public API contract broken: {sorted(missing)} removed. "
             "If this is intentional, update V01_PUBLIC_API_BASELINE in "
             "tests/test_public_api.py."
+        )
+
+    def test_v2_additions_exported(self) -> None:
+        """V2 additive contract: every documented V2 symbol is exported."""
+        mod = importlib.import_module("sentinel")
+        current = set(mod.__all__)
+        missing = V2_PUBLIC_API_ADDITIONS - current
+        assert missing == set(), (
+            f"V2 additive public API missing exports: {sorted(missing)}. "
+            "Either add them to sentinel/__init__.py __all__, or update "
+            "V2_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
         )
 
     def test_no_internal_modules_in_export(self) -> None:

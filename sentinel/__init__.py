@@ -60,6 +60,14 @@ from sentinel.adapters.audit import (
     emit_neural_seed_attempt_revoke,
 )
 from sentinel.adapters.echo import EchoAdapter
+from sentinel.adapters.local_jsonl_market import LocalJsonlMarketAdapter
+from sentinel.adapters.market_observation import (
+    MarketObservationEnvelope,
+    SanitizedMarketProvenance,
+    build_market_observation_audit_payload,
+    sanitize_market_observation_to_event,
+)
+from sentinel.adapters.synthetic_market import SyntheticMarketAdapter
 from sentinel.adapters.trust import (
     AdapterTrustRecord,
     TrustBand,
@@ -97,6 +105,11 @@ from sentinel.recall.audit import (
     emit_recall_trigger_rejected,
 )
 from sentinel.runtime.dry_sim import DrySimResult, run_dry_simulation
+from sentinel.runtime.market_replay import (
+    MarketReplayResult,
+    run_market_jsonl_file,
+    run_market_observations,
+)
 from sentinel.runtime.output import SystemOutput
 from sentinel.types.neural_seed import EventProfile, NeuralSeed, ProvenanceRef
 from sentinel.types.observer import EventFamily, ObserverEvent
@@ -120,6 +133,9 @@ __all__ = [
     "InvariantSeverity",
     "InvariantViolation",
     "JsonlObserverLedger",
+    "LocalJsonlMarketAdapter",
+    "MarketObservationEnvelope",
+    "MarketReplayResult",
     "NeuralSeed",
     "ObserverEvent",
     "ObserverRingBuffer",
@@ -127,11 +143,14 @@ __all__ = [
     "PrimerPayload",
     "ProvenanceRef",
     "RoutingOutcome",
+    "SanitizedMarketProvenance",
+    "SyntheticMarketAdapter",
     "SystemOutput",
     "TrustBand",
     "ViolationContext",
     "__version__",
     "assert_invariant",
+    "build_market_observation_audit_payload",
     "compute_trust",
     "emit_manifest_status_changed",
     "emit_neural_seed_attempt_revoke",
@@ -144,4 +163,7 @@ __all__ = [
     "list_invariants",
     "route_observer_event",
     "run_dry_simulation",
+    "run_market_jsonl_file",
+    "run_market_observations",
+    "sanitize_market_observation_to_event",
 ]
