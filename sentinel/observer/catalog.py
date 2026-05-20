@@ -257,6 +257,38 @@ CANONICAL_EVENT_CATALOG: tuple[CanonicalEventDefinition, ...] = (
         severity_band=SeverityBand.MEDIUM,
         source_ref="REPLAY_PROTOCOL.md §5",
     ),
+    CanonicalEventDefinition(
+        event_type="SLEEP_REPLAY_SYNAPSE_UPDATE",
+        event_family=EventFamily.REPLAY,
+        permanence=EventPermanence.PERMANENT,
+        human_alert_required=False,
+        severity_band=SeverityBand.LOW,
+        source_ref="REPLAY_PROTOCOL.md §7 (sleep effect channel)",
+    ),
+    CanonicalEventDefinition(
+        event_type="ATTENTION_REPLAY_HABITUATION_UPDATE",
+        event_family=EventFamily.REPLAY,
+        permanence=EventPermanence.PERMANENT,
+        human_alert_required=False,
+        severity_band=SeverityBand.LOW,
+        source_ref="REPLAY_PROTOCOL.md §7 (attention habituation channel)",
+    ),
+    CanonicalEventDefinition(
+        event_type="INGRESS_CALIBRATION_UPDATED",
+        event_family=EventFamily.REPLAY,
+        permanence=EventPermanence.PERMANENT,
+        human_alert_required=False,
+        severity_band=SeverityBand.LOW,
+        source_ref="REPLAY_PROTOCOL.md §7 (ingress calibration channel)",
+    ),
+    CanonicalEventDefinition(
+        event_type="MEMORY_VERIFICATION_EVIDENCE_PROPOSED",
+        event_family=EventFamily.MEMORY,
+        permanence=EventPermanence.PERMANENT,
+        human_alert_required=False,
+        severity_band=SeverityBand.LOW,
+        source_ref="REPLAY_PROTOCOL.md §8 (memory verification evidence)",
+    ),
     # ---- INGRESS (recall protocol audit) ---------------------------------
     CanonicalEventDefinition(
         event_type="RECALL_REQUEST_EMITTED",
