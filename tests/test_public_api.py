@@ -112,6 +112,29 @@ V5_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
 )
 
 
+# V9 additive surface — limited live co-governance.
+# Additive only; no v0.1 / V2..V8 baseline removal.
+V9_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
+    {
+        "GovernanceDecisionKind",
+        "GovernanceEnvironment",
+        "GovernanceGuardContext",
+        "GovernanceReason",
+        "GovernanceRequestKind",
+        "GovernanceScopeKind",
+        "HumanApprovalRecord",
+        "HumanApprovalStatus",
+        "LimitedLiveGovernanceScope",
+        "LiveGovernanceBatchResult",
+        "LiveGovernanceDecision",
+        "LiveGovernanceRequest",
+        "evaluate_governance_guard",
+        "is_human_approval_valid",
+        "run_live_governance_file",
+    }
+)
+
+
 # V8 additive surface — canary micro-live veto layer.
 # Additive only; no v0.1 / V2..V7 baseline removal.
 V8_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
@@ -299,6 +322,17 @@ class TestPublicApi:
             f"V8 additive public API missing exports: {sorted(missing)}. "
             "Either add them to sentinel/__init__.py __all__, or update "
             "V8_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
+        )
+
+    def test_v9_additions_exported(self) -> None:
+        """V9 additive contract: every documented V9 symbol is exported."""
+        mod = importlib.import_module("sentinel")
+        current = set(mod.__all__)
+        missing = V9_PUBLIC_API_ADDITIONS - current
+        assert missing == set(), (
+            f"V9 additive public API missing exports: {sorted(missing)}. "
+            "Either add them to sentinel/__init__.py __all__, or update "
+            "V9_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
         )
 
     def test_no_internal_modules_in_export(self) -> None:
