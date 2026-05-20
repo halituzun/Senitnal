@@ -125,6 +125,27 @@ from sentinel.observer.ledger import JsonlObserverLedger
 from sentinel.observer.permanence import EventPermanence
 from sentinel.observer.ring_buffer import ObserverRingBuffer
 from sentinel.observer.router import RoutingOutcome, route_observer_event
+from sentinel.policy.evaluator import (
+    FinancialPolicyEvaluation,
+    FinancialPolicyInput,
+    evaluate_financial_policy,
+    resolve_policy_conflicts,
+)
+from sentinel.policy.financial import (
+    FinancialDeonticPolicyArtifact,
+    FinancialHardStopThresholds,
+    FinancialPolicyAction,
+    FinancialPolicyOperator,
+    FinancialPolicyRule,
+    FinancialPolicyScope,
+    FinancialPolicySeverity,
+)
+from sentinel.policy.record_builder import build_deontic_policy_candidate_record
+from sentinel.policy.store import InMemoryPolicyStore
+from sentinel.policy.write_path import (
+    FinancialPolicyWriteResult,
+    submit_financial_policy_candidate,
+)
 from sentinel.recall.audit import (
     emit_recall_request,
     emit_recall_result_empty,
@@ -198,8 +219,18 @@ __all__ = [
     "EventPermanence",
     "EventProfile",
     "ExecutionQualityObservationPayload",
+    "FinancialDeonticPolicyArtifact",
+    "FinancialHardStopThresholds",
     "FinancialMemoryPipelineResult",
     "FinancialMemoryWriteResult",
+    "FinancialPolicyAction",
+    "FinancialPolicyEvaluation",
+    "FinancialPolicyInput",
+    "FinancialPolicyOperator",
+    "FinancialPolicyRule",
+    "FinancialPolicyScope",
+    "FinancialPolicySeverity",
+    "FinancialPolicyWriteResult",
     "FinancialRecallRequest",
     "FinancialRecallScope",
     "GelAlShadowBatchResult",
@@ -208,6 +239,7 @@ __all__ = [
     "GelAlShadowEventType",
     "GelAlShadowJsonlAdapter",
     "InMemoryExplicitMemoryStore",
+    "InMemoryPolicyStore",
     "InvariantCategory",
     "InvariantDefinition",
     "InvariantSeverity",
@@ -246,6 +278,7 @@ __all__ = [
     "__version__",
     "assert_invariant",
     "build_candidate_financial_memory_record",
+    "build_deontic_policy_candidate_record",
     "build_financial_recall_event",
     "build_gelal_shadow_audit_payload",
     "build_market_observation_audit_payload",
@@ -258,9 +291,11 @@ __all__ = [
     "emit_recall_trigger_rejected",
     "evaluate_action",
     "evaluate_action_with_audit",
+    "evaluate_financial_policy",
     "evaluate_gelal_shadow_event",
     "get_invariant",
     "list_invariants",
+    "resolve_policy_conflicts",
     "route_observer_event",
     "run_dry_simulation",
     "run_financial_memory_pipeline",
@@ -272,4 +307,5 @@ __all__ = [
     "sanitize_market_observation_to_event",
     "select_financial_recall_top_one",
     "submit_financial_memory_candidate",
+    "submit_financial_policy_candidate",
 ]
