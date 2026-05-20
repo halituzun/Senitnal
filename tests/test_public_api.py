@@ -72,6 +72,29 @@ V2_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
     }
 )
 
+# V4 additive surface — replay / counterfactual.
+# Additive only; no v0.1 / V2 / V3 baseline removal.
+V4_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
+    {
+        "AblationKind",
+        "CounterfactualAblation",
+        "CounterfactualAblationResult",
+        "OutcomeAlignmentEvidence",
+        "OutcomeRef",
+        "ReplayBudget",
+        "ReplayBudgetState",
+        "ReplayEffectChannel",
+        "ReplayFinancialPipelineResult",
+        "ReplayInputSnapshot",
+        "ReplayPurpose",
+        "ReplaySession",
+        "ReplaySessionStatus",
+        "ReplaySurvivalEvidence",
+        "can_start_replay_session",
+        "run_replay_financial_pipeline",
+    }
+)
+
 # V3 additive surface — financial M2 memory + recall.
 # Additive only; no v0.1 / V2 baseline removal.
 V3_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
@@ -134,6 +157,17 @@ class TestPublicApi:
             f"V3 additive public API missing exports: {sorted(missing)}. "
             "Either add them to sentinel/__init__.py __all__, or update "
             "V3_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
+        )
+
+    def test_v4_additions_exported(self) -> None:
+        """V4 additive contract: every documented V4 symbol is exported."""
+        mod = importlib.import_module("sentinel")
+        current = set(mod.__all__)
+        missing = V4_PUBLIC_API_ADDITIONS - current
+        assert missing == set(), (
+            f"V4 additive public API missing exports: {sorted(missing)}. "
+            "Either add them to sentinel/__init__.py __all__, or update "
+            "V4_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
         )
 
     def test_no_internal_modules_in_export(self) -> None:
