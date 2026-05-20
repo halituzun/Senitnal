@@ -73,6 +73,45 @@ from sentinel.adapters.trust import (
     TrustBand,
     compute_trust,
 )
+from sentinel.agi.audit import (
+    emit_financial_agi_readiness_recorded,
+    emit_financial_agi_v1_evaluated,
+)
+from sentinel.agi.consensus import (
+    GovernanceConsensusDecision,
+    GovernanceConsensusResult,
+    GovernanceSignal,
+    GovernanceSignalSource,
+    compute_governance_consensus,
+)
+from sentinel.agi.evidence_gate import (
+    EvidenceGateDecision,
+    EvidenceGateInput,
+    EvidenceGateResult,
+    EvidenceWindow,
+    EvidenceWindowKind,
+    evaluate_evidence_gate,
+)
+from sentinel.agi.live_impact_guard import (
+    LiveImpactGuardInput,
+    LiveImpactGuardResult,
+    evaluate_live_impact_guard,
+)
+from sentinel.agi.orchestrator import (
+    FinancialAGIInputBundle,
+    FinancialAGIOutputBundle,
+    evaluate_financial_agi_v1,
+)
+from sentinel.agi.readiness_report import (
+    FinancialAGIReadinessReport,
+    generate_financial_agi_readiness_report,
+)
+from sentinel.agi.state import (
+    FinancialAGIActivationState,
+    FinancialAGICapabilityMap,
+    FinancialAGIPhase,
+    FinancialAGIState,
+)
 from sentinel.canary.candidate import (
     CanaryCandidateAction,
     CanaryCandidateSource,
@@ -246,6 +285,10 @@ from sentinel.runtime.canary_veto import (
     run_canary_veto_file,
 )
 from sentinel.runtime.dry_sim import DrySimResult, run_dry_simulation
+from sentinel.runtime.financial_agi import (
+    FinancialAGIBatchResult,
+    run_financial_agi_file,
+)
 from sentinel.runtime.financial_memory_pipeline import (
     FinancialMemoryPipelineResult,
     run_financial_memory_pipeline,
@@ -300,7 +343,20 @@ __all__ = [
     "EventFamily",
     "EventPermanence",
     "EventProfile",
+    "EvidenceGateDecision",
+    "EvidenceGateInput",
+    "EvidenceGateResult",
+    "EvidenceWindow",
+    "EvidenceWindowKind",
     "ExecutionQualityObservationPayload",
+    "FinancialAGIActivationState",
+    "FinancialAGIBatchResult",
+    "FinancialAGICapabilityMap",
+    "FinancialAGIInputBundle",
+    "FinancialAGIOutputBundle",
+    "FinancialAGIPhase",
+    "FinancialAGIReadinessReport",
+    "FinancialAGIState",
     "FinancialDeonticPolicyArtifact",
     "FinancialHardStopThresholds",
     "FinancialMemoryPipelineResult",
@@ -321,12 +377,16 @@ __all__ = [
     "GelAlShadowEvaluationResult",
     "GelAlShadowEventType",
     "GelAlShadowJsonlAdapter",
+    "GovernanceConsensusDecision",
+    "GovernanceConsensusResult",
     "GovernanceDecisionKind",
     "GovernanceEnvironment",
     "GovernanceGuardContext",
     "GovernanceReason",
     "GovernanceRequestKind",
     "GovernanceScopeKind",
+    "GovernanceSignal",
+    "GovernanceSignalSource",
     "HumanApprovalRecord",
     "HumanApprovalStatus",
     "InMemoryExplicitMemoryStore",
@@ -342,6 +402,8 @@ __all__ = [
     "LiveGovernanceBatchResult",
     "LiveGovernanceDecision",
     "LiveGovernanceRequest",
+    "LiveImpactGuardInput",
+    "LiveImpactGuardResult",
     "LocalJsonlMarketAdapter",
     "MarketObservationEnvelope",
     "MarketRegimeObservationPayload",
@@ -396,7 +458,10 @@ __all__ = [
     "can_start_replay_session",
     "compare_gelal_shadow_to_paper_decision",
     "compare_paper_decision_to_outcome",
+    "compute_governance_consensus",
     "compute_trust",
+    "emit_financial_agi_readiness_recorded",
+    "emit_financial_agi_v1_evaluated",
     "emit_manifest_status_changed",
     "emit_neural_seed_attempt_revoke",
     "emit_recall_request",
@@ -405,10 +470,14 @@ __all__ = [
     "evaluate_action",
     "evaluate_action_with_audit",
     "evaluate_canary_veto",
+    "evaluate_evidence_gate",
+    "evaluate_financial_agi_v1",
     "evaluate_financial_policy",
     "evaluate_gelal_shadow_event",
     "evaluate_governance_guard",
+    "evaluate_live_impact_guard",
     "evaluate_paper_opportunity",
+    "generate_financial_agi_readiness_report",
     "get_invariant",
     "is_human_approval_valid",
     "list_invariants",
@@ -416,6 +485,7 @@ __all__ = [
     "route_observer_event",
     "run_canary_veto_file",
     "run_dry_simulation",
+    "run_financial_agi_file",
     "run_financial_memory_pipeline",
     "run_gelal_shadow_file",
     "run_live_governance_file",

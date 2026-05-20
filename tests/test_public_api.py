@@ -228,6 +228,41 @@ V3_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
 )
 
 
+# V10 additive surface — Financial AGI v1.
+# Additive only; no V2-V9 baseline removal.
+V10_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
+    {
+        "EvidenceGateDecision",
+        "EvidenceGateInput",
+        "EvidenceGateResult",
+        "EvidenceWindow",
+        "EvidenceWindowKind",
+        "FinancialAGIActivationState",
+        "FinancialAGIBatchResult",
+        "FinancialAGICapabilityMap",
+        "FinancialAGIInputBundle",
+        "FinancialAGIOutputBundle",
+        "FinancialAGIPhase",
+        "FinancialAGIReadinessReport",
+        "FinancialAGIState",
+        "GovernanceConsensusDecision",
+        "GovernanceConsensusResult",
+        "GovernanceSignal",
+        "GovernanceSignalSource",
+        "LiveImpactGuardInput",
+        "LiveImpactGuardResult",
+        "compute_governance_consensus",
+        "emit_financial_agi_readiness_recorded",
+        "emit_financial_agi_v1_evaluated",
+        "evaluate_evidence_gate",
+        "evaluate_financial_agi_v1",
+        "evaluate_live_impact_guard",
+        "generate_financial_agi_readiness_report",
+        "run_financial_agi_file",
+    }
+)
+
+
 class TestPublicApi:
     def test_all_listed_symbols_importable(self) -> None:
         mod = importlib.import_module("sentinel")
@@ -333,6 +368,17 @@ class TestPublicApi:
             f"V9 additive public API missing exports: {sorted(missing)}. "
             "Either add them to sentinel/__init__.py __all__, or update "
             "V9_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
+        )
+
+    def test_v10_additions_exported(self) -> None:
+        """V10 additive contract: every documented V10 symbol is exported."""
+        mod = importlib.import_module("sentinel")
+        current = set(mod.__all__)
+        missing = V10_PUBLIC_API_ADDITIONS - current
+        assert missing == set(), (
+            f"V10 additive public API missing exports: {sorted(missing)}. "
+            "Either add them to sentinel/__init__.py __all__, or update "
+            "V10_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
         )
 
     def test_no_internal_modules_in_export(self) -> None:
