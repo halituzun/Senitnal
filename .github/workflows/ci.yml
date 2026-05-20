@@ -40,7 +40,11 @@ jobs:
         run: |
           # Madde 6: no LLM client libraries in MVP
           # DEONTIC §8 Rule 1: no exchange API libraries in MVP
-          ! grep -RE "^\s*(import|from)\s+(ccxt|openai|anthropic|langchain|web3|binance|btcturk)" \
+          # v0.1 forbidden SDK set (release readiness review 0007):
+          #   exchanges: ccxt, web3, binance, btcturk, pybit (bybit),
+          #              okx, gate_api, kucoin, huobi, bitfinex, kraken
+          #   llm:       openai, anthropic, langchain
+          ! grep -RE "^\s*(import|from)\s+(ccxt|openai|anthropic|langchain|web3|binance|btcturk|pybit|okx|gate_api|kucoin|huobi|bitfinex|kraken)" \
               sentinel/ tests/ 2>/dev/null || (echo "FORBIDDEN IMPORT detected" && exit 1)
 
       - name: Forbidden outputs (constitutional)
