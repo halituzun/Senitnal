@@ -1,19 +1,23 @@
-"""Read-only market observation adapter (V2A — synthetic only).
+"""Read-only market observation adapter (V2 — synthetic / local only).
 
 Per docs/build/0002-read-only-market-observation-plan.md +
+docs/build/0003-v2-read-only-market-adapters-build-plan.md +
 docs/integrations/gel-al-borsa-readonly-bridge.md +
-docs/reviews/0013-v2a-read-only-market-observation-implementation.md.
+docs/reviews/0013-v2a-read-only-market-observation-implementation.md +
+docs/reviews/0014-v2-read-only-market-adapters-review.md.
 
 This module provides:
 
     MarketObservationEnvelope            — observer-side schema, frozen
+    SanitizedMarketProvenance            — observer-side provenance
+                                            wrapper (typed)
     sanitize_market_observation_to_event — pure conversion to v0.1
                                             ObservationEvent
     build_market_observation_audit_payload
                                          — pure observer-side audit
                                             payload builder
 
-Boundary discipline (constitutional, v0.1 + V2A):
+Boundary discipline (constitutional, v0.1 + V2):
     - No network I/O. No exchange SDK. No LLM SDK.
     - No order side, no quantity, no API key, no balance, no position,
       no execution verb.
@@ -24,8 +28,8 @@ Boundary discipline (constitutional, v0.1 + V2A):
       defense-in-depth + intentional documentation of the mapping).
     - This module owns NO ledger I/O. Callers wishing to audit a
       market observation must call route_observer_event (the
-      sanctioned persistence path) and supply the payload returned
-      by build_market_observation_audit_payload.
+      sanctioned persistence path) via the helper in
+      sentinel/adapters/market_audit.py.
 """
 
 from __future__ import annotations
@@ -124,10 +128,31 @@ class MarketObservationEnvelope(BaseModel):
         return self
 
 
+class SanitizedMarketProvenance(BaseModel):
+    """Observer-side provenance wrapper.
+
+    Bundles the envelope's identity + raw-domain fields that should
+    accompany a market observation's M1 audit entry. NEVER embedded
+    in an ObservationEvent; only used in observer-side contexts
+    (ObserverEvent.payload, replay diagnostics).
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True, strict=True)
+
+    source_adapter_id: str = Field(min_length=1)
+    source_system: str = Field(min_length=1)
+    venue: str = Field(min_length=1)
+    symbol: str = Field(min_length=1)
+    observed_at_ms: int = Field(ge=0)
+    raw_ref: str | None = None
+    provenance_hash: str = Field(min_length=1)
+
+
 def sanitize_market_observation_to_event(
     envelope: MarketObservationEnvelope,
     *,
     ttl_ms: int = 1000,
+    source_reliability_band: int = _DEFAULT_SOURCE_RELIABILITY_BAND,
 ) -> ObservationEvent:
     """Map a MarketObservationEnvelope to a core-facing ObservationEvent.
 
@@ -149,8 +174,9 @@ def sanitize_market_observation_to_event(
             0.0, 1.0)
         staleness_ms = orderbook_age_ms + latency_ms
         confidence   = envelope.confidence (pass-through)
-        source_reliability_band = _DEFAULT_SOURCE_RELIABILITY_BAND
-                                  (conservative mid-stream)
+        source_reliability_band = caller-supplied
+                                  (default _DEFAULT_SOURCE_RELIABILITY_BAND;
+                                  must remain in v0.1 range [0, 5])
     """
     magnitude = (
         0.4 * min(envelope.spread_pct / 10.0, 1.0)
@@ -167,7 +193,7 @@ def sanitize_market_observation_to_event(
         ttl_ms=ttl_ms,
         confidence=envelope.confidence,
         source_adapter_id=envelope.source_adapter_id,
-        source_reliability_band=_DEFAULT_SOURCE_RELIABILITY_BAND,
+        source_reliability_band=source_reliability_band,
         magnitude_normalized=magnitude_clamped,
         novelty_indicator=novelty_clamped,
         staleness_ms=envelope.orderbook_age_ms + envelope.latency_ms,
