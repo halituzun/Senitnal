@@ -72,6 +72,10 @@ _MVP_ACCEPTED_PAIRS: frozenset[tuple[SubjectClass, EvidenceAxis]] = frozenset(
         (SubjectClass.PROCEDURAL, EvidenceAxis.HUMAN_TESTIMONY),
         (SubjectClass.EPISODIC, EvidenceAxis.INTERNAL_INFERENCE),
         (SubjectClass.INCIDENT_HUMAN_RECORD, EvidenceAxis.HUMAN_TESTIMONY),
+        # V6 — financial deontic policy candidates are human-attested
+        # signed artifacts.  Production verification remains disabled by
+        # mvp_verified_disabled; this pair only permits CANDIDATE writes.
+        (SubjectClass.DEONTIC_POLICY, EvidenceAxis.HUMAN_TESTIMONY),
     }
 )
 
