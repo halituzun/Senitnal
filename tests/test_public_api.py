@@ -112,6 +112,27 @@ V5_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
 )
 
 
+# V8 additive surface — canary micro-live veto layer.
+# Additive only; no v0.1 / V2..V7 baseline removal.
+V8_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
+    {
+        "CanaryCandidateAction",
+        "CanaryCandidateSource",
+        "CanaryDecisionWindowState",
+        "CanaryEnvironment",
+        "CanaryMicroLiveBounds",
+        "CanaryVetoBatchResult",
+        "CanaryVetoContext",
+        "CanaryVetoDecision",
+        "VetoDecisionKind",
+        "VetoReason",
+        "VetoRequest",
+        "evaluate_canary_veto",
+        "run_canary_veto_file",
+    }
+)
+
+
 # V7 additive surface — paper co-pilot.
 # Additive only; no v0.1 / V2 / V3 / V4 / V5 / V6 baseline removal.
 V7_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
@@ -267,6 +288,17 @@ class TestPublicApi:
             f"V7 additive public API missing exports: {sorted(missing)}. "
             "Either add them to sentinel/__init__.py __all__, or update "
             "V7_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
+        )
+
+    def test_v8_additions_exported(self) -> None:
+        """V8 additive contract: every documented V8 symbol is exported."""
+        mod = importlib.import_module("sentinel")
+        current = set(mod.__all__)
+        missing = V8_PUBLIC_API_ADDITIONS - current
+        assert missing == set(), (
+            f"V8 additive public API missing exports: {sorted(missing)}. "
+            "Either add them to sentinel/__init__.py __all__, or update "
+            "V8_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
         )
 
     def test_no_internal_modules_in_export(self) -> None:
