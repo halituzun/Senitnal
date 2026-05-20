@@ -125,6 +125,29 @@ from sentinel.observer.ledger import JsonlObserverLedger
 from sentinel.observer.permanence import EventPermanence
 from sentinel.observer.ring_buffer import ObserverRingBuffer
 from sentinel.observer.router import RoutingOutcome, route_observer_event
+from sentinel.paper.copilot import PaperCoPilotContext, evaluate_paper_opportunity
+from sentinel.paper.decision import (
+    PaperCoPilotResult,
+    PaperDecision,
+    PaperDecisionReason,
+)
+from sentinel.paper.gelal_compare import (
+    GelAlPaperComparison,
+    compare_gelal_shadow_to_paper_decision,
+)
+from sentinel.paper.opportunity import (
+    PaperOpportunity,
+    PaperOpportunityKind,
+    PaperOpportunitySource,
+    build_paper_opportunity_from_gelal_shadow,
+    build_paper_opportunity_from_market_observation,
+)
+from sentinel.paper.outcome import (
+    PaperDecisionOutcomeComparison,
+    PaperOutcome,
+    PaperOutcomeKind,
+    compare_paper_decision_to_outcome,
+)
 from sentinel.policy.evaluator import (
     FinancialPolicyEvaluation,
     FinancialPolicyInput,
@@ -194,6 +217,10 @@ from sentinel.runtime.market_replay import (
     run_market_observations,
 )
 from sentinel.runtime.output import SystemOutput
+from sentinel.runtime.paper_copilot import (
+    PaperCoPilotBatchResult,
+    run_paper_copilot_file,
+)
 from sentinel.runtime.replay_financial_pipeline import (
     ReplayFinancialPipelineResult,
     run_replay_financial_pipeline,
@@ -233,6 +260,7 @@ __all__ = [
     "FinancialPolicyWriteResult",
     "FinancialRecallRequest",
     "FinancialRecallScope",
+    "GelAlPaperComparison",
     "GelAlShadowBatchResult",
     "GelAlShadowEnvelope",
     "GelAlShadowEvaluationResult",
@@ -256,6 +284,17 @@ __all__ = [
     "ObserverRingBuffer",
     "OutcomeAlignmentEvidence",
     "OutcomeRef",
+    "PaperCoPilotBatchResult",
+    "PaperCoPilotContext",
+    "PaperCoPilotResult",
+    "PaperDecision",
+    "PaperDecisionOutcomeComparison",
+    "PaperDecisionReason",
+    "PaperOpportunity",
+    "PaperOpportunityKind",
+    "PaperOpportunitySource",
+    "PaperOutcome",
+    "PaperOutcomeKind",
     "PayloadSeed",
     "PrimerPayload",
     "ProvenanceRef",
@@ -282,7 +321,11 @@ __all__ = [
     "build_financial_recall_event",
     "build_gelal_shadow_audit_payload",
     "build_market_observation_audit_payload",
+    "build_paper_opportunity_from_gelal_shadow",
+    "build_paper_opportunity_from_market_observation",
     "can_start_replay_session",
+    "compare_gelal_shadow_to_paper_decision",
+    "compare_paper_decision_to_outcome",
     "compute_trust",
     "emit_manifest_status_changed",
     "emit_neural_seed_attempt_revoke",
@@ -293,6 +336,7 @@ __all__ = [
     "evaluate_action_with_audit",
     "evaluate_financial_policy",
     "evaluate_gelal_shadow_event",
+    "evaluate_paper_opportunity",
     "get_invariant",
     "list_invariants",
     "resolve_policy_conflicts",
@@ -302,6 +346,7 @@ __all__ = [
     "run_gelal_shadow_file",
     "run_market_jsonl_file",
     "run_market_observations",
+    "run_paper_copilot_file",
     "run_replay_financial_pipeline",
     "sanitize_gelal_shadow_to_observation_event",
     "sanitize_market_observation_to_event",
