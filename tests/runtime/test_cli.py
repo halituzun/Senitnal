@@ -4,15 +4,12 @@ from __future__ import annotations
 
 from pathlib import Path  # noqa: TC003 (fixture annotation)
 
-import pytest
-
+import pytest  # noqa: TC002 (CaptureFixture runtime annotation)
 from sentinel.runtime.__main__ import main
 
 
 class TestCli:
-    def test_runs_and_exit_zero(
-        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    def test_runs_and_exit_zero(self, tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
         ledger_path = tmp_path / "sim.jsonl"
         rc = main(
             [
