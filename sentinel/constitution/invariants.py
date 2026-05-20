@@ -339,6 +339,279 @@ MVP_REQUIRED_INVARIANTS: tuple[InvariantDefinition, ...] = (
             "order_submit family) must not appear as system outputs."
         ),
     ),
+    # ---- Phase 3-10 runtime-raised invariants (catalog companion to
+    # the violation codes raised by the runtime modules). The
+    # canonical statement for each is the runtime ViolationContext;
+    # this catalog row exists so listing / get_invariant covers them.
+    # ---- NUMERICS_GOVERNANCE (loader + dependency validator) ----------
+    InvariantDefinition(
+        code="NUMERICS_DEV_ONLY_REJECTED_IN_PRODUCTION",
+        category=InvariantCategory.NUMERICS_GOVERNANCE,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="NUMERICS_GOVERNANCE.md §8 + build plan §8",
+        statement=(
+            "A `dev_only=True` numerics artifact is rejected by the loader in PRODUCTION mode."
+        ),
+    ),
+    InvariantDefinition(
+        code="NUMERICS_DEPENDENCY_UNKNOWN_KEY",
+        category=InvariantCategory.NUMERICS_GOVERNANCE,
+        severity=InvariantSeverity.HIGH,
+        source_ref="NUMERICS_GOVERNANCE.md §12",
+        statement=(
+            "Every NumericDependency.target_key must reference another "
+            "entry in the same artifact; unknown keys are rejected."
+        ),
+    ),
+    InvariantDefinition(
+        code="NUMERICS_DEPENDENCY_CYCLE_DETECTED",
+        category=InvariantCategory.NUMERICS_GOVERNANCE,
+        severity=InvariantSeverity.HIGH,
+        source_ref="NUMERICS_GOVERNANCE.md §12",
+        statement=(
+            "The directed graph of cross-key dependencies within a "
+            "NumericsArtifact must be acyclic; cycles (self-loops "
+            "included) are rejected."
+        ),
+    ),
+    # ---- INGRESS_BOUNDARY (profile cap input guard) -------------------
+    InvariantDefinition(
+        code="INGRESS_PROFILE_CAP_INPUT_INVALID",
+        category=InvariantCategory.INGRESS_BOUNDARY,
+        severity=InvariantSeverity.HIGH,
+        source_ref="INGRESS_COMPILER_NUMERICS.md §7",
+        statement=(
+            "`apply_profile_cap(profile, intensity)` rejects intensity "
+            "outside [0.0, 1.0] (raises NumericsGovernanceViolation)."
+        ),
+    ),
+    # ---- OBSERVER_LEDGER (catalog + permanence + ring + LLM scope) ----
+    InvariantDefinition(
+        code="OBSERVER_EVENT_TYPE_UNKNOWN",
+        category=InvariantCategory.OBSERVER_LEDGER,
+        severity=InvariantSeverity.HIGH,
+        source_ref="OBSERVER_LEDGER_SCHEMA.md §19",
+        statement=(
+            "An ObserverEvent whose event_type is not in the canonical "
+            "catalog is rejected at the writer boundary."
+        ),
+    ),
+    InvariantDefinition(
+        code="OBSERVER_EVENT_FAMILY_MATCHES_CATALOG",
+        category=InvariantCategory.OBSERVER_LEDGER,
+        severity=InvariantSeverity.HIGH,
+        source_ref="OBSERVER_LEDGER_SCHEMA.md §19",
+        statement=(
+            "An ObserverEvent's event_family must match the canonical "
+            "catalog row for its event_type; mismatches are rejected."
+        ),
+    ),
+    InvariantDefinition(
+        code="OBSERVER_PERMANENCE_DOWNGRADE_FORBIDDEN",
+        category=InvariantCategory.OBSERVER_LEDGER,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="OBSERVER_LEDGER_NUMERICS.md §10-12",
+        statement=(
+            "Permanence policy is monotonic; storage pressure cannot "
+            "downgrade an event_type's permanence (e.g. permanent ->"
+            " ring_buffer_only is forbidden)."
+        ),
+    ),
+    InvariantDefinition(
+        code="OBSERVER_RING_BUFFER_POLICY_MISMATCH",
+        category=InvariantCategory.OBSERVER_LEDGER,
+        severity=InvariantSeverity.HIGH,
+        source_ref="OBSERVER_LEDGER_SCHEMA.md §10",
+        statement=(
+            "Pushing an event whose catalog permanence does not include "
+            "ring-buffer participation into the in-memory ring is "
+            "rejected."
+        ),
+    ),
+    InvariantDefinition(
+        code="OBSERVER_LLM_READ_SCOPE_FORBIDDEN",
+        category=InvariantCategory.OBSERVER_LEDGER,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="OBSERVER_LEDGER_NUMERICS.md §12-15",
+        statement=(
+            "An LLM reader explicitly requesting an event_type outside "
+            "the LLM_ALLOWED_READ_EVENT_TYPES whitelist is rejected; "
+            "no events are returned and no audit is emitted on the "
+            "failed call."
+        ),
+    ),
+    # ---- ADAPTER_BOUNDARY (trust + neural-seed red line) --------------
+    InvariantDefinition(
+        code="ADAPTER_NEURAL_SEED_EMISSION_DETECTED",
+        category=InvariantCategory.ADAPTER_BOUNDARY,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="ADAPTER_MANIFEST_SPEC.md §7; ADAPTER_TRUST_NUMERICS.md §6",
+        statement=(
+            "An adapter with neural_seed_emission_count > 0 (or one "
+            "attempting direct NeuralSeed emission) is irrevocably "
+            "revoked; AdapterTrustRecord rejects this at construction."
+        ),
+    ),
+    InvariantDefinition(
+        code="ADAPTER_TRUST_HARD_GATES_REQUIRED",
+        category=InvariantCategory.ADAPTER_BOUNDARY,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="ADAPTER_TRUST_NUMERICS.md §6",
+        statement=(
+            "Adapter trust hard gates (signature_validity = True, "
+            "manifest_hash_integrity = True, "
+            "neural_seed_emission_count == 0) must all pass; any "
+            "failure forces composite trust score = 0.0 and band = "
+            "REVOKED."
+        ),
+    ),
+    # ---- INGRESS_BOUNDARY (recall protocol invariants) ----------------
+    InvariantDefinition(
+        code="RECALL_TOP_ONE_INVARIANT",
+        category=InvariantCategory.INGRESS_BOUNDARY,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="RECALL_PROTOCOL.md §5 + §8",
+        statement=(
+            "At the core boundary, at most one recall result is "
+            "emitted per trigger; multi-result APIs are forbidden."
+        ),
+    ),
+    InvariantDefinition(
+        code="RECALL_CORE_TRIGGER_SOURCE_ONLY",
+        category=InvariantCategory.INGRESS_BOUNDARY,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="RECALL_PROTOCOL.md §19",
+        statement=(
+            "Only `RecallTriggerSource.CORE` may trigger recall in MVP; "
+            "human-direct, LLM, replay, summarizer sources are rejected."
+        ),
+    ),
+    InvariantDefinition(
+        code="RECALL_CANDIDATE_SUBJECT_CLASS_FORBIDDEN",
+        category=InvariantCategory.INGRESS_BOUNDARY,
+        severity=InvariantSeverity.HIGH,
+        source_ref="RECALL_PROTOCOL.md §14",
+        statement=(
+            "A candidate recall is only permitted for subject classes "
+            "in {SOURCE_TRUST, PROCEDURAL}; any other subject is "
+            "rejected at the protocol boundary."
+        ),
+    ),
+    # ---- MEMORY_BOUNDARY (Memory Write Gate) --------------------------
+    InvariantDefinition(
+        code="MEMORY_WRITE_GATE_SILENT",
+        category=InvariantCategory.MEMORY_BOUNDARY,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="MEMORY_WRITE_GATE.md §4",
+        statement=(
+            "The Memory Write Gate is silent toward the core. The only "
+            "core-observable signal of a memory write is the audit "
+            "event MEMORY_RECORD_STATUS_CHANGED; the gate returns no "
+            "direct signal to the core."
+        ),
+    ),
+    InvariantDefinition(
+        code="MEMORY_WRITE_GATE_CANDIDATE_ONLY_IN_MVP",
+        category=InvariantCategory.MEMORY_BOUNDARY,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="MEMORY_WRITE_GATE.md §8 + build plan §12",
+        statement=(
+            "While mvp_verified_disabled is True, any VERIFIED-status "
+            "write request is downgraded to CANDIDATE; the verified "
+            "path is unreachable in MVP."
+        ),
+    ),
+    # ---- WORKSPACE (pulse-coupling guard) -----------------------------
+    InvariantDefinition(
+        code="WORKSPACE_PULSE_NO_ACTION_COUPLING",
+        category=InvariantCategory.WORKSPACE,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="BOOTSTRAP_GENOME.md §B; build plan §11",
+        statement=(
+            "Pulse alone cannot trigger action. The pulse emitter "
+            "references no execution / intent constructs; the deontic "
+            "gate is the sole action authorizer."
+        ),
+    ),
+    # ---- MVP_RUNTIME (feature flag + output set + dry sim) ------------
+    InvariantDefinition(
+        code="MVP_FEATURE_FLAG_MATRIX_IMMUTABLE",
+        category=InvariantCategory.MVP_RUNTIME,
+        severity=InvariantSeverity.HIGH,
+        source_ref="build plan §18",
+        statement=(
+            "The MVP_FEATURE_FLAGS mapping is read-only at runtime; no "
+            "code path may override a flag value mid-process. Reads "
+            "must go through `get_flag(name)` which raises on unknown "
+            "names."
+        ),
+    ),
+    InvariantDefinition(
+        code="MVP_OUTPUT_SET_CLOSED",
+        category=InvariantCategory.MVP_RUNTIME,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="build plan §15",
+        statement=(
+            "SystemOutput is the closed 5-value set {WAIT, BLOCK, MONITOR, NEED_RECALL, NO_ACTION}."
+        ),
+    ),
+    # ---- M0 birth-time invariants ------------------------------------
+    InvariantDefinition(
+        code="M0_NEURON_NO_SPECIALIST_AT_BIRTH",
+        category=InvariantCategory.CORE_PAYLOAD,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="BOOTSTRAP_GENOME_NUMERICS.md §6; agi-core S §8",
+        statement=(
+            "Every M0 neuron's receptor sensitivities lie in "
+            "[1.0 - epsilon, 1.0 + epsilon] for a small epsilon; the "
+            "max-min span <= 2*epsilon guarantees no specialist "
+            "neuron exists at birth."
+        ),
+    ),
+    InvariantDefinition(
+        code="M0_SYNAPSE_WEIGHT_BELOW_STABLE_THRESHOLD",
+        category=InvariantCategory.CORE_PAYLOAD,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="agi-core S §7",
+        statement=(
+            "Every M0 synapse's initial weight is in the weak band "
+            "and strictly below STABLE_PATH_THRESHOLD; charge "
+            "propagation is read-only (learning OFF in MVP)."
+        ),
+    ),
+    InvariantDefinition(
+        code="M0_SELF_FIELD_STRICT_HIERARCHY",
+        category=InvariantCategory.CORE_PAYLOAD,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="agi-core S §11",
+        statement=(
+            "Embryo self-field weights satisfy "
+            "homeostatic_weight > predictive_weight > narrative_weight."
+        ),
+    ),
+    InvariantDefinition(
+        code="M0_PROTO_RESONANCE_5_LAYER_BIRTH",
+        category=InvariantCategory.CORE_PAYLOAD,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="agi-core S §9",
+        statement=(
+            "At MVP birth every proto-resonance pattern satisfies: "
+            "recallability == 0, assembly_id_at_birth is None, "
+            "persistence_max_ms < STABLE_ASSEMBLY_MIN_PERSISTENCE_MS, "
+            "stability_score_cap < ASSEMBLY_STABILIZATION_THRESHOLD, "
+            "memory_write_eligibility is False."
+        ),
+    ),
+    InvariantDefinition(
+        code="M0_TISSUE_UNIFORM_BIRTH_ALLOCATION",
+        category=InvariantCategory.CORE_PAYLOAD,
+        severity=InvariantSeverity.CRITICAL,
+        source_ref="BOOTSTRAP_GENOME_NUMERICS.md §8",
+        statement=(
+            "Tissue birth allocates global_seed_count uniformly across "
+            "all 10 primer payloads; per-payload divergence == 0."
+        ),
+    ),
 )
 
 
