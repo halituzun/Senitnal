@@ -1,0 +1,52 @@
+Sentinel Minimum Viable Brain v0.1
+
+Financial AGI core that observes, audits, and never acts.
+
+What shipped:
+    Phase 1   Contracts as Code (8 schema + 2 constitution modules)
+    Phase 2   Observer Ledger (catalog + hash chain + JSONL +
+              permanence + ring buffer + audit reader + router)
+    Phase 3   Numerics Loader (dev_only guard + 8 dev fixtures +
+              dependency validator)
+    Phase 4   Ingress Compiler (profile caps + soft overlap +
+              rules + compiler)
+    Phase 5   Minimal M0 Tissue (neuron + synapse + self_field +
+              proto_resonance + assembly + tissue)
+    Phase 6   Workspace Pulse (single mechanism)
+    Phase 7   Gates (deontic 11 declaratives + memory write silent)
+    Phase 8   Recall Skeleton (composite-AND + top-1 +
+              candidate guard + audit)
+    Phase 9   EchoAdapter (signed mock + multiplicative trust)
+    Phase 10  End-to-end Dry Simulation (runtime/dry_sim + CLI +
+              integration tests + forbidden-output guard)
+    Polish    Audit wiring + property tests + public API +
+              catalog consistency guard + permanence-aware router
+
+Constitutional red lines (CI-enforced):
+    No live exchange / venue API integration
+    No LLM SDK integration
+    No execution-output literals (BUY, SELL, EXECUTE_REAL,
+       ORDER_SUBMIT)
+    No M2 verified-status memory production
+    No numerics runtime mutation
+    No cross-instance / fork / migration paths
+    No replay-driven memory update
+    No M0 learning (synapse weights immutable)
+    No silent action
+    No adapter NeuralSeed emission
+    No operator override of the deontic gate
+    No human/LLM-direct recall push
+
+Dry simulation outcome:
+    SystemOutput.WAIT
+
+Test count:    877 passing
+pyright:       0 errors (strict)
+ruff:          clean (check + format)
+hash chain:    re-verifies end-to-end
+public API:    41 symbols + __version__
+
+Full release note: docs/releases/v0.1.0-mvb.md
+Release readiness review: docs/reviews/0007-v0.1-release-readiness.md
+CI visibility fix: docs/reviews/0008-ci-visibility-fix.md
+Bot-author trigger diagnostic: docs/reviews/0009-bot-author-push-trigger.md

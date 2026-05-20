@@ -1,5 +1,7 @@
 # Sentinel
 
+[![CI](https://github.com/halituzun/Senitnal/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/halituzun/Senitnal/actions/workflows/ci.yml)
+
 > *Proje kodadı: **Sentinel**. Repo slug: **Senitnal**.*
 
 > Bir trading bot değil. Sonradan trading yeteneği takılabilecek bir yapay zihinsel çekirdek.
