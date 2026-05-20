@@ -1,0 +1,1 @@
+{"event_id":"pap-evt-003","event_type":"kill_switch_observed","source_system":"gel_al_borsa","observed_at_ms":1700000020000,"exported_at_ms":1700000020002,"source_table":"kill","source_row_id":"row-3","source_hash":"sha256:p-3","environment":"shadow","payload":{"kill_switch_active":true,"source":"operator","observed_by":"gel_al_runtime","confidence":1.0}}

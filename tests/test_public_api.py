@@ -112,6 +112,32 @@ V5_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
 )
 
 
+# V7 additive surface — paper co-pilot.
+# Additive only; no v0.1 / V2 / V3 / V4 / V5 / V6 baseline removal.
+V7_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
+    {
+        "GelAlPaperComparison",
+        "PaperCoPilotBatchResult",
+        "PaperCoPilotContext",
+        "PaperCoPilotResult",
+        "PaperDecision",
+        "PaperDecisionOutcomeComparison",
+        "PaperDecisionReason",
+        "PaperOpportunity",
+        "PaperOpportunityKind",
+        "PaperOpportunitySource",
+        "PaperOutcome",
+        "PaperOutcomeKind",
+        "build_paper_opportunity_from_gelal_shadow",
+        "build_paper_opportunity_from_market_observation",
+        "compare_gelal_shadow_to_paper_decision",
+        "compare_paper_decision_to_outcome",
+        "evaluate_paper_opportunity",
+        "run_paper_copilot_file",
+    }
+)
+
+
 # V6 additive surface — financial deontic policy.
 # Additive only; no v0.1 / V2 / V3 / V4 / V5 baseline removal.
 V6_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
@@ -230,6 +256,17 @@ class TestPublicApi:
             f"V6 additive public API missing exports: {sorted(missing)}. "
             "Either add them to sentinel/__init__.py __all__, or update "
             "V6_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
+        )
+
+    def test_v7_additions_exported(self) -> None:
+        """V7 additive contract: every documented V7 symbol is exported."""
+        mod = importlib.import_module("sentinel")
+        current = set(mod.__all__)
+        missing = V7_PUBLIC_API_ADDITIONS - current
+        assert missing == set(), (
+            f"V7 additive public API missing exports: {sorted(missing)}. "
+            "Either add them to sentinel/__init__.py __all__, or update "
+            "V7_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
         )
 
     def test_no_internal_modules_in_export(self) -> None:
