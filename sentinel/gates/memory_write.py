@@ -157,8 +157,7 @@ def submit_memory_write(
             resolution=MemoryWriteResolution.DOWNGRADED_TO_CANDIDATE,
             final_status=MemoryRecordStatus.CANDIDATE,
             reason=(
-                "VERIFIED requested but mvp_verified_disabled is True; "
-                "downgraded to CANDIDATE"
+                "VERIFIED requested but mvp_verified_disabled is True; downgraded to CANDIDATE"
             ),
         )
         _emit_status_changed(
