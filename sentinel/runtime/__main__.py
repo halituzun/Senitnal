@@ -88,6 +88,8 @@ def main(argv: list[str] | None = None) -> int:
     print(
         f"sentinel-mvp: output={result.output.value} "
         f"audit_events={len(result.audit_event_ids)} "
+        f"permanent={len(result.permanent_event_ids)} "
+        f"ring={len(result.ring_buffer_event_ids)} "
         f"ledger={ledger_path}"
     )
     return 0

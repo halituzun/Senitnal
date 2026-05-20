@@ -38,6 +38,9 @@ class TestCli:
         main(["--ledger", str(ledger_path)])
         main(["--ledger", str(ledger_path)])
         events = JsonlObserverLedger(ledger_path).read_all()
-        # 4 events per canonical run, 2 runs = 8 events; chain re-verifies
-        assert len(events) == 8
+        # Per catalog routing: 2 PERMANENT events per run land in
+        # the JSONL ledger (adapter activation + recall rejected);
+        # the 2 RING_BUFFER_ONLY events per run don't (CLI does
+        # not allocate a ring buffer). 2 runs -> 4 ledger events.
+        assert len(events) == 4
         assert JsonlObserverLedger(ledger_path).verify() is True

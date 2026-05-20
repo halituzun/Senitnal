@@ -48,7 +48,7 @@ class TestEndToEnd:
         )
         assert ledger.verify() is True
 
-    def test_audit_event_types(self, ledger: JsonlObserverLedger) -> None:
+    def test_ledger_contains_permanent_event_types(self, ledger: JsonlObserverLedger) -> None:
         adapter = EchoAdapter.default()
         run_dry_simulation(
             ledger=ledger,
@@ -56,14 +56,40 @@ class TestEndToEnd:
             observation_magnitude=0.8,
         )
         events = ledger.read_all()
-        types = [e.event_type for e in events]
-        # Canonical MVP run touches all four audit paths.
-        assert "ADAPTER_MANIFEST_STATUS_CHANGED" in types
-        assert "OBSERVATION_INGESTED" in types
-        assert "WORKSPACE_PULSE" in types
-        assert "RECALL_TRIGGER_REJECTED" in types
-        # Deontic gate is not invoked by default.
-        assert "DEONTIC_BLOCKED" not in types
+        types = {e.event_type for e in events}
+        # Canonical run: 2 PERMANENT events on disk
+        assert types == {
+            "ADAPTER_MANIFEST_STATUS_CHANGED",
+            "RECALL_TRIGGER_REJECTED",
+        }
+
+    def test_ring_buffer_contains_ring_only_event_types(self, ledger: JsonlObserverLedger) -> None:
+        from sentinel.observer.ring_buffer import ObserverRingBuffer
+
+        ring = ObserverRingBuffer(capacity=16)
+        adapter = EchoAdapter.default()
+        run_dry_simulation(
+            ledger=ledger,
+            adapter=adapter,
+            observation_magnitude=0.8,
+            ring_buffer=ring,
+        )
+        types = {e.event_type for e in ring.snapshot()}
+        assert types == {"OBSERVATION_INGESTED", "WORKSPACE_PULSE"}
+
+    def test_ring_only_events_dropped_without_ring_buffer(
+        self, ledger: JsonlObserverLedger
+    ) -> None:
+        adapter = EchoAdapter.default()
+        result = run_dry_simulation(
+            ledger=ledger,
+            adapter=adapter,
+            observation_magnitude=0.8,
+        )
+        # Without a ring buffer, ring_buffer_only events are dropped.
+        # The result still records them in audit_event_ids but
+        # ring_buffer_event_ids is empty.
+        assert result.ring_buffer_event_ids == ()
 
     def test_deontic_opt_in_emits_block(self, ledger: JsonlObserverLedger) -> None:
         adapter = EchoAdapter.default()
@@ -134,20 +160,27 @@ class TestRunsAcrossMagnitudes:
 
 
 class TestStableAuditCount:
-    def test_canonical_run_emits_four_audit_events(self, ledger: JsonlObserverLedger) -> None:
+    def test_canonical_run_split_counts(self, ledger: JsonlObserverLedger) -> None:
+        from sentinel.observer.ring_buffer import ObserverRingBuffer
+
+        ring = ObserverRingBuffer(capacity=16)
         adapter = EchoAdapter.default()
         result = run_dry_simulation(
             ledger=ledger,
             adapter=adapter,
             observation_magnitude=0.8,
+            ring_buffer=ring,
         )
-        # ADAPTER_MANIFEST_STATUS_CHANGED + OBSERVATION_INGESTED +
-        # WORKSPACE_PULSE + RECALL_TRIGGER_REJECTED = 4 audit events
-        # in the canonical run (deontic gate path opt-in only).
+        # Per catalog permanence policy:
+        #   PERMANENT: ADAPTER_MANIFEST_STATUS_CHANGED, RECALL_TRIGGER_REJECTED
+        #   RING_BUFFER_ONLY: OBSERVATION_INGESTED, WORKSPACE_PULSE
         assert len(result.audit_event_ids) == 4
-        assert len(ledger.read_all()) == 4
+        assert len(result.permanent_event_ids) == 2
+        assert len(result.ring_buffer_event_ids) == 2
+        assert len(ledger.read_all()) == 2
+        assert len(ring) == 2
 
-    def test_deontic_opt_in_adds_fifth_event(self, ledger: JsonlObserverLedger) -> None:
+    def test_deontic_opt_in_adds_permanent_event(self, ledger: JsonlObserverLedger) -> None:
         adapter = EchoAdapter.default()
         result = run_dry_simulation(
             ledger=ledger,
@@ -155,10 +188,12 @@ class TestStableAuditCount:
             observation_magnitude=0.8,
             exercise_deontic_gate=True,
         )
+        # +1 PERMANENT (DEONTIC_BLOCKED)
         assert len(result.audit_event_ids) == 5
-        assert len(ledger.read_all()) == 5
+        assert len(result.permanent_event_ids) == 3
+        assert len(ledger.read_all()) == 3
 
-    def test_minimal_run_emits_three_events(self, ledger: JsonlObserverLedger) -> None:
+    def test_minimal_run_routes_correctly(self, ledger: JsonlObserverLedger) -> None:
         adapter = EchoAdapter.default()
         result = run_dry_simulation(
             ledger=ledger,
@@ -166,6 +201,10 @@ class TestStableAuditCount:
             observation_magnitude=0.8,
             emit_adapter_activation=False,
         )
-        # Without adapter activation: observation + pulse + recall = 3
+        # Without adapter activation: 1 PERMANENT (recall rejected),
+        # 2 RING_BUFFER_ONLY (observation + pulse), no ring buffer
+        # supplied -> ring events dropped.
         assert len(result.audit_event_ids) == 3
-        assert len(ledger.read_all()) == 3
+        assert len(result.permanent_event_ids) == 1
+        assert len(result.ring_buffer_event_ids) == 0
+        assert len(ledger.read_all()) == 1
