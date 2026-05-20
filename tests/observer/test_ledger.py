@@ -50,9 +50,7 @@ def ledger_path(tmp_path: Path) -> Path:
 
 
 class TestEmptyLedger:
-    def test_read_all_returns_empty_tuple_for_missing_file(
-        self, ledger_path: Path
-    ) -> None:
+    def test_read_all_returns_empty_tuple_for_missing_file(self, ledger_path: Path) -> None:
         ledger = JsonlObserverLedger(ledger_path)
         assert ledger.read_all() == ()
 
@@ -75,9 +73,7 @@ class TestAppendFirst:
 
     def test_caller_event_hash_is_overwritten(self, ledger_path: Path) -> None:
         ledger = JsonlObserverLedger(ledger_path)
-        ev = _make_event(counter=1).model_copy(
-            update={"event_hash": "sha256:" + ("a" * 64)}
-        )
+        ev = _make_event(counter=1).model_copy(update={"event_hash": "sha256:" + ("a" * 64)})
         appended = ledger.append(ev)
         assert appended.event_hash != "sha256:" + ("a" * 64)
 
@@ -114,16 +110,11 @@ class TestCatalogValidation:
         )
         with pytest.raises(InvariantViolation) as exc_info:
             ledger.append(bad)
-        assert (
-            exc_info.value.violation_code
-            == "OBSERVER_EVENT_FAMILY_MATCHES_CATALOG"
-        )
+        assert exc_info.value.violation_code == "OBSERVER_EVENT_FAMILY_MATCHES_CATALOG"
         # Nothing should have been written
         assert ledger.read_all() == ()
 
-    def test_unknown_event_type_rejected_on_append(
-        self, ledger_path: Path
-    ) -> None:
+    def test_unknown_event_type_rejected_on_append(self, ledger_path: Path) -> None:
         ledger = JsonlObserverLedger(ledger_path)
         bad = _make_event(
             event_type="NOT_A_CANONICAL_EVENT",
@@ -152,17 +143,13 @@ class TestTamperDetection:
         # Replace counter=2 line's payload with a different value, keeping
         # JSON structure valid but invalidating the recorded event_hash.
         lines = ledger_path.read_bytes().splitlines()
-        tampered = lines[1].replace(
-            b'"counter":2', b'"counter":42'
-        )
+        tampered = lines[1].replace(b'"counter":2', b'"counter":42')
         ledger_path.write_bytes(lines[0] + b"\n" + tampered + b"\n")
         assert ledger.verify() is False
 
 
 class TestMultipleEventTypes:
-    def test_mixed_canonical_events_link_correctly(
-        self, ledger_path: Path
-    ) -> None:
+    def test_mixed_canonical_events_link_correctly(self, ledger_path: Path) -> None:
         ledger = JsonlObserverLedger(ledger_path)
         e1 = ledger.append(
             _make_event(

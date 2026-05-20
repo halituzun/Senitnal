@@ -92,9 +92,7 @@ class JsonlObserverLedger:
                 try:
                     json.loads(line)
                 except json.JSONDecodeError as exc:
-                    raise ValueError(
-                        f"malformed JSON on ledger line {line_no}: {exc.msg}"
-                    ) from exc
+                    raise ValueError(f"malformed JSON on ledger line {line_no}: {exc.msg}") from exc
                 events.append(ObserverEvent.model_validate_json(line))
         return tuple(events)
 

@@ -185,12 +185,8 @@ class TestVerifyChainLinks:
 
     def test_three_event_chain_valid(self) -> None:
         e0 = link_observer_event(_event(event_id="ev-0"), previous_event_hash=None)
-        e1 = link_observer_event(
-            _event(event_id="ev-1"), previous_event_hash=e0.event_hash
-        )
-        e2 = link_observer_event(
-            _event(event_id="ev-2"), previous_event_hash=e1.event_hash
-        )
+        e1 = link_observer_event(_event(event_id="ev-1"), previous_event_hash=e0.event_hash)
+        e2 = link_observer_event(_event(event_id="ev-2"), previous_event_hash=e1.event_hash)
         assert verify_chain_links((e0, e1, e2)) is True
 
     def test_broken_previous_hash_rejected(self) -> None:
@@ -203,9 +199,7 @@ class TestVerifyChainLinks:
 
     def test_stale_event_hash_rejected(self) -> None:
         e0 = link_observer_event(_event(event_id="ev-0"), previous_event_hash=None)
-        e1 = link_observer_event(
-            _event(event_id="ev-1"), previous_event_hash=e0.event_hash
-        )
+        e1 = link_observer_event(_event(event_id="ev-1"), previous_event_hash=e0.event_hash)
         # Tamper with e1's payload AFTER it was linked → stale event_hash
         e1_stale = e1.model_copy(update={"payload": {"reason": "tampered"}})
         assert verify_chain_links((e0, e1_stale)) is False
