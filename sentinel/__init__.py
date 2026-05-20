@@ -23,3 +23,82 @@ cross-document consistency baseline.
 """
 
 __version__ = "0.1.0"
+
+
+# ---------------------------------------------------------------------------
+# Public API — curated re-exports.
+#
+# Importing from `sentinel` directly is the supported integration surface
+# for downstream callers; deeper paths (e.g. `sentinel.observer.ledger`)
+# remain available but may be reorganized in later phases.
+# ---------------------------------------------------------------------------
+
+from sentinel.adapters.echo import EchoAdapter
+from sentinel.adapters.trust import (
+    AdapterTrustRecord,
+    TrustBand,
+    compute_trust,
+)
+from sentinel.constitution.invariants import (
+    MVP_REQUIRED_INVARIANTS,
+    InvariantCategory,
+    InvariantDefinition,
+    InvariantSeverity,
+    assert_invariant,
+    get_invariant,
+    list_invariants,
+)
+from sentinel.constitution.violations import (
+    ConstitutionalViolation,
+    InvariantViolation,
+    ViolationContext,
+)
+from sentinel.gates.deontic import (
+    ApprovedActionIntent,
+    BlockClass,
+    DeonticDecision,
+    DeonticOutcome,
+    evaluate_action,
+    evaluate_action_with_audit,
+)
+from sentinel.observer.ledger import JsonlObserverLedger
+from sentinel.runtime.dry_sim import DrySimResult, run_dry_simulation
+from sentinel.runtime.output import SystemOutput
+from sentinel.types.neural_seed import EventProfile, NeuralSeed, ProvenanceRef
+from sentinel.types.observer import EventFamily, ObserverEvent
+from sentinel.types.payload import PayloadSeed, PrimerPayload
+
+__all__ = [
+    "MVP_REQUIRED_INVARIANTS",
+    "AdapterTrustRecord",
+    "ApprovedActionIntent",
+    "BlockClass",
+    "ConstitutionalViolation",
+    "DeonticDecision",
+    "DeonticOutcome",
+    "DrySimResult",
+    "EchoAdapter",
+    "EventFamily",
+    "EventProfile",
+    "InvariantCategory",
+    "InvariantDefinition",
+    "InvariantSeverity",
+    "InvariantViolation",
+    "JsonlObserverLedger",
+    "NeuralSeed",
+    "ObserverEvent",
+    "PayloadSeed",
+    "PrimerPayload",
+    "ProvenanceRef",
+    "SystemOutput",
+    "TrustBand",
+    "ViolationContext",
+    "__version__",
+    "assert_invariant",
+    "compute_trust",
+    "evaluate_action",
+    "evaluate_action_with_audit",
+    "get_invariant",
+    "list_invariants",
+    "run_dry_simulation",
+]
