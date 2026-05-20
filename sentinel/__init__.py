@@ -95,6 +95,19 @@ from sentinel.gates.deontic import (
     evaluate_action,
     evaluate_action_with_audit,
 )
+from sentinel.integrations.gelal_jsonl import GelAlShadowJsonlAdapter
+from sentinel.integrations.gelal_sanitizer import (
+    build_gelal_shadow_audit_payload,
+    sanitize_gelal_shadow_to_observation_event,
+)
+from sentinel.integrations.gelal_shadow import (
+    GelAlShadowEnvelope,
+    GelAlShadowEventType,
+)
+from sentinel.integrations.gelal_shadow_eval import (
+    GelAlShadowEvaluationResult,
+    evaluate_gelal_shadow_event,
+)
 from sentinel.memory.builder import build_candidate_financial_memory_record
 from sentinel.memory.financial import (
     ExecutionQualityObservationPayload,
@@ -150,6 +163,10 @@ from sentinel.runtime.financial_memory_pipeline import (
     FinancialMemoryPipelineResult,
     run_financial_memory_pipeline,
 )
+from sentinel.runtime.gelal_shadow import (
+    GelAlShadowBatchResult,
+    run_gelal_shadow_file,
+)
 from sentinel.runtime.market_replay import (
     MarketReplayResult,
     run_market_jsonl_file,
@@ -185,6 +202,11 @@ __all__ = [
     "FinancialMemoryWriteResult",
     "FinancialRecallRequest",
     "FinancialRecallScope",
+    "GelAlShadowBatchResult",
+    "GelAlShadowEnvelope",
+    "GelAlShadowEvaluationResult",
+    "GelAlShadowEventType",
+    "GelAlShadowJsonlAdapter",
     "InMemoryExplicitMemoryStore",
     "InvariantCategory",
     "InvariantDefinition",
@@ -225,6 +247,7 @@ __all__ = [
     "assert_invariant",
     "build_candidate_financial_memory_record",
     "build_financial_recall_event",
+    "build_gelal_shadow_audit_payload",
     "build_market_observation_audit_payload",
     "can_start_replay_session",
     "compute_trust",
@@ -235,14 +258,17 @@ __all__ = [
     "emit_recall_trigger_rejected",
     "evaluate_action",
     "evaluate_action_with_audit",
+    "evaluate_gelal_shadow_event",
     "get_invariant",
     "list_invariants",
     "route_observer_event",
     "run_dry_simulation",
     "run_financial_memory_pipeline",
+    "run_gelal_shadow_file",
     "run_market_jsonl_file",
     "run_market_observations",
     "run_replay_financial_pipeline",
+    "sanitize_gelal_shadow_to_observation_event",
     "sanitize_market_observation_to_event",
     "select_financial_recall_top_one",
     "submit_financial_memory_candidate",
