@@ -3,15 +3,30 @@ name: CI
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
     branches: [main]
+  workflow_dispatch: {}
+
+# Explicit lowest-privilege permissions so the workflow is visible
+# in repo Settings > Actions > General regardless of org defaults.
+permissions:
+  contents: read
+
+# One run per ref; cancel duplicate in-flight runs on the same
+# branch / tag / PR. New runs supersede older queued ones.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   ci:
+    name: lint + type + test + forbidden grep
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
