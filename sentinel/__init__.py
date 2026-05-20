@@ -1,13 +1,21 @@
 """Sentinel — Financial AGI core.
 
-Minimum Viable Brain (MVB) implementation phase.
+Minimum Viable Brain (MVB) v0.1 — shipped.
 
-Conceptual + numerics design phase is **closed**:
+Conceptual + numerics design phase **closed**:
     22 frozen draft documents (A-U + ATTENTION_WORKSPACE + M) +
     2 reviews (phase closure + implementation readiness) +
     1 build plan (`docs/build/0001-minimum-viable-brain-plan.md`).
 
-Constitutional MVB invariants (enforced by CI + invariant test suite):
+Implementation phase **closed**:
+    Phases 1-10 (Contracts as Code -> End-to-end Dry Simulation)
+    + polish phase (audit wiring, property tests, CLI, public API,
+    catalog-consistency guard) — see
+    `docs/reviews/0004-mvp-build-closure-review.md` and
+    `docs/reviews/0005-mvp-polish-closure-review.md`.
+
+Constitutional MVB invariants (enforced by type boundary + CI
+grep + invariant test suite):
     - No live action output. Output set: {WAIT, BLOCK, MONITOR, NEED_RECALL, NO_ACTION}.
     - No live exchange API integration.
     - No LLM integration (intent_relay capability disabled).
@@ -17,9 +25,23 @@ Constitutional MVB invariants (enforced by CI + invariant test suite):
     - No replay-driven memory update (replay engine disabled in MVP).
     - No silent action (every gate decision audited to M1).
 
-See `docs/build/0001-minimum-viable-brain-plan.md` for the implementation roadmap
-and `docs/reviews/0001-phase-closure-consistency-review.md` for the
-cross-document consistency baseline.
+Top-level package re-exports the curated public API (see __all__
+below); deeper module paths remain available for explicit imports.
+
+Quick start:
+    >>> from sentinel import (
+    ...     EchoAdapter, JsonlObserverLedger, run_dry_simulation,
+    ... )
+    >>> ledger = JsonlObserverLedger(path)
+    >>> result = run_dry_simulation(
+    ...     ledger=ledger,
+    ...     adapter=EchoAdapter.default(),
+    ...     observation_magnitude=0.8,
+    ... )
+    >>> result.output
+    <SystemOutput.WAIT: 'WAIT'>
+    >>> ledger.verify()
+    True
 """
 
 __version__ = "0.1.0"
