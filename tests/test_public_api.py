@@ -112,6 +112,29 @@ V5_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
 )
 
 
+# V6 additive surface — financial deontic policy.
+# Additive only; no v0.1 / V2 / V3 / V4 / V5 baseline removal.
+V6_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
+    {
+        "FinancialDeonticPolicyArtifact",
+        "FinancialHardStopThresholds",
+        "FinancialPolicyAction",
+        "FinancialPolicyEvaluation",
+        "FinancialPolicyInput",
+        "FinancialPolicyOperator",
+        "FinancialPolicyRule",
+        "FinancialPolicyScope",
+        "FinancialPolicySeverity",
+        "FinancialPolicyWriteResult",
+        "InMemoryPolicyStore",
+        "build_deontic_policy_candidate_record",
+        "evaluate_financial_policy",
+        "resolve_policy_conflicts",
+        "submit_financial_policy_candidate",
+    }
+)
+
+
 # V3 additive surface — financial M2 memory + recall.
 # Additive only; no v0.1 / V2 baseline removal.
 V3_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
@@ -196,6 +219,17 @@ class TestPublicApi:
             f"V5 additive public API missing exports: {sorted(missing)}. "
             "Either add them to sentinel/__init__.py __all__, or update "
             "V5_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
+        )
+
+    def test_v6_additions_exported(self) -> None:
+        """V6 additive contract: every documented V6 symbol is exported."""
+        mod = importlib.import_module("sentinel")
+        current = set(mod.__all__)
+        missing = V6_PUBLIC_API_ADDITIONS - current
+        assert missing == set(), (
+            f"V6 additive public API missing exports: {sorted(missing)}. "
+            "Either add them to sentinel/__init__.py __all__, or update "
+            "V6_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
         )
 
     def test_no_internal_modules_in_export(self) -> None:

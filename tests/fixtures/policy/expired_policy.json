@@ -1,0 +1,46 @@
+{
+  "artifact_id": "art-expired",
+  "policy_id": "policy-expired",
+  "policy_version": "v1",
+  "scope": {
+    "scope_id": "scope-expired",
+    "environment": "shadow",
+    "source_system": "gel_al_borsa",
+    "applies_to_all_symbols": true,
+    "applies_to_all_strategies": true
+  },
+  "thresholds": {
+    "max_daily_loss_pct": 1.0,
+    "max_single_observation_risk_score": 0.7,
+    "max_staleness_ms": 1000,
+    "max_latency_ms": 500,
+    "max_orderbook_age_ms": 200,
+    "max_spread_pct": 1.0,
+    "min_confidence": 0.3,
+    "min_liquidity_score": 0.1,
+    "max_bad_order_count": 0,
+    "max_unknown_risk_score": 0.5,
+    "kill_switch_observed_blocks": true,
+    "stale_data_blocks": true,
+    "bad_order_blocks": true,
+    "missing_provenance_blocks": true
+  },
+  "rules": [
+    {
+      "rule_id": "r1",
+      "condition_key": "risk_score",
+      "operator": "gte",
+      "threshold_ref": "0.5",
+      "output_if_triggered": "classify_block",
+      "severity_band": "high",
+      "rationale": "Expired window block."
+    }
+  ],
+  "signed_by": "k",
+  "signature": "s",
+  "artifact_hash": "sha256:expired",
+  "effective_at_ms": 1700000000000,
+  "expires_at_ms": 1700000001000,
+  "human_approval_ref": "approval-x",
+  "created_at_ms": 1700000000000
+}

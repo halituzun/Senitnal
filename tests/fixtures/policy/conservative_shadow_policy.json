@@ -1,0 +1,70 @@
+{
+  "artifact_id": "art-conservative-001",
+  "policy_id": "policy-conservative",
+  "policy_version": "v1",
+  "scope": {
+    "scope_id": "scope-conservative-all",
+    "environment": "shadow",
+    "source_system": "gel_al_borsa",
+    "venue_hash": null,
+    "symbol_hash": null,
+    "strategy_hash": null,
+    "applies_to_all_symbols": true,
+    "applies_to_all_strategies": true
+  },
+  "thresholds": {
+    "max_daily_loss_pct": 1.0,
+    "max_daily_loss_abs_ref": null,
+    "max_single_observation_risk_score": 0.7,
+    "max_staleness_ms": 1000,
+    "max_latency_ms": 500,
+    "max_orderbook_age_ms": 200,
+    "max_spread_pct": 1.0,
+    "min_confidence": 0.3,
+    "min_liquidity_score": 0.1,
+    "max_bad_order_count": 0,
+    "max_unknown_risk_score": 0.5,
+    "kill_switch_observed_blocks": true,
+    "stale_data_blocks": true,
+    "bad_order_blocks": true,
+    "missing_provenance_blocks": true
+  },
+  "rules": [
+    {
+      "rule_id": "risk-high-block",
+      "condition_key": "risk_score",
+      "operator": "gte",
+      "threshold_ref": "0.7",
+      "output_if_triggered": "classify_block",
+      "severity_band": "high",
+      "rationale": "High risk score observed; shadow-block."
+    },
+    {
+      "rule_id": "stale-monitor",
+      "condition_key": "staleness_ms",
+      "operator": "gt",
+      "threshold_ref": "1000",
+      "output_if_triggered": "classify_monitor",
+      "severity_band": "medium",
+      "rationale": "Staleness exceeds 1s; shadow-monitor."
+    },
+    {
+      "rule_id": "low-confidence-wait",
+      "condition_key": "confidence",
+      "operator": "lt",
+      "threshold_ref": "0.3",
+      "output_if_triggered": "classify_wait",
+      "severity_band": "low",
+      "rationale": "Confidence below threshold; shadow-wait."
+    }
+  ],
+  "signed_by": "sentinel-mock-key",
+  "signature": "sig-mock-conservative",
+  "artifact_hash": "sha256:conservative-001",
+  "previous_artifact_hash": null,
+  "effective_at_ms": 1700000000000,
+  "expires_at_ms": null,
+  "human_approval_ref": "approval-conservative-001",
+  "rollback_ref": null,
+  "created_at_ms": 1700000000000
+}
