@@ -123,6 +123,28 @@ from sentinel.recall.financial import (
     build_financial_recall_event,
     select_financial_recall_top_one,
 )
+from sentinel.replay.budget import (
+    ReplayBudget,
+    ReplayBudgetState,
+    can_start_replay_session,
+)
+from sentinel.replay.counterfactual import (
+    AblationKind,
+    CounterfactualAblation,
+    CounterfactualAblationResult,
+)
+from sentinel.replay.outcome_alignment import (
+    OutcomeAlignmentEvidence,
+    OutcomeRef,
+)
+from sentinel.replay.session import (
+    ReplayEffectChannel,
+    ReplayInputSnapshot,
+    ReplayPurpose,
+    ReplaySession,
+    ReplaySessionStatus,
+)
+from sentinel.replay.survival import ReplaySurvivalEvidence
 from sentinel.runtime.dry_sim import DrySimResult, run_dry_simulation
 from sentinel.runtime.financial_memory_pipeline import (
     FinancialMemoryPipelineResult,
@@ -134,16 +156,23 @@ from sentinel.runtime.market_replay import (
     run_market_observations,
 )
 from sentinel.runtime.output import SystemOutput
+from sentinel.runtime.replay_financial_pipeline import (
+    ReplayFinancialPipelineResult,
+    run_replay_financial_pipeline,
+)
 from sentinel.types.neural_seed import EventProfile, NeuralSeed, ProvenanceRef
 from sentinel.types.observer import EventFamily, ObserverEvent
 from sentinel.types.payload import PayloadSeed, PrimerPayload
 
 __all__ = [
     "MVP_REQUIRED_INVARIANTS",
+    "AblationKind",
     "AdapterTrustRecord",
     "ApprovedActionIntent",
     "BlockClass",
     "ConstitutionalViolation",
+    "CounterfactualAblation",
+    "CounterfactualAblationResult",
     "DeonticDecision",
     "DeonticOutcome",
     "DrySimResult",
@@ -171,9 +200,20 @@ __all__ = [
     "NeuralSeed",
     "ObserverEvent",
     "ObserverRingBuffer",
+    "OutcomeAlignmentEvidence",
+    "OutcomeRef",
     "PayloadSeed",
     "PrimerPayload",
     "ProvenanceRef",
+    "ReplayBudget",
+    "ReplayBudgetState",
+    "ReplayEffectChannel",
+    "ReplayFinancialPipelineResult",
+    "ReplayInputSnapshot",
+    "ReplayPurpose",
+    "ReplaySession",
+    "ReplaySessionStatus",
+    "ReplaySurvivalEvidence",
     "RoutingOutcome",
     "SanitizedMarketProvenance",
     "SpreadWindowObservationPayload",
@@ -186,6 +226,7 @@ __all__ = [
     "build_candidate_financial_memory_record",
     "build_financial_recall_event",
     "build_market_observation_audit_payload",
+    "can_start_replay_session",
     "compute_trust",
     "emit_manifest_status_changed",
     "emit_neural_seed_attempt_revoke",
@@ -201,6 +242,7 @@ __all__ = [
     "run_financial_memory_pipeline",
     "run_market_jsonl_file",
     "run_market_observations",
+    "run_replay_financial_pipeline",
     "sanitize_market_observation_to_event",
     "select_financial_recall_top_one",
     "submit_financial_memory_candidate",
