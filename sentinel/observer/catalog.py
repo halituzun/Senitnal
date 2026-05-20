@@ -215,6 +215,22 @@ CANONICAL_EVENT_CATALOG: tuple[CanonicalEventDefinition, ...] = (
         severity_band=SeverityBand.HIGH,
         source_ref="V9 limited live co-governance build plan §20",
     ),
+    CanonicalEventDefinition(
+        event_type="FINANCIAL_AGI_V1_EVALUATED",
+        event_family=EventFamily.DEONTIC,
+        permanence=EventPermanence.PERMANENT,
+        human_alert_required=False,
+        severity_band=SeverityBand.HIGH,
+        source_ref="V10 financial AGI v1 build plan §8",
+    ),
+    CanonicalEventDefinition(
+        event_type="FINANCIAL_AGI_READINESS_RECORDED",
+        event_family=EventFamily.DEONTIC,
+        permanence=EventPermanence.PERMANENT,
+        human_alert_required=True,
+        severity_band=SeverityBand.CRITICAL,
+        source_ref="V10 financial AGI v1 build plan §8",
+    ),
     # ---- LEDGER_META ------------------------------------------------------
     CanonicalEventDefinition(
         event_type="NUMERICS_ARTIFACT_STATUS_CHANGED",
