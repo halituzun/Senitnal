@@ -95,6 +95,23 @@ V4_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
     }
 )
 
+# V5 additive surface — Gel.Al shadow integration.
+# Additive only; no v0.1 / V2 / V3 / V4 baseline removal.
+V5_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
+    {
+        "GelAlShadowBatchResult",
+        "GelAlShadowEnvelope",
+        "GelAlShadowEvaluationResult",
+        "GelAlShadowEventType",
+        "GelAlShadowJsonlAdapter",
+        "build_gelal_shadow_audit_payload",
+        "evaluate_gelal_shadow_event",
+        "run_gelal_shadow_file",
+        "sanitize_gelal_shadow_to_observation_event",
+    }
+)
+
+
 # V3 additive surface — financial M2 memory + recall.
 # Additive only; no v0.1 / V2 baseline removal.
 V3_PUBLIC_API_ADDITIONS: frozenset[str] = frozenset(
@@ -168,6 +185,17 @@ class TestPublicApi:
             f"V4 additive public API missing exports: {sorted(missing)}. "
             "Either add them to sentinel/__init__.py __all__, or update "
             "V4_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
+        )
+
+    def test_v5_additions_exported(self) -> None:
+        """V5 additive contract: every documented V5 symbol is exported."""
+        mod = importlib.import_module("sentinel")
+        current = set(mod.__all__)
+        missing = V5_PUBLIC_API_ADDITIONS - current
+        assert missing == set(), (
+            f"V5 additive public API missing exports: {sorted(missing)}. "
+            "Either add them to sentinel/__init__.py __all__, or update "
+            "V5_PUBLIC_API_ADDITIONS in tests/test_public_api.py."
         )
 
     def test_no_internal_modules_in_export(self) -> None:
