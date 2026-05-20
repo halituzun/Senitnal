@@ -37,7 +37,11 @@ from typing import Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from sentinel.observer.hash_chain import placeholder_event_hash
+from sentinel.observer.ledger import JsonlObserverLedger  # noqa: TC001 (runtime)
 from sentinel.runtime.feature_flags import get_flag
+from sentinel.types.neural_seed import ProvenanceRef
+from sentinel.types.observer import EventFamily, ObserverEvent
 
 
 class BlockClass(StrEnum):
@@ -260,3 +264,57 @@ def evaluate_action(intent: ApprovedActionIntent) -> DeonticOutcome:
         triggered_declarative_code=d.code,
         reason=d.statement,
     )
+
+
+def _emit_deontic_block(
+    *,
+    ledger: JsonlObserverLedger,
+    intent: ApprovedActionIntent,
+    outcome: DeonticOutcome,
+    now_ms: int,
+) -> ObserverEvent:
+    """Append a DEONTIC_BLOCKED observer event to the ledger.
+
+    Writer-authoritative chain. Callers should pass `now_ms` for
+    occurred_at_ms.
+    """
+    return ledger.append(
+        ObserverEvent(
+            event_id=f"deontic-block-{intent.intent_id}",
+            event_family=EventFamily.DEONTIC,
+            event_type="DEONTIC_BLOCKED",
+            occurred_at_ms=now_ms,
+            payload={
+                "intent_id": intent.intent_id,
+                "intent_type": intent.intent_type,
+                "block_class": (
+                    outcome.block_class.value if outcome.block_class is not None else None
+                ),
+                "triggered_declarative_code": outcome.triggered_declarative_code,
+                "rationale": intent.rationale,
+                "reason": outcome.reason,
+            },
+            provenance=ProvenanceRef(source_event_id=intent.intent_id),
+            previous_event_hash=None,
+            event_hash=placeholder_event_hash(),
+        )
+    )
+
+
+def evaluate_action_with_audit(
+    ledger: JsonlObserverLedger,
+    intent: ApprovedActionIntent,
+    *,
+    now_ms: int,
+) -> DeonticOutcome:
+    """Evaluate `intent` and append the audit event in one call.
+
+    Every BLOCK decision is recorded as DEONTIC_BLOCKED in the M1
+    ledger. An ALLOW decision (MVP impossible) is NOT audited by
+    this helper; future code paths emitting ALLOW must use their
+    own audit shape.
+    """
+    outcome = evaluate_action(intent)
+    if outcome.decision is DeonticDecision.BLOCK:
+        _emit_deontic_block(ledger=ledger, intent=intent, outcome=outcome, now_ms=now_ms)
+    return outcome

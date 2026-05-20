@@ -11,6 +11,7 @@ from sentinel.gates.deontic import (
     ApprovedActionIntent,
     BlockClass,
     DeonticDecision,
+    DeonticDeclarative,
     DeonticOutcome,
     evaluate_action,
     get_declarative,
@@ -130,3 +131,32 @@ class TestNoSoftPath:
     def test_no_warning_decision_exists(self) -> None:
         # The enum is closed; only BLOCK and ALLOW exist.
         assert {d.value for d in DeonticDecision} == {"block", "allow"}
+
+
+class TestDeclarativeCoverage:
+    """Each declarative produces a constructible BLOCK outcome.
+
+    Per build plan §12 done def, every constitutional rule should
+    have a violation test. The MVP gate currently routes through
+    the first two declaratives (kill switch + mvp_execute_disabled);
+    the remaining declaratives are defense-in-depth wiring for
+    future phases. This sweep guarantees every declarative row is
+    well-formed and constructible into a valid DeonticOutcome.
+    """
+
+    @pytest.mark.parametrize(
+        "declarative",
+        list(DEONTIC_DECLARATIVES),
+    )
+    def test_declarative_outcome_schema_accepts(
+        self, declarative: DeonticDeclarative
+    ) -> None:
+        outcome = DeonticOutcome(
+            intent_id="probe",
+            decision=DeonticDecision.BLOCK,
+            block_class=declarative.block_class,
+            triggered_declarative_code=declarative.code,
+            reason=declarative.statement,
+        )
+        assert outcome.triggered_declarative_code == declarative.code
+        assert outcome.block_class is declarative.block_class
