@@ -1,16 +1,16 @@
 {
-  "generated_at_ms": 1779399245210,
+  "generated_at_ms": 1779404707482,
   "generator": "sentinel.runtime.learning_loop",
   "sentinel_version": "v1.14",
   "learning_state": {
-    "cycle": 10,
-    "started_at_ms": 1779399236154,
-    "last_cycle_ms": 1779399245205,
-    "total_signals": 20,
-    "total_blocks": 3,
+    "cycle": 2,
+    "started_at_ms": 1779404702475,
+    "last_cycle_ms": 1779404707482,
+    "total_signals": 4,
+    "total_blocks": 0,
     "total_candidates": 0,
-    "total_live_candidates": 5,
-    "total_memories": 4
+    "total_live_candidates": 2,
+    "total_memories": 0
   },
   "portfolio": {
     "portfolio_id": "main-portfolio",
@@ -35,16 +35,16 @@
       "allocated_budget_try": 3500,
       "max_entry_try": 350,
       "max_trades_per_day": 8,
-      "current_edge_score": 0.494,
-      "current_risk_score": 0.191,
-      "current_confidence": 0.569,
+      "current_edge_score": 0.65,
+      "current_risk_score": 0.25,
+      "current_confidence": 0.75,
       "enabled": true,
-      "strategy_quality": 0.75,
-      "pnl_today_try": -2.0,
-      "pnl_week_try": -2.0,
-      "total_decisions": 3,
-      "total_pass": 1,
-      "total_block": 1
+      "strategy_quality": 0.8,
+      "pnl_today_try": 0,
+      "pnl_week_try": 0,
+      "total_decisions": 0,
+      "total_pass": 0,
+      "total_block": 0
     },
     {
       "strategy_id": "eth-mean-reversion",
@@ -53,16 +53,16 @@
       "allocated_budget_try": 2800,
       "max_entry_try": 280,
       "max_trades_per_day": 12,
-      "current_edge_score": 0.508,
-      "current_risk_score": 0.217,
-      "current_confidence": 0.478,
+      "current_edge_score": 0.555,
+      "current_risk_score": 0.261,
+      "current_confidence": 0.547,
       "enabled": true,
-      "strategy_quality": 0.62,
-      "pnl_today_try": -2.6,
-      "pnl_week_try": -2.6,
-      "total_decisions": 4,
-      "total_pass": 3,
-      "total_block": 1
+      "strategy_quality": 0.74,
+      "pnl_today_try": 3.2,
+      "pnl_week_try": 3.2,
+      "total_decisions": 2,
+      "total_pass": 2,
+      "total_block": 0
     },
     {
       "strategy_id": "sol-breakout-alpha",
@@ -71,16 +71,16 @@
       "allocated_budget_try": 1200,
       "max_entry_try": 120,
       "max_trades_per_day": 5,
-      "current_edge_score": 0.415,
-      "current_risk_score": 0.303,
-      "current_confidence": 0.45,
+      "current_edge_score": 0.45,
+      "current_risk_score": 0.45,
+      "current_confidence": 0.55,
       "enabled": true,
-      "strategy_quality": 0.57,
-      "pnl_today_try": 5.2,
-      "pnl_week_try": 5.2,
-      "total_decisions": 3,
-      "total_pass": 1,
-      "total_block": 1
+      "strategy_quality": 0.55,
+      "pnl_today_try": 0,
+      "pnl_week_try": 0,
+      "total_decisions": 0,
+      "total_pass": 0,
+      "total_block": 0
     },
     {
       "strategy_id": "bnb-arb-v1",
@@ -128,9 +128,9 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779398696485,
-      "latency_ms": 360,
-      "error_rate": 0.0013476623028366333,
+      "last_seen_ms": 1779404128929,
+      "latency_ms": 355,
+      "error_rate": 0.0015692106627064968,
       "credential_ref_id": "cred-taapi-pro",
       "description": "TAAPI Pro \u2014 TECHNICAL data feed"
     },
@@ -142,9 +142,9 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779399034868,
-      "latency_ms": 42,
-      "error_rate": 0.0017019218062278429,
+      "last_seen_ms": 1779404634222,
+      "latency_ms": 51,
+      "error_rate": 0.001361115405182311,
       "credential_ref_id": "cred-binance-ws",
       "description": "Binance WS \u2014 MARKET_DATA data feed"
     },
@@ -156,9 +156,9 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779399049418,
-      "latency_ms": 549,
-      "error_rate": 0.007138617542042109,
+      "last_seen_ms": 1779404554624,
+      "latency_ms": 522,
+      "error_rate": 0.007594101951322199,
       "credential_ref_id": "cred-lunarcrush-social",
       "description": "LunarCrush \u2014 SOCIAL data feed"
     },
@@ -170,9 +170,9 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779399087602,
-      "latency_ms": 929,
-      "error_rate": 0.01168031472545419,
+      "last_seen_ms": 1779404485693,
+      "latency_ms": 934,
+      "error_rate": 0.011411570769423153,
       "credential_ref_id": "cred-cryptopanic-feed",
       "description": "CryptoPanic \u2014 NEWS data feed"
     },
@@ -184,9 +184,9 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779398908062,
-      "latency_ms": 1218,
-      "error_rate": 0.0056266006057618095,
+      "last_seen_ms": 1779404185041,
+      "latency_ms": 1212,
+      "error_rate": 0.0033452681167885144,
       "credential_ref_id": "cred-glassnode-onchain",
       "description": "Glassnode \u2014 ONCHAIN data feed"
     },
@@ -198,9 +198,9 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779398645406,
-      "latency_ms": 406,
-      "error_rate": 0.010096144588423301,
+      "last_seen_ms": 1779404525087,
+      "latency_ms": 399,
+      "error_rate": 0.01098664834698201,
       "credential_ref_id": "cred-coinglass-futures",
       "description": "Coinglass \u2014 DERIVATIVES data feed"
     },
@@ -212,7 +212,7 @@
       "is_active": true,
       "is_fresh": false,
       "is_healthy": false,
-      "last_seen_ms": 1779370445210,
+      "last_seen_ms": 1779375907482,
       "latency_ms": null,
       "error_rate": 0.12,
       "credential_ref_id": "cred-fear-greed-index",
@@ -226,595 +226,151 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779398947253,
-      "latency_ms": 326,
-      "error_rate": 0.004939862372722094,
+      "last_seen_ms": 1779404276501,
+      "latency_ms": 319,
+      "error_rate": 0.0031639033374013903,
       "credential_ref_id": "cred-deribit-options",
       "description": "Deribit \u2014 DERIVATIVES data feed"
     }
   ],
   "ledger_events": [
     {
-      "id": "ev-00016",
-      "ts_ms": 1779399238167,
-      "event_type": "NET_EDGE_COMPUTED",
-      "severity": "INFO",
-      "source": "net-edge",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "net-edge",
-      "message": "Gross=0.0184 Net=0.0121 (costs deducted)"
-    },
-    {
-      "id": "ev-00017",
-      "ts_ms": 1779399238167,
-      "event_type": "LIVE_CONVICTION",
-      "severity": "INFO",
-      "source": "conviction-engine",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "conviction-engine",
-      "message": "Band=LIVE_CANDIDATE Score=0.22"
-    },
-    {
-      "id": "ev-00018",
-      "ts_ms": 1779399238167,
-      "event_type": "PRODUCTION_DECISION",
-      "severity": "INFO",
-      "source": "production-engine",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "production-engine",
-      "message": "PnL=-2.0 TRY Quality=0.75"
-    },
-    {
-      "id": "ev-00019",
-      "ts_ms": 1779399238167,
-      "event_type": "INGRESS_COMPILED",
-      "severity": "INFO",
-      "source": "ingress-compiler",
-      "strategy_id": null,
-      "adapter_id": "ingress-compiler",
-      "message": "Ingress compilation: 8 sources checked, 6 passed, 2 stale-suppressed"
-    },
-    {
-      "id": "ev-00020",
-      "ts_ms": 1779399239172,
+      "id": "ev-00001",
+      "ts_ms": 1779404702476,
       "event_type": "SIGNAL_RECEIVED",
       "severity": "INFO",
       "source": "taapi-pro",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "taapi-pro",
-      "message": "RSI(14)=39.9 MACD=-1.41"
+      "message": "RSI(14)=68.1 MACD=1.23"
     },
     {
-      "id": "ev-00021",
-      "ts_ms": 1779399239172,
+      "id": "ev-00002",
+      "ts_ms": 1779404702476,
       "event_type": "SIGNAL_RECEIVED",
       "severity": "INFO",
       "source": "binance-ws",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "binance-ws",
-      "message": "Spread=0.0056 Imbalance=-0.13"
+      "message": "Spread=0.0055 Imbalance=-0.04"
     },
     {
-      "id": "ev-00022",
-      "ts_ms": 1779399239172,
+      "id": "ev-00003",
+      "ts_ms": 1779404702476,
       "event_type": "FUSION_COMPUTED",
       "severity": "INFO",
       "source": "fusion-engine",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "fusion-engine",
-      "message": "Trend=0.09 Contradiction=0.13 Confidence=0.30"
+      "message": "Trend=0.53 Contradiction=0.03 Confidence=0.28"
     },
     {
-      "id": "ev-00023",
-      "ts_ms": 1779399239172,
+      "id": "ev-00004",
+      "ts_ms": 1779404702476,
       "event_type": "NET_EDGE_COMPUTED",
       "severity": "INFO",
       "source": "net-edge",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "net-edge",
-      "message": "Gross=0.0028 Net=-0.0046 (costs deducted)"
+      "message": "Gross=0.0160 Net=0.0088 (costs deducted)"
     },
     {
-      "id": "ev-00024",
-      "ts_ms": 1779399239172,
+      "id": "ev-00005",
+      "ts_ms": 1779404702476,
       "event_type": "LIVE_CONVICTION",
       "severity": "INFO",
       "source": "conviction-engine",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "conviction-engine",
-      "message": "Band=BLOCKED Score=0.00"
+      "message": "Band=LIVE_CANDIDATE Score=0.12"
     },
     {
-      "id": "ev-00025",
-      "ts_ms": 1779399239172,
-      "event_type": "MEMORY_WRITE",
-      "severity": "INFO",
-      "source": "memory-write-gate",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "memory-write-gate",
-      "message": "Memory stored: BEARISH (conf=0.30)"
-    },
-    {
-      "id": "ev-00026",
-      "ts_ms": 1779399240176,
-      "event_type": "SIGNAL_RECEIVED",
-      "severity": "INFO",
-      "source": "taapi-pro",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "taapi-pro",
-      "message": "RSI(14)=56.8 MACD=0.12"
-    },
-    {
-      "id": "ev-00027",
-      "ts_ms": 1779399240176,
-      "event_type": "SIGNAL_RECEIVED",
-      "severity": "INFO",
-      "source": "binance-ws",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "binance-ws",
-      "message": "Spread=0.0059 Imbalance=-0.17"
-    },
-    {
-      "id": "ev-00028",
-      "ts_ms": 1779399240176,
-      "event_type": "FUSION_COMPUTED",
-      "severity": "INFO",
-      "source": "fusion-engine",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "fusion-engine",
-      "message": "Trend=0.33 Contradiction=0.05 Confidence=0.27"
-    },
-    {
-      "id": "ev-00029",
-      "ts_ms": 1779399240176,
-      "event_type": "NET_EDGE_COMPUTED",
-      "severity": "INFO",
-      "source": "net-edge",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "net-edge",
-      "message": "Gross=0.0100 Net=0.0023 (costs deducted)"
-    },
-    {
-      "id": "ev-00030",
-      "ts_ms": 1779399240176,
-      "event_type": "LIVE_CONVICTION",
-      "severity": "INFO",
-      "source": "conviction-engine",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "conviction-engine",
-      "message": "Band=WATCH Score=0.02"
-    },
-    {
-      "id": "ev-00031",
-      "ts_ms": 1779399240176,
-      "event_type": "REPLAY_COMPLETED",
-      "severity": "INFO",
-      "source": "replay-engine",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "replay-engine",
-      "message": "Counterfactual replay: sol-breakout-alpha \u2014 edge would be 0.41 with tighter spread"
-    },
-    {
-      "id": "ev-00032",
-      "ts_ms": 1779399241179,
-      "event_type": "SIGNAL_RECEIVED",
-      "severity": "INFO",
-      "source": "taapi-pro",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "taapi-pro",
-      "message": "RSI(14)=27.6 MACD=-2.57"
-    },
-    {
-      "id": "ev-00033",
-      "ts_ms": 1779399241179,
-      "event_type": "SIGNAL_RECEIVED",
-      "severity": "INFO",
-      "source": "binance-ws",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "binance-ws",
-      "message": "Spread=0.0032 Imbalance=-0.33"
-    },
-    {
-      "id": "ev-00034",
-      "ts_ms": 1779399241180,
-      "event_type": "FUSION_COMPUTED",
-      "severity": "INFO",
-      "source": "fusion-engine",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "fusion-engine",
-      "message": "Trend=0.01 Contradiction=0.11 Confidence=0.27"
-    },
-    {
-      "id": "ev-00035",
-      "ts_ms": 1779399241180,
-      "event_type": "NET_EDGE_COMPUTED",
-      "severity": "INFO",
-      "source": "net-edge",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "net-edge",
-      "message": "Gross=0.0003 Net=-0.0046 (costs deducted)"
-    },
-    {
-      "id": "ev-00036",
-      "ts_ms": 1779399241180,
-      "event_type": "LIVE_CONVICTION",
-      "severity": "INFO",
-      "source": "conviction-engine",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "conviction-engine",
-      "message": "Band=BLOCKED Score=0.00"
-    },
-    {
-      "id": "ev-00037",
-      "ts_ms": 1779399241180,
-      "event_type": "MEMORY_WRITE",
-      "severity": "INFO",
-      "source": "memory-write-gate",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "memory-write-gate",
-      "message": "Memory stored: BEARISH (conf=0.27)"
-    },
-    {
-      "id": "ev-00038",
-      "ts_ms": 1779399241180,
-      "event_type": "INGRESS_COMPILED",
-      "severity": "INFO",
-      "source": "ingress-compiler",
-      "strategy_id": null,
-      "adapter_id": "ingress-compiler",
-      "message": "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed"
-    },
-    {
-      "id": "ev-00039",
-      "ts_ms": 1779399242185,
-      "event_type": "SIGNAL_RECEIVED",
-      "severity": "INFO",
-      "source": "taapi-pro",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "taapi-pro",
-      "message": "RSI(14)=80.6 MACD=1.78"
-    },
-    {
-      "id": "ev-00040",
-      "ts_ms": 1779399242185,
-      "event_type": "SIGNAL_RECEIVED",
-      "severity": "INFO",
-      "source": "binance-ws",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "binance-ws",
-      "message": "Spread=0.0022 Imbalance=-0.19"
-    },
-    {
-      "id": "ev-00041",
-      "ts_ms": 1779399242185,
-      "event_type": "FUSION_COMPUTED",
-      "severity": "INFO",
-      "source": "fusion-engine",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "fusion-engine",
-      "message": "Trend=0.57 Contradiction=0.06 Confidence=0.28"
-    },
-    {
-      "id": "ev-00042",
-      "ts_ms": 1779399242185,
-      "event_type": "NET_EDGE_COMPUTED",
-      "severity": "INFO",
-      "source": "net-edge",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "net-edge",
-      "message": "Gross=0.0171 Net=0.0131 (costs deducted)"
-    },
-    {
-      "id": "ev-00043",
-      "ts_ms": 1779399242185,
-      "event_type": "LIVE_CONVICTION",
-      "severity": "INFO",
-      "source": "conviction-engine",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "conviction-engine",
-      "message": "Band=LIVE_CANDIDATE Score=0.17"
-    },
-    {
-      "id": "ev-00044",
-      "ts_ms": 1779399242185,
+      "id": "ev-00006",
+      "ts_ms": 1779404702476,
       "event_type": "PRODUCTION_DECISION",
       "severity": "INFO",
       "source": "production-engine",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "production-engine",
-      "message": "PnL=+5.1 TRY Quality=0.72"
+      "message": "PnL=+2.2 TRY Quality=0.72"
     },
     {
-      "id": "ev-00045",
-      "ts_ms": 1779399243191,
+      "id": "ev-00007",
+      "ts_ms": 1779404707482,
       "event_type": "SIGNAL_RECEIVED",
       "severity": "INFO",
       "source": "taapi-pro",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "taapi-pro",
-      "message": "RSI(14)=77.7 MACD=1.39"
+      "message": "RSI(14)=87.3 MACD=2.50"
     },
     {
-      "id": "ev-00046",
-      "ts_ms": 1779399243191,
+      "id": "ev-00008",
+      "ts_ms": 1779404707482,
       "event_type": "SIGNAL_RECEIVED",
       "severity": "INFO",
       "source": "binance-ws",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "binance-ws",
-      "message": "Spread=0.0054 Imbalance=-0.34"
+      "message": "Spread=0.0021 Imbalance=-0.31"
     },
     {
-      "id": "ev-00047",
-      "ts_ms": 1779399243191,
+      "id": "ev-00009",
+      "ts_ms": 1779404707482,
       "event_type": "FUSION_COMPUTED",
       "severity": "INFO",
       "source": "fusion-engine",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "fusion-engine",
-      "message": "Trend=0.51 Contradiction=0.05 Confidence=0.30"
+      "message": "Trend=0.60 Contradiction=0.03 Confidence=0.27"
     },
     {
-      "id": "ev-00048",
-      "ts_ms": 1779399243191,
+      "id": "ev-00010",
+      "ts_ms": 1779404707482,
       "event_type": "NET_EDGE_COMPUTED",
       "severity": "INFO",
       "source": "net-edge",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "net-edge",
-      "message": "Gross=0.0152 Net=0.0080 (costs deducted)"
+      "message": "Gross=0.0179 Net=0.0141 (costs deducted)"
     },
     {
-      "id": "ev-00049",
-      "ts_ms": 1779399243191,
+      "id": "ev-00011",
+      "ts_ms": 1779404707482,
       "event_type": "LIVE_CONVICTION",
       "severity": "INFO",
       "source": "conviction-engine",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "conviction-engine",
-      "message": "Band=LIVE_CANDIDATE Score=0.13"
+      "message": "Band=LIVE_CANDIDATE Score=0.19"
     },
     {
-      "id": "ev-00050",
-      "ts_ms": 1779399243191,
+      "id": "ev-00012",
+      "ts_ms": 1779404707482,
       "event_type": "PRODUCTION_DECISION",
       "severity": "INFO",
       "source": "production-engine",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "production-engine",
-      "message": "PnL=-4.1 TRY Quality=0.67"
-    },
-    {
-      "id": "ev-00051",
-      "ts_ms": 1779399244199,
-      "event_type": "SIGNAL_RECEIVED",
-      "severity": "INFO",
-      "source": "taapi-pro",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "taapi-pro",
-      "message": "RSI(14)=81.1 MACD=1.80"
-    },
-    {
-      "id": "ev-00052",
-      "ts_ms": 1779399244199,
-      "event_type": "SIGNAL_RECEIVED",
-      "severity": "INFO",
-      "source": "binance-ws",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "binance-ws",
-      "message": "Spread=0.0032 Imbalance=-0.23"
-    },
-    {
-      "id": "ev-00053",
-      "ts_ms": 1779399244199,
-      "event_type": "FUSION_COMPUTED",
-      "severity": "INFO",
-      "source": "fusion-engine",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "fusion-engine",
-      "message": "Trend=0.63 Contradiction=0.06 Confidence=0.30"
-    },
-    {
-      "id": "ev-00054",
-      "ts_ms": 1779399244199,
-      "event_type": "NET_EDGE_COMPUTED",
-      "severity": "INFO",
-      "source": "net-edge",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "net-edge",
-      "message": "Gross=0.0190 Net=0.0140 (costs deducted)"
-    },
-    {
-      "id": "ev-00055",
-      "ts_ms": 1779399244199,
-      "event_type": "LIVE_CONVICTION",
-      "severity": "INFO",
-      "source": "conviction-engine",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "conviction-engine",
-      "message": "Band=LIVE_CANDIDATE Score=0.16"
-    },
-    {
-      "id": "ev-00056",
-      "ts_ms": 1779399244199,
-      "event_type": "PRODUCTION_DECISION",
-      "severity": "INFO",
-      "source": "production-engine",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "production-engine",
-      "message": "PnL=+5.2 TRY Quality=0.57"
-    },
-    {
-      "id": "ev-00057",
-      "ts_ms": 1779399244199,
-      "event_type": "INGRESS_COMPILED",
-      "severity": "INFO",
-      "source": "ingress-compiler",
-      "strategy_id": null,
-      "adapter_id": "ingress-compiler",
-      "message": "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed"
-    },
-    {
-      "id": "ev-00058",
-      "ts_ms": 1779399245205,
-      "event_type": "SIGNAL_RECEIVED",
-      "severity": "INFO",
-      "source": "taapi-pro",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "taapi-pro",
-      "message": "RSI(14)=89.2 MACD=1.84"
-    },
-    {
-      "id": "ev-00059",
-      "ts_ms": 1779399245205,
-      "event_type": "SIGNAL_RECEIVED",
-      "severity": "INFO",
-      "source": "binance-ws",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "binance-ws",
-      "message": "Spread=0.0041 Imbalance=-0.33"
-    },
-    {
-      "id": "ev-00060",
-      "ts_ms": 1779399245205,
-      "event_type": "FUSION_COMPUTED",
-      "severity": "INFO",
-      "source": "fusion-engine",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "fusion-engine",
-      "message": "Trend=0.58 Contradiction=0.06 Confidence=0.29"
-    },
-    {
-      "id": "ev-00061",
-      "ts_ms": 1779399245205,
-      "event_type": "NET_EDGE_COMPUTED",
-      "severity": "INFO",
-      "source": "net-edge",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "net-edge",
-      "message": "Gross=0.0174 Net=0.0114 (costs deducted)"
-    },
-    {
-      "id": "ev-00062",
-      "ts_ms": 1779399245205,
-      "event_type": "LIVE_CONVICTION",
-      "severity": "INFO",
-      "source": "conviction-engine",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "conviction-engine",
-      "message": "Band=LIVE_CANDIDATE Score=0.16"
-    },
-    {
-      "id": "ev-00063",
-      "ts_ms": 1779399245205,
-      "event_type": "PRODUCTION_DECISION",
-      "severity": "INFO",
-      "source": "production-engine",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "production-engine",
-      "message": "PnL=-3.6 TRY Quality=0.62"
-    },
-    {
-      "id": "ev-00064",
-      "ts_ms": 1779399245205,
-      "event_type": "REPLAY_COMPLETED",
-      "severity": "INFO",
-      "source": "replay-engine",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "replay-engine",
-      "message": "Counterfactual replay: eth-mean-reversion \u2014 edge would be 0.61 with tighter spread"
-    },
-    {
-      "id": "ev-00065",
-      "ts_ms": 1779399245205,
-      "event_type": "CONSTITUTION_AUDIT",
-      "severity": "INFO",
-      "source": "constitution-auditor",
-      "strategy_id": null,
-      "adapter_id": "constitution-auditor",
-      "message": "Constitutional audit: 0 violations in last 10 decisions. All invariants hold."
+      "message": "PnL=+1.0 TRY Quality=0.74"
     }
   ],
   "decisions": [
     {
       "decision_id": "dec-00001",
-      "ts_ms": 1779399236155,
-      "strategy_id": "sol-breakout-alpha",
+      "ts_ms": 1779404702476,
+      "strategy_id": "eth-mean-reversion",
       "gate_name": "conviction_gate",
-      "outcome": "BLOCK",
-      "reason": "Band=blocked score=0.00"
+      "outcome": "PASS",
+      "reason": "Band=live_candidate score=0.12"
     },
     {
       "decision_id": "dec-00002",
-      "ts_ms": 1779399237161,
-      "strategy_id": "btc-momentum-v3",
-      "gate_name": "conviction_gate",
-      "outcome": "BLOCK",
-      "reason": "Band=watch score=0.00"
-    },
-    {
-      "decision_id": "dec-00003",
-      "ts_ms": 1779399238167,
-      "strategy_id": "btc-momentum-v3",
-      "gate_name": "conviction_gate",
-      "outcome": "PASS",
-      "reason": "Band=live_candidate score=0.22"
-    },
-    {
-      "decision_id": "dec-00004",
-      "ts_ms": 1779399239172,
-      "strategy_id": "eth-mean-reversion",
-      "gate_name": "conviction_gate",
-      "outcome": "BLOCK",
-      "reason": "Band=blocked score=0.00"
-    },
-    {
-      "decision_id": "dec-00005",
-      "ts_ms": 1779399240176,
-      "strategy_id": "sol-breakout-alpha",
-      "gate_name": "conviction_gate",
-      "outcome": "BLOCK",
-      "reason": "Band=watch score=0.02"
-    },
-    {
-      "decision_id": "dec-00006",
-      "ts_ms": 1779399241179,
-      "strategy_id": "btc-momentum-v3",
-      "gate_name": "conviction_gate",
-      "outcome": "BLOCK",
-      "reason": "Band=blocked score=0.00"
-    },
-    {
-      "decision_id": "dec-00007",
-      "ts_ms": 1779399242185,
+      "ts_ms": 1779404707482,
       "strategy_id": "eth-mean-reversion",
       "gate_name": "conviction_gate",
       "outcome": "PASS",
-      "reason": "Band=live_candidate score=0.17"
-    },
-    {
-      "decision_id": "dec-00008",
-      "ts_ms": 1779399243191,
-      "strategy_id": "eth-mean-reversion",
-      "gate_name": "conviction_gate",
-      "outcome": "PASS",
-      "reason": "Band=live_candidate score=0.13"
-    },
-    {
-      "decision_id": "dec-00009",
-      "ts_ms": 1779399244199,
-      "strategy_id": "sol-breakout-alpha",
-      "gate_name": "conviction_gate",
-      "outcome": "PASS",
-      "reason": "Band=live_candidate score=0.16"
-    },
-    {
-      "decision_id": "dec-00010",
-      "ts_ms": 1779399245205,
-      "strategy_id": "eth-mean-reversion",
-      "gate_name": "conviction_gate",
-      "outcome": "PASS",
-      "reason": "Band=live_candidate score=0.16"
+      "reason": "Band=live_candidate score=0.19"
     }
   ],
   "exchanges": [
@@ -845,7 +401,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778794445210,
+      "created_at_ms": 1778799907482,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -859,7 +415,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778794445210,
+      "created_at_ms": 1778799907482,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -873,7 +429,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778794445210,
+      "created_at_ms": 1778799907482,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -887,7 +443,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778794445210,
+      "created_at_ms": 1778799907482,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -901,7 +457,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778794445210,
+      "created_at_ms": 1778799907482,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -915,7 +471,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778794445210,
+      "created_at_ms": 1778799907482,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -929,7 +485,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778794445210,
+      "created_at_ms": 1778799907482,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -943,52 +499,11 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778794445210,
+      "created_at_ms": 1778799907482,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
     }
   ],
-  "memory_records": [
-    {
-      "memory_id": "mem-00001",
-      "strategy_id": "sol-breakout-alpha",
-      "pattern_type": "BEARISH_PATTERN",
-      "description": "C1: BEARISH trend=0.01 contradiction=0.11",
-      "confidence": 0.294,
-      "last_seen_ms": 1779399236155,
-      "sample_count": 1,
-      "usable_for_live": false
-    },
-    {
-      "memory_id": "mem-00002",
-      "strategy_id": "btc-momentum-v3",
-      "pattern_type": "BEARISH_PATTERN",
-      "description": "C2: BEARISH trend=0.14 contradiction=0.15",
-      "confidence": 0.278,
-      "last_seen_ms": 1779399237161,
-      "sample_count": 1,
-      "usable_for_live": false
-    },
-    {
-      "memory_id": "mem-00003",
-      "strategy_id": "eth-mean-reversion",
-      "pattern_type": "BEARISH_PATTERN",
-      "description": "C4: BEARISH trend=0.09 contradiction=0.13",
-      "confidence": 0.30000000000000004,
-      "last_seen_ms": 1779399239172,
-      "sample_count": 1,
-      "usable_for_live": false
-    },
-    {
-      "memory_id": "mem-00004",
-      "strategy_id": "btc-momentum-v3",
-      "pattern_type": "BEARISH_PATTERN",
-      "description": "C6: BEARISH trend=0.01 contradiction=0.11",
-      "confidence": 0.26799999999999996,
-      "last_seen_ms": 1779399241179,
-      "sample_count": 3,
-      "usable_for_live": true
-    }
-  ]
+  "memory_records": []
 }

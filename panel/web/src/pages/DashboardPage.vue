@@ -86,6 +86,31 @@
         </div>
       </div>
 
+      <!-- Learning status -->
+      <div v-if="data.learning" class="section-header">Learning Loop</div>
+      <div v-if="data.learning" class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Cycle</div>
+          <div class="stat-value" style="font-size:20px">{{ data.learning.cycle }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Signals</div>
+          <div class="stat-value" style="font-size:20px">{{ data.learning.total_signals }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Live ★</div>
+          <div class="stat-value ok" style="font-size:20px">{{ data.learning.total_live_candidates }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Blocks ✗</div>
+          <div class="stat-value warn" style="font-size:20px">{{ data.learning.total_blocks }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Memories</div>
+          <div class="stat-value" style="font-size:20px">{{ data.learning.total_memories }}</div>
+        </div>
+      </div>
+
       <!-- Recent events -->
       <div class="section-header">Recent Events</div>
       <table>
@@ -125,6 +150,7 @@ interface Dashboard {
   pnl_summary: { today_try: number; week_try: number; month_try: number }
   adapter_hub: { total_adapters: number; healthy_count: number; stale_count: number; quarantined_count: number; revoked_count: number; degraded: boolean }
   recent_events: Array<{ id: string; ts_ms: number; severity: string; event_type: string; message: string }>
+  learning?: { cycle: number; total_signals: number; total_live_candidates: number; total_blocks: number; total_memories: number }
   captured_at_ms: number
 }
 

@@ -995,6 +995,9 @@ function loadSnapshot() {
       degraded: ADAPTERS.filter((a) => a.is_healthy).length < ADAPTERS.filter((a) => a.is_active).length,
     }
     ;(DASHBOARD as Record<string, unknown>)["recent_events"] = LEDGER_EVENTS.slice(-10).reverse()
+    if (snap["learning_state"] && typeof snap["learning_state"] === "object") {
+      ;(DASHBOARD as Record<string, unknown>)["learning"] = snap["learning_state"]
+    }
 
     const strategies = ADAPTERS.filter((a) => (a as Record<string, unknown>)["strategy_id"] != null)
     // Recalculate PnL from strategy data if available
