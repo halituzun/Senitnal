@@ -305,6 +305,27 @@ from sentinel.policy.write_path import (
     FinancialPolicyWriteResult,
     submit_financial_policy_candidate,
 )
+from sentinel.production.execution_quality import (
+    ExecutionQualityRecord,
+    update_strategy_quality_from_record,
+)
+from sentinel.production.portfolio import (
+    LiveProductionDecision,
+    LiveProductionDecisionInput,
+    StrategyAllocation,
+    StrategyPortfolioConfig,
+    evaluate_live_production_decision,
+)
+from sentinel.production.review import (
+    DailyProductionReport,
+    WeeklyProductionReport,
+    build_daily_report,
+    build_weekly_report,
+)
+from sentinel.production.strategy_lifecycle import (
+    StrategyLifecycleState,
+    transition_state,
+)
 from sentinel.recall.audit import (
     emit_recall_request,
     emit_recall_result_empty,
@@ -397,6 +418,7 @@ __all__ = [
     "ConstitutionalViolation",
     "CounterfactualAblation",
     "CounterfactualAblationResult",
+    "DailyProductionReport",
     "DeonticDecision",
     "DeonticOutcome",
     "DrySimResult",
@@ -410,6 +432,7 @@ __all__ = [
     "EvidenceWindow",
     "EvidenceWindowKind",
     "ExecutionQualityObservationPayload",
+    "ExecutionQualityRecord",
     "FinancialAGIActivationState",
     "FinancialAGIBatchResult",
     "FinancialAGICapabilityMap",
@@ -477,6 +500,8 @@ __all__ = [
     "LiveGovernanceRequest",
     "LiveImpactGuardInput",
     "LiveImpactGuardResult",
+    "LiveProductionDecision",
+    "LiveProductionDecisionInput",
     "LocalJsonlMarketAdapter",
     "MacroEventKind",
     "MacroEventSnapshot",
@@ -528,6 +553,9 @@ __all__ = [
     "SocialSignalSnapshot",
     "SourceFamily",
     "SpreadWindowObservationPayload",
+    "StrategyAllocation",
+    "StrategyLifecycleState",
+    "StrategyPortfolioConfig",
     "SyntheticMarketAdapter",
     "SystemOutput",
     "TechnicalIndicatorSnapshot",
@@ -536,16 +564,19 @@ __all__ = [
     "VetoReason",
     "VetoRequest",
     "ViolationContext",
+    "WeeklyProductionReport",
     "__version__",
     "aggregate_records",
     "assert_invariant",
     "build_candidate_financial_memory_record",
+    "build_daily_report",
     "build_deontic_policy_candidate_record",
     "build_financial_recall_event",
     "build_gelal_shadow_audit_payload",
     "build_market_observation_audit_payload",
     "build_paper_opportunity_from_gelal_shadow",
     "build_paper_opportunity_from_market_observation",
+    "build_weekly_report",
     "can_start_replay_session",
     "compare_gelal_shadow_to_paper_decision",
     "compare_paper_decision_to_outcome",
@@ -572,6 +603,7 @@ __all__ = [
     "evaluate_live_activation",
     "evaluate_live_conviction",
     "evaluate_live_impact_guard",
+    "evaluate_live_production_decision",
     "evaluate_paper_opportunity",
     "generate_financial_agi_readiness_report",
     "get_invariant",
@@ -596,4 +628,6 @@ __all__ = [
     "select_financial_recall_top_one",
     "submit_financial_memory_candidate",
     "submit_financial_policy_candidate",
+    "transition_state",
+    "update_strategy_quality_from_record",
 ]
