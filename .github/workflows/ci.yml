@@ -8,20 +8,16 @@ on:
     branches: [main]
   workflow_dispatch: {}
 
-# Explicit lowest-privilege permissions so the workflow is visible
-# in repo Settings > Actions > General regardless of org defaults.
 permissions:
   contents: read
 
-# One run per ref; cancel duplicate in-flight runs on the same
-# branch / tag / PR. New runs supersede older queued ones.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  ci:
-    name: lint + type + test + forbidden grep
+  python:
+    name: Python — lint + type + test + constitutional
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -53,18 +49,50 @@ jobs:
 
       - name: Forbidden imports (constitutional)
         run: |
-          # Madde 6: no LLM client libraries in MVP
-          # DEONTIC §8 Rule 1: no exchange API libraries in MVP
-          # v0.1 forbidden SDK set (release readiness review 0007):
-          #   exchanges: ccxt, web3, binance, btcturk, pybit (bybit),
-          #              okx, gate_api, kucoin, huobi, bitfinex, kraken
-          #   llm:       openai, anthropic, langchain
           ! grep -RE "^\s*(import|from)\s+(ccxt|openai|anthropic|langchain|web3|binance|btcturk|pybit|okx|gate_api|kucoin|huobi|bitfinex|kraken)" \
               sentinel/ tests/ 2>/dev/null || (echo "FORBIDDEN IMPORT detected" && exit 1)
 
       - name: Forbidden outputs (constitutional)
         run: |
-          # MVP output set: {WAIT, BLOCK, MONITOR, NEED_RECALL, NO_ACTION}
-          # BUY / SELL / EXECUTE_REAL / ORDER_SUBMIT never appear as string literals
           ! grep -RE "\"(BUY|SELL|EXECUTE_REAL|ORDER_SUBMIT)\"" sentinel/ 2>/dev/null \
               || (echo "FORBIDDEN OUTPUT string literal detected" && exit 1)
+
+  panel:
+    name: Panel — typecheck + test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: panel/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: panel
+        run: pnpm install --frozen-lockfile
+
+      - name: API typecheck
+        working-directory: panel/api
+        run: pnpm lint
+
+      - name: API test
+        working-directory: panel/api
+        run: pnpm test
+
+      - name: Web typecheck
+        working-directory: panel/web
+        run: pnpm lint
+
+      - name: Web build
+        working-directory: panel/web
+        run: pnpm build
