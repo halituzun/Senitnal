@@ -34,7 +34,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 interface Rule { rule_id: string; name: string; description: string; status: string; active: boolean; threshold_try?: number; current_value_try?: number; threshold_pct?: number; current_max_pct?: number; threshold?: number; current?: number; blocked_adapter_ids?: string[] }
 interface PolicyResp { rules: Rule[]; kill_switch_active: boolean }
 const { data, loading, error, execute: load } = useFetch<PolicyResp>("/api/policy")

@@ -29,7 +29,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 interface FamilyAdapter { adapter_id: string; trust_band: string; is_healthy: boolean; error_rate: number }
 interface FamilySummary { source_family: string; total: number; healthy: number; avg_error_rate: number; adapters: FamilyAdapter[] }
 const { data, loading, error, execute: load } = useFetch<{ summary: FamilySummary[] }>("/api/source-trust")

@@ -22,7 +22,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 interface Source { source_family: string; adapter_count: number; active_count: number; healthy_count: number; avg_error_rate: number }
 const { data, loading, error, execute: load } = useFetch<{ sources: Source[] }>("/api/sources")
 onMounted(load)

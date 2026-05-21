@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import { reactive, onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 
 interface Decision { decision_id: string; ts_ms: number; strategy_id: string; decision_type: string; outcome: string; edge_score: number; risk_score: number; confidence: number; gate_name: string; rationale: string }
 interface DecisionsResponse { items: Decision[]; total: number; page: number; total_pages: number }

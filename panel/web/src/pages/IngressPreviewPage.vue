@@ -33,7 +33,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 interface Compilation { id: string; ts_ms: number; message: string }
 interface IngressResp { latest_compilation: Compilation | null; recent_compilations: Compilation[]; adapter_summary: { total: number; active: number; healthy: number; stale: number } }
 const { data, loading, error, execute: load } = useFetch<IngressResp>("/api/ingress-preview")

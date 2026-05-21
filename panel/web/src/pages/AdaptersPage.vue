@@ -80,7 +80,7 @@
 
 <script setup lang="ts">
 import { reactive, onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 
 interface Adapter { adapter_id: string; name: string; source_family: string; trust_band: string; is_active: boolean; is_fresh: boolean; is_healthy: boolean; last_seen_ms: number | null; latency_ms: number | null; error_rate: number | null; description: string }
 interface AdaptersResponse { adapters: Adapter[]; total: number }

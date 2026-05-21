@@ -32,7 +32,7 @@
 </template>
 <script setup lang="ts">
 import { reactive, onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 interface Exchange { exchange_id: string; name: string; region: string; status: string; connection_mode: string; trade_enabled: boolean; withdraw_enabled: boolean; last_checked_ms: number; pairs_tracked: number; notes: string }
 const filters = reactive({ status: "" })
 const { data, loading, error, execute } = useFetch<{ exchanges: Exchange[]; total: number }>("")

@@ -31,7 +31,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 interface HealthResp {
   status: string
   services: Record<string, { status: string; latency_ms: number }>

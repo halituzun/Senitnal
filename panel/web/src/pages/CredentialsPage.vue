@@ -87,7 +87,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 
 interface Cred { ref_id: string; kind: string; adapter_id: string | null; label: string; masked_secret: string; trade_enabled: boolean; withdraw_enabled: boolean; read_only: boolean; created_at_ms: number; expires_at_ms: number | null; is_active: boolean; source: "seed" | "user"; overridden?: boolean }
 interface CredsResponse { credentials: Cred[]; total: number }

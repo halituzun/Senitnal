@@ -29,7 +29,7 @@
 </template>
 <script setup lang="ts">
 import { reactive, onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 interface Item { id: string; ts_ms: number; event_type: string; strategy_id: string | null; message: string }
 interface Resp { replays: Item[]; total: number }
 const filters = reactive({ strategy_id: "" })

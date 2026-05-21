@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 import { reactive, onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 
 interface MemRecord { memory_id: string; strategy_id: string; pattern_hash: string; confidence: number; recall_count: number; last_recalled_ms: number; pattern_type: string; description: string }
 interface MemResponse { items: MemRecord[]; total: number; page: number; total_pages: number }

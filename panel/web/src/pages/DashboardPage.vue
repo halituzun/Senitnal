@@ -112,7 +112,7 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 
 interface Dashboard {
   portfolio: {

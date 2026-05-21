@@ -93,7 +93,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 
 interface Strategy {
   strategy_id: string; name: string; lifecycle_state: string

@@ -31,7 +31,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 interface BandAdapter { adapter_id: string; name: string; is_healthy: boolean; is_fresh: boolean }
 interface BandSummary { trust_band: string; count: number; adapters: BandAdapter[] }
 const { data, loading, error, execute: load } = useFetch<{ summary: BandSummary[] }>("/api/adapter-trust")

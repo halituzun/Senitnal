@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { reactive, onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 interface Item { id: string; ts_ms: number; strategy_id: string | null; message: string }
 interface Resp { items: Item[]; total: number; page: number; total_pages: number }
 const filters = reactive({ strategy_id: "" })

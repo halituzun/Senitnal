@@ -39,7 +39,7 @@
 </template>
 <script setup lang="ts">
 import { reactive, onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 interface Idea { idea_id: string; title: string; description: string; status: string; priority: string; tags: string[] }
 const filters = reactive({ status: "", priority: "" })
 const { data, loading, error, execute } = useFetch<{ ideas: Idea[] }>("")

@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import { reactive, onMounted } from "vue"
-import { useFetch } from "@/composables/useFetch.js"
+import { useFetch } from "../composables/useFetch"
 
 interface LedgerResponse {
   items: Array<{ id: string; ts_ms: number; event_type: string; severity: string; source: string; strategy_id: string | null; adapter_id: string | null; message: string }>
