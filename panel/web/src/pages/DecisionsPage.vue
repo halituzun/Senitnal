@@ -27,10 +27,7 @@
           <th>Strategy</th>
           <th>Gate</th>
           <th>Outcome</th>
-          <th>Edge</th>
-          <th>Risk</th>
-          <th>Confidence</th>
-          <th>Rationale</th>
+          <th>Reason</th>
         </tr>
       </thead>
       <tbody>
@@ -39,10 +36,7 @@
           <td class="mono" style="font-size:11px;color:var(--accent)">{{ d.strategy_id }}</td>
           <td class="mono" style="font-size:11px">{{ d.gate_name }}</td>
           <td><span class="badge" :class="outcomeClass(d.outcome)">{{ d.outcome }}</span></td>
-          <td>{{ (d.edge_score * 100).toFixed(0) }}%</td>
-          <td>{{ (d.risk_score * 100).toFixed(0) }}%</td>
-          <td>{{ (d.confidence * 100).toFixed(0) }}%</td>
-          <td style="font-size:11px;color:var(--text-muted);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ d.rationale }}</td>
+          <td style="font-size:11px;color:var(--text-muted);max-width:300px">{{ d.reason }}</td>
         </tr>
       </tbody>
     </table>
@@ -59,7 +53,7 @@
 import { reactive, onMounted } from "vue"
 import { useFetch } from "../composables/useFetch"
 
-interface Decision { decision_id: string; ts_ms: number; strategy_id: string; decision_type: string; outcome: string; edge_score: number; risk_score: number; confidence: number; gate_name: string; rationale: string }
+interface Decision { decision_id: string; ts_ms: number; strategy_id: string; outcome: string; gate_name: string; reason: string }
 interface DecisionsResponse { items: Decision[]; total: number; page: number; total_pages: number }
 
 const filters = reactive({ outcome: "", strategy_id: "", page: 1 })

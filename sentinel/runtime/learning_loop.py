@@ -308,6 +308,8 @@ def run_cycle(state: LearningState) -> LearningState:
         stale_count = sum(1 for a in ADAPTER_POOL if random.random() < a["error_rate"] * 3)
         state.ledger_events.append(_event(state, "INGRESS_COMPILED", "INFO", "ingress-compiler", None,
             f"Ingress compilation: {len(ADAPTER_POOL)} sources checked, {len(ADAPTER_POOL) - stale_count} passed, {stale_count} stale-suppressed"))
+        state.ledger_events.append(_event(state, "EVIDENCE_STORED", "INFO", "evidence-gate", strategy.strategy_id,
+            f"Evidence bundle: trend={edge_proxy:.2f} contradiction={risk_proxy:.2f} sources_agreed={fusion_result.source_agreement_score:.2f}"))
 
     if state.cycle % 5 == 0:
         state.ledger_events.append(_event(state, "REPLAY_COMPLETED", "INFO", "replay-engine", strategy.strategy_id,

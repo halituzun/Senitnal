@@ -17,8 +17,8 @@
       </select>
       <select v-model="filters.pattern_type" @change="resetAndLoad">
         <option value="">All pattern types</option>
-        <option value="BULLISH_MOMENTUM">Bullish Momentum</option>
-        <option value="REVERSAL_SIGNAL">Reversal Signal</option>
+        <option value="BULLISH_PATTERN">Bullish Pattern</option>
+        <option value="BEARISH_PATTERN">Bearish Pattern</option>
         <option value="BREAKOUT">Breakout</option>
         <option value="ACCUMULATION">Accumulation</option>
         <option value="HIGH_VOLATILITY">High Volatility</option>
@@ -51,8 +51,8 @@
               {{ (m.confidence * 100).toFixed(0) }}%
             </div>
           </td>
-          <td>{{ m.recall_count }}</td>
-          <td class="mono" style="font-size:11px">{{ relTime(m.last_recalled_ms) }}</td>
+          <td>{{ m.sample_count }}</td>
+          <td class="mono" style="font-size:11px">{{ relTime(m.last_seen_ms) }}</td>
           <td style="font-size:11px;color:var(--text-muted);max-width:300px">{{ m.description }}</td>
         </tr>
       </tbody>
@@ -64,7 +64,7 @@
 import { reactive, onMounted } from "vue"
 import { useFetch } from "../composables/useFetch"
 
-interface MemRecord { memory_id: string; strategy_id: string; pattern_hash: string; confidence: number; recall_count: number; last_recalled_ms: number; pattern_type: string; description: string }
+interface MemRecord { memory_id: string; strategy_id: string; confidence: number; sample_count: number; last_seen_ms: number; pattern_type: string; description: string }
 interface MemResponse { items: MemRecord[]; total: number; page: number; total_pages: number }
 
 const filters = reactive({ strategy_id: "", pattern_type: "", min_confidence: "", page: 1 })
