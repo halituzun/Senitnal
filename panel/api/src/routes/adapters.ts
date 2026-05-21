@@ -21,7 +21,7 @@ function allAdapters(): AdapterRecord[] {
     credential_ref_id: a.credential_ref_id,
     description: a.description ?? "",
     is_user_added: true,
-  })) as AdapterRecord[]
+  })) as unknown as AdapterRecord[]
   return [...user, ...seed]
 }
 

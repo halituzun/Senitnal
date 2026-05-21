@@ -201,12 +201,13 @@ describe("Credentials — security", () => {
       cookies: { panel_session: token },
     })
     expect(res.statusCode).toBe(200)
-    const creds = res.json().credentials as Array<Record<string, unknown>>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const creds = res.json().credentials as Array<Record<string, any>>
     for (const c of creds) {
       expect(c).not.toHaveProperty("full_secret")
-      expect(c.trade_enabled).toBe(false)
-      expect(c.withdraw_enabled).toBe(false)
-      expect(c.read_only).toBe(true)
+      expect(c["trade_enabled"]).toBe(false)
+      expect(c["withdraw_enabled"]).toBe(false)
+      expect(c["read_only"]).toBe(true)
     }
   })
 
@@ -217,7 +218,8 @@ describe("Credentials — security", () => {
       url: "/api/credentials",
       cookies: { panel_session: token },
     })
-    const creds = res.json().credentials as Array<Record<string, unknown>>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const creds = res.json().credentials as Array<Record<string, any>>
     for (const c of creds) {
       expect(typeof c["masked_secret"]).toBe("string")
       expect(String(c["masked_secret"])).toContain("•")
@@ -239,16 +241,17 @@ describe("Credentials — security", () => {
       },
     })
     expect(res.statusCode).toBe(201)
-    const body = res.json() as Record<string, unknown>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const body = res.json() as Record<string, any>
     // Response must NOT contain the plaintext secret anywhere
     const bodyStr = JSON.stringify(body)
     expect(bodyStr).not.toContain(TEST_SECRET)
     expect(bodyStr).not.toContain("extremely-fake")
-    expect(body.trade_enabled).toBe(false)
-    expect(body.withdraw_enabled).toBe(false)
-    expect(body.read_only).toBe(true)
-    expect(String(body.ref_id)).toMatch(/^cred-user-/)
-    expect(String(body.masked_secret)).toContain("•")
+    expect(body["trade_enabled"]).toBe(false)
+    expect(body["withdraw_enabled"]).toBe(false)
+    expect(body["read_only"]).toBe(true)
+    expect(String(body["ref_id"])).toMatch(/^cred-user-/)
+    expect(String(body["masked_secret"])).toContain("•")
   })
 
   it("POST /api/credentials rejects short secret", async () => {

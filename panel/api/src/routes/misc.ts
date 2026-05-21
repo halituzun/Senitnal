@@ -202,7 +202,7 @@ export async function miscRoutes(app: FastifyInstance) {
   }>("/api/exchanges", { preHandler: requireAuth }, async (request) => {
     let items = [...EXCHANGES]
     if (request.query.status) {
-      items = items.filter((e) => e.status === request.query.status.toUpperCase())
+      items = items.filter((e) => e.status === request.query.status!.toUpperCase())
     }
     // trade_enabled is always false — filter is informational only
     return { exchanges: items, total: items.length, captured_at_ms: Date.now() }
@@ -240,7 +240,7 @@ export async function miscRoutes(app: FastifyInstance) {
       .filter((e) => ["ERROR", "WARN"].includes(e.severity) || e.event_type.includes("AUDIT"))
       .sort((a, b) => b.ts_ms - a.ts_ms)
 
-    if (q.severity) items = items.filter((e) => e.severity === q.severity.toUpperCase())
+    if (q.severity) items = items.filter((e) => e.severity === q.severity!.toUpperCase())
     if (q.since_ms) items = items.filter((e) => e.ts_ms >= Number(q.since_ms))
 
     const total = items.length
@@ -262,10 +262,10 @@ export async function miscRoutes(app: FastifyInstance) {
   }>("/api/ideas", { preHandler: requireAuth }, async (request) => {
     let items = [...IDEAS]
     if (request.query.status) {
-      items = items.filter((i) => i.status === request.query.status.toUpperCase())
+      items = items.filter((i) => i.status === request.query.status!.toUpperCase())
     }
     if (request.query.priority) {
-      items = items.filter((i) => i.priority === request.query.priority.toUpperCase())
+      items = items.filter((i) => i.priority === request.query.priority!.toUpperCase())
     }
     return { ideas: items, total: items.length }
   })

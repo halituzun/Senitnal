@@ -17,7 +17,7 @@ export async function memoryRoutes(app: FastifyInstance) {
     const q = request.query
 
     if (q.strategy_id) items = items.filter((m) => m.strategy_id === q.strategy_id)
-    if (q.pattern_type) items = items.filter((m) => m.pattern_type === q.pattern_type.toUpperCase())
+    if (q.pattern_type) items = items.filter((m) => m.pattern_type === q.pattern_type!.toUpperCase())
     if (q.min_confidence) items = items.filter((m) => m.confidence >= Number(q.min_confidence))
 
     const total = items.length

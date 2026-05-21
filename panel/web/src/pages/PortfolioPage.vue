@@ -115,8 +115,6 @@ const lifecycleFilter = ref("")
 const enabledFilter = ref("")
 
 const { data: portfolio, loading, error, execute: loadPortfolio } = useFetch<PortfolioConfig>("/api/portfolio")
-const { data: stratData, execute: loadStrategiesFn } = useFetch<{ strategies: Strategy[] }>("/api/strategies")
-
 const strategies = ref<Strategy[]>([])
 
 async function loadStrategies() {
@@ -125,8 +123,13 @@ async function loadStrategies() {
   if (enabledFilter.value) params.set("enabled", enabledFilter.value)
   const qs = params.toString()
   const url = qs ? `/api/strategies?${qs}` : "/api/strategies"
-  const result = await loadStrategiesFn(url)
-  if (result) strategies.value = result.strategies
+  try {
+    const res = await fetch(url, { credentials: "include" })
+    if (res.ok) {
+      const body = (await res.json()) as { strategies: Strategy[] }
+      strategies.value = body.strategies
+    }
+  } catch { /* keep previous data */ }
 }
 
 async function loadAll() {

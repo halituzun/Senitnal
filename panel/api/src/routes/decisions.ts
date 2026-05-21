@@ -16,7 +16,7 @@ export async function decisionRoutes(app: FastifyInstance) {
     let items = [...DECISIONS].sort((a, b) => b.ts_ms - a.ts_ms)
     const q = request.query
 
-    if (q.outcome) items = items.filter((d) => d.outcome === q.outcome.toUpperCase())
+    if (q.outcome) items = items.filter((d) => d.outcome === q.outcome!.toUpperCase())
     if (q.strategy_id) items = items.filter((d) => d.strategy_id === q.strategy_id)
     if (q.gate_name) items = items.filter((d) => d.gate_name === q.gate_name)
 

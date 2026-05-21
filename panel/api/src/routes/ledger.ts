@@ -20,8 +20,8 @@ export async function ledgerRoutes(app: FastifyInstance) {
     let events = [...LEDGER_EVENTS].sort((a, b) => b.ts_ms - a.ts_ms)
     const q = request.query
 
-    if (q.severity) events = events.filter((e) => e.severity === q.severity.toUpperCase())
-    if (q.event_type) events = events.filter((e) => e.event_type === q.event_type.toUpperCase())
+    if (q.severity) events = events.filter((e) => e.severity === q.severity!.toUpperCase())
+    if (q.event_type) events = events.filter((e) => e.event_type === q.event_type!.toUpperCase())
     if (q.strategy_id) events = events.filter((e) => e.strategy_id === q.strategy_id)
     if (q.adapter_id) events = events.filter((e) => e.adapter_id === q.adapter_id)
     if (q.source) events = events.filter((e) => e.source === q.source)

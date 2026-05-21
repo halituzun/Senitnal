@@ -73,7 +73,7 @@ export async function credentialRoutes(app: FastifyInstance) {
     let items = allCredentials()
     const q = request.query
 
-    if (q.kind) items = items.filter((c) => c.kind === q.kind.toLowerCase())
+    if (q.kind) items = items.filter((c) => c.kind === q.kind!.toLowerCase())
     if (q.adapter_id) items = items.filter((c) => c.adapter_id === q.adapter_id)
     if (q.active !== undefined) {
       const want = q.active === "true"
