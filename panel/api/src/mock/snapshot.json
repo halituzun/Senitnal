@@ -1,5 +1,5 @@
 {
-  "generated_at_ms": 1779395385975,
+  "generated_at_ms": 1779395927157,
   "generator": "sentinel.scripts.export_panel_state",
   "sentinel_version": "v1.14",
   "portfolio": {
@@ -16,7 +16,7 @@
     "kill_switch_required": true,
     "active_strategy_count": 3,
     "paused_strategy_count": 1,
-    "captured_at_ms": 1779395385975
+    "captured_at_ms": 1779395927157
   },
   "strategies": [
     {
@@ -104,7 +104,7 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779395340975,
+      "last_seen_ms": 1779395882157,
       "latency_ms": 320,
       "error_rate": 0.002,
       "credential_ref_id": "cred-taapi-prod",
@@ -118,7 +118,7 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779395265975,
+      "last_seen_ms": 1779395807157,
       "latency_ms": 890,
       "error_rate": 0.01,
       "credential_ref_id": "cred-cryptopanic",
@@ -132,7 +132,7 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779395185975,
+      "last_seen_ms": 1779395727157,
       "latency_ms": 540,
       "error_rate": 0.005,
       "credential_ref_id": "cred-lunarcrush",
@@ -146,7 +146,7 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779395085975,
+      "last_seen_ms": 1779395627157,
       "latency_ms": 1200,
       "error_rate": 0.003,
       "credential_ref_id": "cred-glassnode",
@@ -160,7 +160,7 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779395295975,
+      "last_seen_ms": 1779395837157,
       "latency_ms": 410,
       "error_rate": 0.008,
       "credential_ref_id": "cred-coinglass",
@@ -174,7 +174,7 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779395380975,
+      "last_seen_ms": 1779395922157,
       "latency_ms": 18,
       "error_rate": 0.001,
       "credential_ref_id": null,
@@ -188,7 +188,7 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779395377975,
+      "last_seen_ms": 1779395919157,
       "latency_ms": 22,
       "error_rate": 0.001,
       "credential_ref_id": null,
@@ -202,7 +202,7 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779395373975,
+      "last_seen_ms": 1779395915157,
       "latency_ms": 31,
       "error_rate": 0.004,
       "credential_ref_id": null,
@@ -216,7 +216,7 @@
       "is_active": true,
       "is_fresh": false,
       "is_healthy": false,
-      "last_seen_ms": 1779366585975,
+      "last_seen_ms": 1779367127157,
       "latency_ms": null,
       "error_rate": 0.12,
       "credential_ref_id": null,
@@ -230,7 +230,7 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779394785975,
+      "last_seen_ms": 1779395327157,
       "latency_ms": 1800,
       "error_rate": 0.006,
       "credential_ref_id": "cred-messari",
@@ -244,7 +244,7 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779395205975,
+      "last_seen_ms": 1779395747157,
       "latency_ms": 760,
       "error_rate": 0.009,
       "credential_ref_id": null,
@@ -258,7 +258,7 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779394985975,
+      "last_seen_ms": 1779395527157,
       "latency_ms": 2100,
       "error_rate": 0.004,
       "credential_ref_id": "cred-nansen",
@@ -272,7 +272,7 @@
       "is_active": true,
       "is_fresh": false,
       "is_healthy": false,
-      "last_seen_ms": 1779136185975,
+      "last_seen_ms": 1779136727157,
       "latency_ms": null,
       "error_rate": 0.28,
       "credential_ref_id": "cred-santiment",
@@ -287,7 +287,7 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779395325975,
+      "last_seen_ms": 1779395867157,
       "latency_ms": 280,
       "error_rate": 0.003,
       "credential_ref_id": "cred-deribit",
@@ -312,7 +312,7 @@
   "ledger_events": [
     {
       "id": "ev-001",
-      "ts_ms": 1779388185975,
+      "ts_ms": 1779388727157,
       "event_type": "SIGNAL_RECEIVED",
       "severity": "INFO",
       "source": "taapi-pro",
@@ -322,7 +322,7 @@
     },
     {
       "id": "ev-002",
-      "ts_ms": 1779388186475,
+      "ts_ms": 1779388727657,
       "event_type": "SIGNAL_SCORED",
       "severity": "INFO",
       "source": "ingress-compiler",
@@ -332,7 +332,7 @@
     },
     {
       "id": "ev-003",
-      "ts_ms": 1779388545975,
+      "ts_ms": 1779389087157,
       "event_type": "DECISION_GATE_PASS",
       "severity": "INFO",
       "source": "decision-engine",
@@ -342,7 +342,7 @@
     },
     {
       "id": "ev-004",
-      "ts_ms": 1779388905975,
+      "ts_ms": 1779389447157,
       "event_type": "SIGNAL_RECEIVED",
       "severity": "INFO",
       "source": "lunarcrush-social",
@@ -352,7 +352,7 @@
     },
     {
       "id": "ev-005",
-      "ts_ms": 1779389265975,
+      "ts_ms": 1779389807157,
       "event_type": "ADAPTER_STALE",
       "severity": "WARN",
       "source": "adapter-hub",
@@ -362,7 +362,7 @@
     },
     {
       "id": "ev-006",
-      "ts_ms": 1779389625975,
+      "ts_ms": 1779390167157,
       "event_type": "SIGNAL_RECEIVED",
       "severity": "INFO",
       "source": "cryptopanic-feed",
@@ -372,7 +372,7 @@
     },
     {
       "id": "ev-007",
-      "ts_ms": 1779389985975,
+      "ts_ms": 1779390527157,
       "event_type": "DECISION_GATE_FAIL",
       "severity": "WARN",
       "source": "decision-engine",
@@ -382,7 +382,7 @@
     },
     {
       "id": "ev-008",
-      "ts_ms": 1779390345975,
+      "ts_ms": 1779390887157,
       "event_type": "INGRESS_COMPILED",
       "severity": "INFO",
       "source": "ingress-compiler",
@@ -392,7 +392,7 @@
     },
     {
       "id": "ev-009",
-      "ts_ms": 1779390705975,
+      "ts_ms": 1779391247157,
       "event_type": "SIGNAL_RECEIVED",
       "severity": "INFO",
       "source": "coinglass-futures",
@@ -402,7 +402,7 @@
     },
     {
       "id": "ev-010",
-      "ts_ms": 1779391065975,
+      "ts_ms": 1779391607157,
       "event_type": "FUSION_COMPUTED",
       "severity": "INFO",
       "source": "fusion-engine",
@@ -412,7 +412,7 @@
     },
     {
       "id": "ev-011",
-      "ts_ms": 1779392085975,
+      "ts_ms": 1779392627157,
       "event_type": "NET_EDGE_COMPUTED",
       "severity": "INFO",
       "source": "net-edge",
@@ -422,7 +422,7 @@
     },
     {
       "id": "ev-012",
-      "ts_ms": 1779392685975,
+      "ts_ms": 1779393227157,
       "event_type": "LIVE_CONVICTION",
       "severity": "INFO",
       "source": "conviction-engine",
@@ -432,7 +432,7 @@
     },
     {
       "id": "ev-013",
-      "ts_ms": 1779392985975,
+      "ts_ms": 1779393527157,
       "event_type": "PRODUCTION_DECISION",
       "severity": "INFO",
       "source": "production-engine",
@@ -442,7 +442,7 @@
     },
     {
       "id": "ev-014",
-      "ts_ms": 1779393585975,
+      "ts_ms": 1779394127157,
       "event_type": "ADAPTER_QUARANTINED",
       "severity": "ERROR",
       "source": "adapter-hub",
@@ -452,7 +452,7 @@
     },
     {
       "id": "ev-015",
-      "ts_ms": 1779394485975,
+      "ts_ms": 1779395027157,
       "event_type": "KILL_SWITCH_CHECK",
       "severity": "INFO",
       "source": "kill-switch",
@@ -462,7 +462,7 @@
     },
     {
       "id": "ev-016",
-      "ts_ms": 1779394785975,
+      "ts_ms": 1779395327157,
       "event_type": "CONSTITUTION_AUDIT",
       "severity": "INFO",
       "source": "constitution-auditor",
@@ -472,7 +472,7 @@
     },
     {
       "id": "ev-017",
-      "ts_ms": 1779395085975,
+      "ts_ms": 1779395627157,
       "event_type": "MEMORY_WRITE",
       "severity": "INFO",
       "source": "memory-write-gate",
@@ -482,7 +482,7 @@
     },
     {
       "id": "ev-018",
-      "ts_ms": 1779395265975,
+      "ts_ms": 1779395807157,
       "event_type": "STRATEGY_ROLLBACK",
       "severity": "ERROR",
       "source": "strategy-lifecycle",
@@ -492,7 +492,7 @@
     },
     {
       "id": "ev-019",
-      "ts_ms": 1779395325975,
+      "ts_ms": 1779395867157,
       "event_type": "CANARY_VETO",
       "severity": "WARN",
       "source": "canary-engine",
@@ -502,7 +502,7 @@
     },
     {
       "id": "ev-020",
-      "ts_ms": 1779395385475,
+      "ts_ms": 1779395926657,
       "event_type": "PORTFOLIO_SNAPSHOT",
       "severity": "INFO",
       "source": "portfolio-manager",
@@ -514,7 +514,7 @@
   "decisions": [
     {
       "decision_id": "dec-001",
-      "ts_ms": 1779388545975,
+      "ts_ms": 1779389087157,
       "strategy_id": "btc-momentum-v3",
       "gate_name": "deontic_gate",
       "outcome": "PASS",
@@ -522,7 +522,7 @@
     },
     {
       "decision_id": "dec-002",
-      "ts_ms": 1779389985975,
+      "ts_ms": 1779390527157,
       "strategy_id": "eth-mean-reversion",
       "gate_name": "evidence_gate",
       "outcome": "FAIL",
@@ -530,7 +530,7 @@
     },
     {
       "decision_id": "dec-003",
-      "ts_ms": 1779391065975,
+      "ts_ms": 1779391607157,
       "strategy_id": "sol-breakout-alpha",
       "gate_name": "fusion_gate",
       "outcome": "PASS",
@@ -538,7 +538,7 @@
     },
     {
       "decision_id": "dec-004",
-      "ts_ms": 1779392085975,
+      "ts_ms": 1779392627157,
       "strategy_id": "btc-momentum-v3",
       "gate_name": "net_edge_gate",
       "outcome": "PASS",
@@ -546,7 +546,7 @@
     },
     {
       "decision_id": "dec-005",
-      "ts_ms": 1779392685975,
+      "ts_ms": 1779393227157,
       "strategy_id": "btc-momentum-v3",
       "gate_name": "conviction_gate",
       "outcome": "PASS",
@@ -554,7 +554,7 @@
     },
     {
       "decision_id": "dec-006",
-      "ts_ms": 1779392985975,
+      "ts_ms": 1779393527157,
       "strategy_id": "btc-momentum-v3",
       "gate_name": "production_gate",
       "outcome": "WAIT",
@@ -562,7 +562,7 @@
     },
     {
       "decision_id": "dec-007",
-      "ts_ms": 1779393285975,
+      "ts_ms": 1779393827157,
       "strategy_id": "bnb-arb-v1",
       "gate_name": "risk_gate",
       "outcome": "BLOCK",
@@ -570,7 +570,7 @@
     },
     {
       "decision_id": "dec-008",
-      "ts_ms": 1779394185975,
+      "ts_ms": 1779394727157,
       "strategy_id": "xrp-sentiment-v2",
       "gate_name": "execution_quality_gate",
       "outcome": "BLOCK",
@@ -585,7 +585,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "latency_ms": 18,
-      "captured_at_ms": 1779395385975
+      "captured_at_ms": 1779395927157
     },
     {
       "exchange_id": "bybit",
@@ -594,7 +594,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "latency_ms": 22,
-      "captured_at_ms": 1779395385975
+      "captured_at_ms": 1779395927157
     },
     {
       "exchange_id": "okx",
@@ -603,7 +603,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "latency_ms": 31,
-      "captured_at_ms": 1779395385975
+      "captured_at_ms": 1779395927157
     },
     {
       "exchange_id": "btcturk",
@@ -612,7 +612,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "latency_ms": 55,
-      "captured_at_ms": 1779395385975
+      "captured_at_ms": 1779395927157
     },
     {
       "exchange_id": "gate",
@@ -621,7 +621,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "latency_ms": 1200,
-      "captured_at_ms": 1779395385975
+      "captured_at_ms": 1779395927157
     },
     {
       "exchange_id": "kucoin",
@@ -630,7 +630,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "latency_ms": 44,
-      "captured_at_ms": 1779395385975
+      "captured_at_ms": 1779395927157
     }
   ],
   "credentials": [
@@ -643,7 +643,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778790585975,
+      "created_at_ms": 1778791127157,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -657,7 +657,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778963385975,
+      "created_at_ms": 1778963927157,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -671,7 +671,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778963385975,
+      "created_at_ms": 1778963927157,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -685,7 +685,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778876985975,
+      "created_at_ms": 1778877527157,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -699,7 +699,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1779049785975,
+      "created_at_ms": 1779050327157,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -713,7 +713,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1779049785975,
+      "created_at_ms": 1779050327157,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -727,7 +727,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1779136185975,
+      "created_at_ms": 1779136727157,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -741,7 +741,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1779222585975,
+      "created_at_ms": 1779223127157,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -755,8 +755,8 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778185785975,
-      "expires_at_ms": 1780000185975,
+      "created_at_ms": 1778186327157,
+      "expires_at_ms": 1780000727157,
       "is_active": false,
       "source": "seed"
     }
@@ -768,7 +768,7 @@
       "pattern_type": "RSI_DIVERGENCE",
       "description": "BTC RSI bullish divergence on 4h \u2014 price made lower low, RSI made higher low. Historically 68% win rate (n=47).",
       "confidence": 0.68,
-      "last_seen_ms": 1779222585975,
+      "last_seen_ms": 1779223127157,
       "sample_count": 47,
       "usable_for_live": true
     },
@@ -778,7 +778,7 @@
       "pattern_type": "MACD_CROSS",
       "description": "MACD line crossed above signal line on BTC daily. Mean return +1.8% over next 72h (n=31).",
       "confidence": 0.72,
-      "last_seen_ms": 1779308985975,
+      "last_seen_ms": 1779309527157,
       "sample_count": 31,
       "usable_for_live": true
     },
@@ -788,7 +788,7 @@
       "pattern_type": "BOLLINGER_SQUEEZE",
       "description": "ETH Bollinger bands squeezing on 2h \u2014 historically precedes 4.2% mean move within 24h (n=23).",
       "confidence": 0.61,
-      "last_seen_ms": 1779384585975,
+      "last_seen_ms": 1779385127157,
       "sample_count": 23,
       "usable_for_live": true
     },
@@ -798,7 +798,7 @@
       "pattern_type": "VOLUME_SPIKE",
       "description": "ETH volume 3.2x 20-period MA \u2014 historically precedes reversal 55% of time (n=89).",
       "confidence": 0.55,
-      "last_seen_ms": 1779373785975,
+      "last_seen_ms": 1779374327157,
       "sample_count": 89,
       "usable_for_live": true
     },
@@ -808,7 +808,7 @@
       "pattern_type": "BREAKOUT_CONFIRMED",
       "description": "SOL broke above 200 EMA on 4h with volume confirmation. Historically 71% continuation (n=19).",
       "confidence": 0.71,
-      "last_seen_ms": 1779380985975,
+      "last_seen_ms": 1779381527157,
       "sample_count": 19,
       "usable_for_live": true
     },
@@ -818,7 +818,7 @@
       "pattern_type": "SENTIMENT_EXTREME",
       "description": "XRP social sentiment at 2.4\u03c3 below mean \u2014 historically mean reversion within 48h (n=52, but low freshness).",
       "confidence": 0.31,
-      "last_seen_ms": 1778185785975,
+      "last_seen_ms": 1778186327157,
       "sample_count": 52,
       "usable_for_live": false
     },
@@ -828,7 +828,7 @@
       "pattern_type": "ORDERBOOK_IMBALANCE",
       "description": "BTC bid wall at 84,500 \u2014 historically 63% support holds within 4h (n=41).",
       "confidence": 0.63,
-      "last_seen_ms": 1779391785975,
+      "last_seen_ms": 1779392327157,
       "sample_count": 41,
       "usable_for_live": true
     },
@@ -838,7 +838,7 @@
       "pattern_type": "CROSS_EXCHANGE_SPREAD",
       "description": "BNB Binance-Bybit spread widened to 0.8% \u2014 historically profitable arb 82% of time when >0.5% (n=156).",
       "confidence": 0.82,
-      "last_seen_ms": 1779366585975,
+      "last_seen_ms": 1779367127157,
       "sample_count": 156,
       "usable_for_live": true
     }
