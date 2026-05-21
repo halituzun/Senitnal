@@ -1,4 +1,12 @@
 // Rich mock data for V14 panel — 15+ adapters, 2 quarantined, 50+ ledger events
+// Prefers snapshot.json exported by sentinel/scripts/export_panel_state.py
+
+import { existsSync, readFileSync } from "node:fs"
+import { fileURLToPath } from "node:url"
+import { dirname, resolve } from "node:path"
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 export const NOW_MS = Date.now()
 const DAY = 86_400_000
@@ -930,3 +938,82 @@ export const DASHBOARD = {
     utilization_pct: 75.0,
   },
 }
+
+// ─── Snapshot override — prefer Python-exported data when available ────────────
+
+function loadSnapshot() {
+  try {
+    const snapshotPath = resolve(__dirname, "snapshot.json")
+    if (!existsSync(snapshotPath)) return
+    const raw = readFileSync(snapshotPath, "utf-8")
+    const snap = JSON.parse(raw) as Record<string, unknown>
+    if (!snap || typeof snap !== "object") return
+
+    // Override exports with snapshot data
+    if (Array.isArray(snap["adapters"])) {
+      ;(ADAPTERS as unknown[]).length = 0
+      ;(ADAPTERS as unknown[]).push(...(snap["adapters"] as unknown[]))
+    }
+    if (Array.isArray(snap["strategies"])) {
+      ;(STRATEGIES as unknown[]).length = 0
+      ;(STRATEGIES as unknown[]).push(...(snap["strategies"] as unknown[]))
+    }
+    if (Array.isArray(snap["ledger_events"])) {
+      ;(LEDGER_EVENTS as unknown[]).length = 0
+      ;(LEDGER_EVENTS as unknown[]).push(...(snap["ledger_events"] as unknown[]))
+    }
+    if (Array.isArray(snap["decisions"])) {
+      ;(DECISIONS as unknown[]).length = 0
+      ;(DECISIONS as unknown[]).push(...(snap["decisions"] as unknown[]))
+    }
+    if (Array.isArray(snap["exchanges"])) {
+      ;(EXCHANGES as unknown[]).length = 0
+      ;(EXCHANGES as unknown[]).push(...(snap["exchanges"] as unknown[]))
+    }
+    if (Array.isArray(snap["credentials"])) {
+      ;(CREDENTIALS as unknown[]).length = 0
+      ;(CREDENTIALS as unknown[]).push(...(snap["credentials"] as unknown[]))
+    }
+    if (Array.isArray(snap["memory_records"])) {
+      ;(MEMORY_RECORDS as unknown[]).length = 0
+      ;(MEMORY_RECORDS as unknown[]).push(...(snap["memory_records"] as unknown[]))
+    }
+    if (snap["portfolio"] && typeof snap["portfolio"] === "object") {
+      Object.assign(PORTFOLIO, snap["portfolio"])
+    }
+
+    // Refresh derived dashboard values
+    ;(DASHBOARD as Record<string, unknown>)["portfolio"] = PORTFOLIO
+    ;(DASHBOARD as Record<string, unknown>)["adapter_hub"] = {
+      hub_id: "main-hub",
+      captured_at_ms: (snap["generated_at_ms"] as number) ?? NOW_MS,
+      total_adapters: ADAPTERS.length,
+      healthy_count: ADAPTERS.filter((a) => a.is_healthy).length,
+      stale_count: ADAPTERS.filter((a) => !a.is_fresh && a.is_active).length,
+      quarantined_count: ADAPTERS.filter((a) => a.trust_band === "QUARANTINED").length,
+      revoked_count: ADAPTERS.filter((a) => a.trust_band === "REVOKED").length,
+      degraded: ADAPTERS.filter((a) => a.is_healthy).length < ADAPTERS.filter((a) => a.is_active).length,
+    }
+    ;(DASHBOARD as Record<string, unknown>)["recent_events"] = LEDGER_EVENTS.slice(-10).reverse()
+
+    const strategies = ADAPTERS.filter((a) => (a as Record<string, unknown>)["strategy_id"] != null)
+    // Recalculate PnL from strategy data if available
+    const strats = STRATEGIES as Array<Record<string, unknown>>
+    if (strats.length > 0) {
+      const todayPnL = strats.reduce((s, st) => s + (Number(st["pnl_today_try"]) || 0), 0)
+      const weekPnL = strats.reduce((s, st) => s + (Number(st["pnl_week_try"]) || 0), 0)
+      ;(DASHBOARD as Record<string, unknown>)["pnl_summary"] = {
+        today_try: Math.round(todayPnL * 10) / 10,
+        week_try: Math.round(weekPnL * 10) / 10,
+        month_try: Math.round(weekPnL * 32) / 10,
+        utilization_pct: ((PORTFOLIO.total_allocated_try / PORTFOLIO.approved_capital_value) * 100),
+      }
+    }
+
+    console.log(`[data] Loaded panel snapshot from ${snapshotPath} (${snap["generated_at_ms"]})`)
+  } catch (e) {
+    console.warn("[data] Failed to load snapshot, using built-in mock data:", e instanceof Error ? e.message : e)
+  }
+}
+
+loadSnapshot()
