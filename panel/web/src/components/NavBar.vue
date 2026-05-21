@@ -15,6 +15,7 @@
       <router-link to="/decisions">Decisions</router-link>
       <router-link to="/memory-recall">Memory</router-link>
       <router-link to="/replay">Replay</router-link>
+      <router-link to="/portfolio">Portfolio</router-link>
       <div class="nav-section-label">System</div>
       <router-link to="/health">Health</router-link>
       <router-link to="/policy">Policy</router-link>
@@ -22,7 +23,7 @@
       <div class="nav-section-label">Adapters</div>
       <router-link to="/adapters">Adapters</router-link>
       <router-link to="/adapter-trust">Trust</router-link>
-      <router-link to="/source-trust">Sources</router-link>
+      <router-link to="/source-trust">Trust</router-link>
       <router-link to="/exchanges">Exchanges</router-link>
       <div class="nav-section-label">Config</div>
       <router-link to="/credentials">Credentials</router-link>

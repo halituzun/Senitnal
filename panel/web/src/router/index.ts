@@ -14,6 +14,7 @@ const router = createRouter({
     { path: "/memory-recall", name: "memory-recall", component: () => import("@/pages/MemoryRecallPage.vue") },
     { path: "/replay", name: "replay", component: () => import("@/pages/ReplayPage.vue") },
     { path: "/policy", name: "policy", component: () => import("@/pages/PolicyPage.vue") },
+    { path: "/portfolio", name: "portfolio", component: () => import("@/pages/PortfolioPage.vue") },
     { path: "/health", name: "health", component: () => import("@/pages/HealthPage.vue") },
     { path: "/sources", name: "sources", component: () => import("@/pages/SourcesPage.vue") },
     { path: "/source-trust", name: "source-trust", component: () => import("@/pages/SourceTrustPage.vue") },
