@@ -481,7 +481,7 @@ export const CREDENTIALS = [
   },
   {
     ref_id: "cred-okx-spot",
-    kind: "api_key",
+    kind: "hmac_secret",
     adapter_id: "okx-spot-account",
     label: "OKX Spot (read-only)",
     masked_secret: "okx_••••••••••••MAIN",
@@ -494,7 +494,7 @@ export const CREDENTIALS = [
   },
   {
     ref_id: "cred-gate-spot",
-    kind: "api_key",
+    kind: "hmac_secret",
     adapter_id: "gate-spot-account",
     label: "Gate.io v4 Spot (read-only)",
     masked_secret: "gate_••••••••••V4READ",
@@ -507,7 +507,7 @@ export const CREDENTIALS = [
   },
   {
     ref_id: "cred-coinex",
-    kind: "api_key",
+    kind: "hmac_secret",
     adapter_id: "coinex-spot-account",
     label: "CoinEx Spot (read-only)",
     masked_secret: "cnx_••••••••••SPOTRO",
@@ -520,7 +520,7 @@ export const CREDENTIALS = [
   },
   {
     ref_id: "cred-btcturk",
-    kind: "api_key",
+    kind: "hmac_secret",
     adapter_id: "btcturk-spot-account",
     label: "BTCTürk Spot (read-only, IP allowlist)",
     masked_secret: "btct_••••••••••TRREAD",

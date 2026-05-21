@@ -31,9 +31,33 @@
           </select>
         </div>
 
-        <div class="field">
-          <label>Secret *</label>
-          <input v-model="form.secret" type="text" placeholder="paste your API key here" required minlength="8" name="cred_secret_input" autocomplete="off" data-lpignore="true" data-1p-ignore="true" />
+        <template v-if="form.kind === 'hmac_secret'">
+          <div class="field">
+            <label>API Key *</label>
+            <input v-model="hmac.api_key" type="text" placeholder="public part of HMAC pair" required minlength="8" name="hmac_pub" autocomplete="off" data-lpignore="true" data-1p-ignore="true" readonly @focus="(e: FocusEvent) => (e.target as HTMLInputElement).removeAttribute('readonly')" />
+            <div class="hint">Public identifier — sent in request headers.</div>
+          </div>
+          <div class="field">
+            <label>Secret Key *</label>
+            <input v-model="hmac.secret_key" type="text" placeholder="private signing key" required minlength="8" name="hmac_priv" autocomplete="off" data-lpignore="true" data-1p-ignore="true" readonly @focus="(e: FocusEvent) => (e.target as HTMLInputElement).removeAttribute('readonly')" />
+            <div class="hint">Private — never sent on wire. Encrypted with AES-256-GCM at rest.</div>
+          </div>
+        </template>
+
+        <template v-else-if="form.kind === 'oauth2_client'">
+          <div class="field">
+            <label>Client ID *</label>
+            <input v-model="oauth.client_id" type="text" placeholder="OAuth2 Client ID" required minlength="4" name="oauth_id" autocomplete="off" data-lpignore="true" data-1p-ignore="true" readonly @focus="(e: FocusEvent) => (e.target as HTMLInputElement).removeAttribute('readonly')" />
+          </div>
+          <div class="field">
+            <label>Client Secret *</label>
+            <input v-model="oauth.client_secret" type="text" placeholder="OAuth2 Client Secret" required minlength="8" name="oauth_secret" autocomplete="off" data-lpignore="true" data-1p-ignore="true" readonly @focus="(e: FocusEvent) => (e.target as HTMLInputElement).removeAttribute('readonly')" />
+          </div>
+        </template>
+
+        <div v-else class="field">
+          <label>{{ form.kind === 'bearer_token' ? 'Token' : 'API Key' }} *</label>
+          <input v-model="form.secret" type="text" :placeholder="form.kind === 'bearer_token' ? 'paste your bearer token' : 'paste your API key'" required minlength="8" name="cred_secret_input" autocomplete="off" data-lpignore="true" data-1p-ignore="true" readonly @focus="(e: FocusEvent) => (e.target as HTMLInputElement).removeAttribute('readonly')" />
           <div class="hint">
             Encrypted with AES-256-GCM before storage. Only a SHA256 fingerprint is shown afterwards.
             <strong>This panel can never trade or withdraw — flags hardcoded to false.</strong>
@@ -82,6 +106,8 @@ const form = reactive({
   secret: "",
   expires_days: null as number | null,
 })
+const hmac = reactive({ api_key: "", secret_key: "" })
+const oauth = reactive({ client_id: "", client_secret: "" })
 const submitting = ref(false)
 const errorMsg = ref("")
 const success = ref<{ ref_id: string; masked_secret: string } | null>(null)
@@ -93,6 +119,25 @@ async function handleSubmit() {
 
   const expires_at_ms = form.expires_days ? Date.now() + form.expires_days * 86_400_000 : null
 
+  let secretPayload: string
+  if (form.kind === "hmac_secret") {
+    if (!hmac.api_key || !hmac.secret_key) {
+      errorMsg.value = "Both API Key and Secret Key are required for HMAC"
+      submitting.value = false
+      return
+    }
+    secretPayload = JSON.stringify({ api_key: hmac.api_key, secret_key: hmac.secret_key })
+  } else if (form.kind === "oauth2_client") {
+    if (!oauth.client_id || !oauth.client_secret) {
+      errorMsg.value = "Both Client ID and Client Secret are required for OAuth2"
+      submitting.value = false
+      return
+    }
+    secretPayload = JSON.stringify({ client_id: oauth.client_id, client_secret: oauth.client_secret })
+  } else {
+    secretPayload = form.secret
+  }
+
   try {
     const res = await fetch("/api/credentials", {
       method: "POST",
@@ -102,7 +147,7 @@ async function handleSubmit() {
         adapter_id: form.adapter_id,
         label: form.label,
         kind: form.kind,
-        secret: form.secret,
+        secret: secretPayload,
         expires_at_ms,
       }),
     })
@@ -113,6 +158,10 @@ async function handleSubmit() {
       form.secret = ""
       form.adapter_id = ""
       form.label = ""
+      hmac.api_key = ""
+      hmac.secret_key = ""
+      oauth.client_id = ""
+      oauth.client_secret = ""
     } else {
       const err = (await res.json()) as { error?: string }
       errorMsg.value = err.error ?? `HTTP ${res.status}`

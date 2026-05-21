@@ -95,16 +95,38 @@ function encrypt(plaintext: string): { ciphertext: Buffer; iv: Buffer; authTag: 
   return { ciphertext, iv, authTag: cipher.getAuthTag() }
 }
 
-// Public mask: 4-hex SHA256 fingerprint, no plaintext material
+function fp(s: string): string {
+  return crypto.createHash("sha256").update(s).digest("hex").slice(0, 4).toUpperCase()
+}
+
+// Public mask: 4-hex SHA256 fingerprint, no plaintext material.
+// For composite secrets (HMAC api_key+secret_key, OAuth client_id+client_secret),
+// fingerprints both parts so the user can visually confirm rotation.
 function maskSecret(plaintext: string, kind: string): string {
-  const fingerprint = crypto
-    .createHash("sha256")
-    .update(plaintext)
-    .digest("hex")
-    .slice(0, 4)
-    .toUpperCase()
-  const prefix = kind === "hmac_secret" ? "hmac" : kind === "bearer_token" ? "br" : kind === "oauth2_client" ? "oa2" : "key"
-  return `${prefix}_${"•".repeat(16)}${fingerprint}`
+  if (kind === "hmac_secret") {
+    try {
+      const parsed = JSON.parse(plaintext) as { api_key?: string; secret_key?: string }
+      if (parsed.api_key && parsed.secret_key) {
+        return `hmac_pub_•••${fp(parsed.api_key)}/priv_•••${fp(parsed.secret_key)}`
+      }
+    } catch {
+      // fall through to single-string masking
+    }
+    return `hmac_${"•".repeat(16)}${fp(plaintext)}`
+  }
+  if (kind === "oauth2_client") {
+    try {
+      const parsed = JSON.parse(plaintext) as { client_id?: string; client_secret?: string }
+      if (parsed.client_id && parsed.client_secret) {
+        return `oa2_id_•••${fp(parsed.client_id)}/sec_•••${fp(parsed.client_secret)}`
+      }
+    } catch {
+      // fall through
+    }
+    return `oa2_${"•".repeat(16)}${fp(plaintext)}`
+  }
+  const prefix = kind === "bearer_token" ? "br" : "key"
+  return `${prefix}_${"•".repeat(16)}${fp(plaintext)}`
 }
 
 // ─── Credential CRUD ───────────────────────────────────────────────────────────

@@ -38,23 +38,70 @@
             name="cred_edit_label"
             autocomplete="off"
             data-lpignore="true"
-            data-1p-ignore="true"
+            data-1p-ignore="true" readonly @focus="(e) => (e.target as HTMLInputElement).removeAttribute('readonly')"
           />
           <div class="hint">Leave blank to keep current.</div>
         </div>
 
-        <div class="field">
-          <label>New Secret *</label>
+        <!-- HMAC: needs both API Key (public) + Secret Key (private) -->
+        <template v-if="cred.kind === 'hmac_secret'">
+          <div class="field">
+            <label>API Key *</label>
+            <input
+              v-model="hmac.api_key"
+              type="text"
+              placeholder="paste API Key here (public identifier)"
+              required
+              minlength="8"
+              name="hmac_api_key_input"
+              autocomplete="off"
+              data-lpignore="true"
+              data-1p-ignore="true" readonly @focus="(e) => (e.target as HTMLInputElement).removeAttribute('readonly')"
+            />
+            <div class="hint">Public part of the HMAC pair — sent in request headers.</div>
+          </div>
+          <div class="field">
+            <label>Secret Key *</label>
+            <input
+              v-model="hmac.secret_key"
+              type="text"
+              placeholder="paste Secret Key here (private — used to sign requests)"
+              required
+              minlength="8"
+              name="hmac_secret_key_input"
+              autocomplete="off"
+              data-lpignore="true"
+              data-1p-ignore="true" readonly @focus="(e) => (e.target as HTMLInputElement).removeAttribute('readonly')"
+            />
+            <div class="hint">Private part — never sent on the wire, only used to sign locally. Encrypted with AES-256-GCM at rest.</div>
+          </div>
+        </template>
+
+        <!-- OAuth2: needs Client ID + Client Secret -->
+        <template v-else-if="cred.kind === 'oauth2_client'">
+          <div class="field">
+            <label>Client ID *</label>
+            <input v-model="oauth.client_id" type="text" placeholder="paste OAuth2 Client ID" required minlength="4" name="oauth_id" autocomplete="off" data-lpignore="true" data-1p-ignore="true" readonly @focus="(e) => (e.target as HTMLInputElement).removeAttribute('readonly')" />
+          </div>
+          <div class="field">
+            <label>Client Secret *</label>
+            <input v-model="oauth.client_secret" type="text" placeholder="paste OAuth2 Client Secret" required minlength="8" name="oauth_secret" autocomplete="off" data-lpignore="true" data-1p-ignore="true" readonly @focus="(e) => (e.target as HTMLInputElement).removeAttribute('readonly')" />
+          </div>
+        </template>
+
+        <!-- Single-string kinds (api_key, bearer_token) -->
+        <div v-else class="field">
+          <label>New {{ cred.kind === 'bearer_token' ? 'Token' : 'API Key' }} *</label>
           <input
             v-model="form.secret"
             type="text"
-            placeholder="paste your new API key here"
+            :placeholder="cred.kind === 'bearer_token' ? 'paste your bearer token' : 'paste your API key'"
             required
             minlength="8"
             name="cred_edit_secret"
             autocomplete="off"
             data-lpignore="true"
-            data-1p-ignore="true"
+            data-1p-ignore="true" readonly @focus="(e) => (e.target as HTMLInputElement).removeAttribute('readonly')"
           />
           <div class="hint">
             <strong>Encrypted with AES-256-GCM.</strong> Only a SHA256 fingerprint is shown afterward.
@@ -110,6 +157,8 @@ interface Cred {
 
 const cred = ref<Cred | null>(null)
 const form = reactive({ label: "", secret: "", expires_days: null as number | null })
+const hmac = reactive({ api_key: "", secret_key: "" })
+const oauth = reactive({ client_id: "", client_secret: "" })
 const submitting = ref(false)
 const errorMsg = ref("")
 const success = ref<{ masked_secret: string } | null>(null)
@@ -130,8 +179,27 @@ async function handleSubmit() {
 
   const expires_at_ms = form.expires_days ? Date.now() + form.expires_days * 86_400_000 : null
 
+  let secretPayload: string
+  if (cred.value?.kind === "hmac_secret") {
+    if (!hmac.api_key || !hmac.secret_key) {
+      errorMsg.value = "Both API Key and Secret Key are required for HMAC"
+      submitting.value = false
+      return
+    }
+    secretPayload = JSON.stringify({ api_key: hmac.api_key, secret_key: hmac.secret_key })
+  } else if (cred.value?.kind === "oauth2_client") {
+    if (!oauth.client_id || !oauth.client_secret) {
+      errorMsg.value = "Both Client ID and Client Secret are required for OAuth2"
+      submitting.value = false
+      return
+    }
+    secretPayload = JSON.stringify({ client_id: oauth.client_id, client_secret: oauth.client_secret })
+  } else {
+    secretPayload = form.secret
+  }
+
   try {
-    const body: Record<string, unknown> = { secret: form.secret }
+    const body: Record<string, unknown> = { secret: secretPayload }
     if (form.label) body["label"] = form.label
     if (expires_at_ms !== null) body["expires_at_ms"] = expires_at_ms
 
@@ -145,6 +213,10 @@ async function handleSubmit() {
       const data = (await res.json()) as { masked_secret: string }
       success.value = data
       form.secret = ""
+      hmac.api_key = ""
+      hmac.secret_key = ""
+      oauth.client_id = ""
+      oauth.client_secret = ""
       // Reload current state
       const cur = await fetch(`/api/credentials/${refId}`, { credentials: "include" })
       if (cur.ok) cred.value = (await cur.json()) as Cred
