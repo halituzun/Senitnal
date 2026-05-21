@@ -9,21 +9,21 @@
     </div>
 
     <div class="card" style="max-width:640px">
-      <form @submit.prevent="handleSubmit">
+      <form @submit.prevent="handleSubmit" autocomplete="off">
         <div class="field">
           <label>Adapter ID *</label>
-          <input v-model="form.adapter_id" placeholder="binance-spot-account" required />
+          <input v-model="form.adapter_id" placeholder="binance-spot-account" required name="adp_id" autocomplete="off" />
           <div class="hint">The adapter this credential belongs to (lowercase, hyphens).</div>
         </div>
 
         <div class="field">
           <label>Label *</label>
-          <input v-model="form.label" placeholder="Binance Spot (read-only)" required />
+          <input v-model="form.label" placeholder="Binance Spot (read-only)" required name="cred_label" autocomplete="off" />
         </div>
 
         <div class="field">
           <label>Kind *</label>
-          <select v-model="form.kind" required>
+          <select v-model="form.kind" required name="cred_kind">
             <option value="api_key">API Key</option>
             <option value="hmac_secret">HMAC Secret</option>
             <option value="bearer_token">Bearer Token</option>
@@ -33,7 +33,7 @@
 
         <div class="field">
           <label>Secret *</label>
-          <input v-model="form.secret" type="password" placeholder="paste your API key here" required minlength="8" />
+          <input v-model="form.secret" type="text" placeholder="paste your API key here" required minlength="8" name="cred_secret_input" autocomplete="off" data-lpignore="true" data-1p-ignore="true" />
           <div class="hint">
             Encrypted with AES-256-GCM before storage. Only a SHA256 fingerprint is shown afterwards.
             <strong>This panel can never trade or withdraw — flags hardcoded to false.</strong>
@@ -42,7 +42,7 @@
 
         <div class="field">
           <label>Expires (days from now, optional)</label>
-          <input v-model.number="form.expires_days" type="number" min="1" max="3650" placeholder="365" />
+          <input v-model.number="form.expires_days" type="number" min="1" max="3650" placeholder="365" name="cred_exp_days" autocomplete="off" />
         </div>
 
         <div class="notice">

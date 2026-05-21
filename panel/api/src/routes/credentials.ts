@@ -2,7 +2,10 @@
 import type { FastifyInstance } from "fastify"
 import { requireAuth } from "../auth.js"
 import { CREDENTIALS } from "../mock/data.js"
-import { addCredential, listCredentials, getCredential, deactivateCredential } from "../db/vault.js"
+import {
+  addCredential, listCredentials, getCredential, deactivateCredential,
+  setSeedOverride, listSeedOverrides, clearSeedOverride,
+} from "../db/vault.js"
 
 interface SafeCred {
   ref_id: string
@@ -17,23 +20,47 @@ interface SafeCred {
   withdraw_enabled: false
   read_only: true
   source: "seed" | "user"
+  overridden?: boolean
+  updated_at_ms?: number
 }
 
 function allCredentials(): SafeCred[] {
-  const seed: SafeCred[] = CREDENTIALS.map((c) => ({
-    ref_id: c.ref_id,
-    kind: c.kind,
-    adapter_id: c.adapter_id,
-    label: c.label,
-    masked_secret: c.masked_secret,
-    created_at_ms: c.created_at_ms,
-    expires_at_ms: c.expires_at_ms,
-    is_active: c.is_active,
-    trade_enabled: false,
-    withdraw_enabled: false,
-    read_only: true,
-    source: "seed" as const,
-  }))
+  const overrides = listSeedOverrides()
+  const seed: SafeCred[] = CREDENTIALS.map((c) => {
+    const ov = overrides[c.ref_id]
+    if (ov) {
+      return {
+        ref_id: c.ref_id,
+        kind: c.kind,
+        adapter_id: c.adapter_id,
+        label: ov.label ?? c.label,
+        masked_secret: ov.masked_secret,
+        created_at_ms: c.created_at_ms,
+        expires_at_ms: ov.expires_at_ms ?? c.expires_at_ms,
+        is_active: c.is_active,
+        trade_enabled: false,
+        withdraw_enabled: false,
+        read_only: true,
+        source: "seed" as const,
+        overridden: true,
+        updated_at_ms: ov.updated_at_ms,
+      }
+    }
+    return {
+      ref_id: c.ref_id,
+      kind: c.kind,
+      adapter_id: c.adapter_id,
+      label: c.label,
+      masked_secret: c.masked_secret,
+      created_at_ms: c.created_at_ms,
+      expires_at_ms: c.expires_at_ms,
+      is_active: c.is_active,
+      trade_enabled: false,
+      withdraw_enabled: false,
+      read_only: true,
+      source: "seed" as const,
+    }
+  })
   const user: SafeCred[] = listCredentials().map((c) => ({ ...c, source: "user" as const }))
   return [...user, ...seed]
 }
@@ -131,20 +158,74 @@ export async function credentialRoutes(app: FastifyInstance) {
     },
   )
 
-  // DELETE /api/credentials/:ref_id — soft delete (sets is_active=false)
-  // Only works on user-added credentials. Seed credentials are immutable.
+  // DELETE /api/credentials/:ref_id — soft delete user, or clear seed override
   app.delete<{ Params: { ref_id: string } }>(
     "/api/credentials/:ref_id",
     { preHandler: requireAuth },
     async (request, reply) => {
       const ref_id = request.params.ref_id
-      if (!ref_id.startsWith("cred-user-")) {
-        return reply.code(403).send({ error: "Seed credentials are immutable. Only user-added credentials can be deleted." })
+      if (ref_id.startsWith("cred-user-")) {
+        const ok = deactivateCredential(ref_id)
+        if (!ok) return reply.code(404).send({ error: "Credential not found" })
+        const updated = getCredential(ref_id)
+        return { ok: true, credential: updated }
       }
-      const ok = deactivateCredential(ref_id)
-      if (!ok) return reply.code(404).send({ error: "Credential not found" })
-      const updated = getCredential(ref_id)
-      return { ok: true, credential: updated }
+      // Seed credential — clear override (revert to mock value)
+      const cleared = clearSeedOverride(ref_id)
+      if (!cleared) {
+        return reply.code(404).send({ error: "No override exists for this seed credential" })
+      }
+      return { ok: true, reverted: true }
+    },
+  )
+
+  // PUT /api/credentials/:ref_id — edit credential (seed → upserts override; user → not yet supported)
+  app.put<{
+    Body: { secret: string; label?: string; expires_at_ms?: number | null }
+    Params: { ref_id: string }
+  }>(
+    "/api/credentials/:ref_id",
+    {
+      preHandler: requireAuth,
+      schema: {
+        body: {
+          type: "object",
+          required: ["secret"],
+          properties: {
+            secret: { type: "string", minLength: 8, maxLength: 4096 },
+            label: { type: "string", minLength: 1, maxLength: 200 },
+            expires_at_ms: { type: ["integer", "null"] },
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      const ref_id = request.params.ref_id
+
+      if (ref_id.startsWith("cred-user-")) {
+        return reply.code(400).send({
+          error: "User-added credentials cannot be edited. Delete and re-add to rotate.",
+        })
+      }
+
+      // Seed credential — find kind from mock to use right mask prefix
+      const seed = CREDENTIALS.find((c) => c.ref_id === ref_id)
+      if (!seed) {
+        return reply.code(404).send({ error: "Seed credential not found" })
+      }
+
+      try {
+        const ov = setSeedOverride({
+          ref_id,
+          kind: seed.kind,
+          secret: request.body.secret,
+          label: request.body.label,
+          expires_at_ms: request.body.expires_at_ms ?? null,
+        })
+        return { ok: true, ref_id, masked_secret: ov.masked_secret, updated_at_ms: ov.updated_at_ms }
+      } catch (e) {
+        return reply.code(400).send({ error: e instanceof Error ? e.message : "Bad request" })
+      }
     },
   )
 }

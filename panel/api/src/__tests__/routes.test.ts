@@ -273,14 +273,72 @@ describe("Credentials — security", () => {
     expect(res.statusCode).toBe(400)
   })
 
-  it("DELETE /api/credentials/:id on seed → 403 (immutable)", async () => {
+  it("DELETE /api/credentials/:id on seed without override → 404", async () => {
     const token = await getSession()
     const res = await app.inject({
+      method: "DELETE",
+      url: "/api/credentials/cred-cryptopanic",
+      cookies: { panel_session: token },
+    })
+    expect(res.statusCode).toBe(404)
+  })
+
+  it("PUT /api/credentials/:id on seed → upserts override, masked fingerprint changes", async () => {
+    const token = await getSession()
+    const TEST_SECRET = "rotation-secret-fake-1234567890"
+
+    // Get original
+    const before = await app.inject({
+      method: "GET",
+      url: "/api/credentials/cred-taapi-prod",
+      cookies: { panel_session: token },
+    })
+    const originalMask = (before.json() as { masked_secret: string }).masked_secret
+
+    // Override
+    const put = await app.inject({
+      method: "PUT",
+      url: "/api/credentials/cred-taapi-prod",
+      cookies: { panel_session: token },
+      payload: { secret: TEST_SECRET, label: "TAAPI rotated" },
+    })
+    expect(put.statusCode).toBe(200)
+    const putBody = put.json() as { ok: boolean; masked_secret: string }
+    expect(putBody.ok).toBe(true)
+    expect(putBody.masked_secret).not.toBe(originalMask)
+    // Response must not contain plaintext
+    expect(JSON.stringify(put.json())).not.toContain(TEST_SECRET)
+
+    // GET shows overridden
+    const after = await app.inject({
+      method: "GET",
+      url: "/api/credentials/cred-taapi-prod",
+      cookies: { panel_session: token },
+    })
+    const afterBody = after.json() as { overridden: boolean; masked_secret: string; label: string }
+    expect(afterBody.overridden).toBe(true)
+    expect(afterBody.masked_secret).toBe(putBody.masked_secret)
+    expect(afterBody.label).toBe("TAAPI rotated")
+
+    // Revert
+    const del = await app.inject({
       method: "DELETE",
       url: "/api/credentials/cred-taapi-prod",
       cookies: { panel_session: token },
     })
-    expect(res.statusCode).toBe(403)
+    expect(del.statusCode).toBe(200)
+    expect((del.json() as { reverted: boolean }).reverted).toBe(true)
+  })
+
+  it("PUT /api/credentials/:id on user cred → rejects (use add/delete to rotate)", async () => {
+    const token = await getSession()
+    const res = await app.inject({
+      method: "PUT",
+      url: "/api/credentials/cred-user-fake",
+      cookies: { panel_session: token },
+      payload: { secret: "longenoughsecret123" },
+    })
+    expect(res.statusCode).toBe(400)
   })
 
   it("DELETE /api/credentials/:id on user cred → soft-deletes", async () => {

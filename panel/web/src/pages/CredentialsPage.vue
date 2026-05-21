@@ -65,14 +65,17 @@
           <td style="font-size:11px;color:var(--text-muted)">
             read-only · no-trade · no-withdraw
           </td>
-          <td>
+          <td style="white-space:nowrap">
+            <router-link :to="`/credentials/${c.ref_id}/edit`" v-if="c.is_active">
+              <button style="font-size:11px;padding:3px 8px;margin-right:4px">Edit</button>
+            </router-link>
             <button
-              v-if="c.source === 'user' && c.is_active"
-              @click="deleteCred(c.ref_id)"
+              v-if="c.is_active && (c.source === 'user' || c.overridden)"
+              @click="deleteCred(c.ref_id, c.source === 'seed')"
               :disabled="deleting === c.ref_id"
               style="font-size:11px;padding:3px 8px;color:var(--error)"
             >
-              {{ deleting === c.ref_id ? "…" : "Delete" }}
+              {{ deleting === c.ref_id ? "…" : (c.source === "seed" ? "Revert" : "Delete") }}
             </button>
           </td>
         </tr>
@@ -86,7 +89,7 @@
 import { reactive, ref, onMounted } from "vue"
 import { useFetch } from "@/composables/useFetch.js"
 
-interface Cred { ref_id: string; kind: string; adapter_id: string | null; label: string; masked_secret: string; trade_enabled: boolean; withdraw_enabled: boolean; read_only: boolean; created_at_ms: number; expires_at_ms: number | null; is_active: boolean; source: "seed" | "user" }
+interface Cred { ref_id: string; kind: string; adapter_id: string | null; label: string; masked_secret: string; trade_enabled: boolean; withdraw_enabled: boolean; read_only: boolean; created_at_ms: number; expires_at_ms: number | null; is_active: boolean; source: "seed" | "user"; overridden?: boolean }
 interface CredsResponse { credentials: Cred[]; total: number }
 interface ExpiringResponse { expiring: Array<{ ref_id: string; days_remaining: number }>; total: number }
 
@@ -95,8 +98,11 @@ const { data, loading, error, execute } = useFetch<CredsResponse>("")
 const expiring = ref<ExpiringResponse | null>(null)
 const deleting = ref<string | null>(null)
 
-async function deleteCred(refId: string) {
-  if (!confirm(`Delete credential ${refId}? This marks it inactive.`)) return
+async function deleteCred(refId: string, isSeedRevert = false) {
+  const msg = isSeedRevert
+    ? `Revert credential ${refId} to its seed value? Your override will be removed.`
+    : `Delete credential ${refId}? This marks it inactive.`
+  if (!confirm(msg)) return
   deleting.value = refId
   try {
     const res = await fetch(`/api/credentials/${refId}`, { method: "DELETE", credentials: "include" })

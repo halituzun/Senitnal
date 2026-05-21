@@ -59,6 +59,20 @@ db.exec(`
     read_only INTEGER NOT NULL DEFAULT 1 CHECK (read_only = 1)
   );
 
+  CREATE TABLE IF NOT EXISTS seed_overrides (
+    ref_id TEXT PRIMARY KEY,
+    label TEXT,
+    expires_at_ms INTEGER,
+    masked_secret TEXT NOT NULL,
+    encrypted_secret BLOB NOT NULL,
+    iv BLOB NOT NULL,
+    auth_tag BLOB NOT NULL,
+    updated_at_ms INTEGER NOT NULL,
+    trade_enabled INTEGER NOT NULL DEFAULT 0 CHECK (trade_enabled = 0),
+    withdraw_enabled INTEGER NOT NULL DEFAULT 0 CHECK (withdraw_enabled = 0),
+    read_only INTEGER NOT NULL DEFAULT 1 CHECK (read_only = 1)
+  );
+
   CREATE TABLE IF NOT EXISTS user_adapters (
     adapter_id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
@@ -219,6 +233,116 @@ function rowToPublic(row: CredentialRow): CredentialPublic {
     withdraw_enabled: false,
     read_only: true,
   }
+}
+
+// ─── Seed override (Edit existing seed credential) ────────────────────────────
+
+export interface SeedOverridePublic {
+  ref_id: string
+  label: string | null
+  expires_at_ms: number | null
+  masked_secret: string
+  updated_at_ms: number
+  trade_enabled: false
+  withdraw_enabled: false
+  read_only: true
+}
+
+const upsertOverrideStmt = db.prepare(`
+  INSERT INTO seed_overrides
+    (ref_id, label, expires_at_ms, masked_secret, encrypted_secret, iv, auth_tag, updated_at_ms,
+     trade_enabled, withdraw_enabled, read_only)
+  VALUES
+    (@ref_id, @label, @expires_at_ms, @masked_secret, @encrypted_secret, @iv, @auth_tag, @updated_at_ms,
+     0, 0, 1)
+  ON CONFLICT(ref_id) DO UPDATE SET
+    label = excluded.label,
+    expires_at_ms = excluded.expires_at_ms,
+    masked_secret = excluded.masked_secret,
+    encrypted_secret = excluded.encrypted_secret,
+    iv = excluded.iv,
+    auth_tag = excluded.auth_tag,
+    updated_at_ms = excluded.updated_at_ms
+`)
+
+const getOverrideStmt = db.prepare(`
+  SELECT ref_id, label, expires_at_ms, masked_secret, updated_at_ms
+  FROM seed_overrides
+  WHERE ref_id = ?
+`)
+
+const listOverridesStmt = db.prepare(`
+  SELECT ref_id, label, expires_at_ms, masked_secret, updated_at_ms
+  FROM seed_overrides
+`)
+
+const clearOverrideStmt = db.prepare(`
+  DELETE FROM seed_overrides WHERE ref_id = ?
+`)
+
+export function setSeedOverride(input: {
+  ref_id: string
+  kind: string
+  secret: string
+  label?: string
+  expires_at_ms?: number | null
+}): SeedOverridePublic {
+  if (input.secret.length < 8 || input.secret.length > 4096) {
+    throw new Error("Secret must be 8-4096 chars")
+  }
+  const { ciphertext, iv, authTag } = encrypt(input.secret)
+  const masked_secret = maskSecret(input.secret, input.kind)
+  const updated_at_ms = Date.now()
+
+  upsertOverrideStmt.run({
+    ref_id: input.ref_id,
+    label: input.label ?? null,
+    expires_at_ms: input.expires_at_ms ?? null,
+    masked_secret,
+    encrypted_secret: ciphertext,
+    iv,
+    auth_tag: authTag,
+    updated_at_ms,
+  })
+
+  return {
+    ref_id: input.ref_id,
+    label: input.label ?? null,
+    expires_at_ms: input.expires_at_ms ?? null,
+    masked_secret,
+    updated_at_ms,
+    trade_enabled: false,
+    withdraw_enabled: false,
+    read_only: true,
+  }
+}
+
+export function getSeedOverride(ref_id: string): SeedOverridePublic | null {
+  const row = getOverrideStmt.get(ref_id) as
+    | { ref_id: string; label: string | null; expires_at_ms: number | null; masked_secret: string; updated_at_ms: number }
+    | undefined
+  if (!row) return null
+  return {
+    ...row,
+    trade_enabled: false,
+    withdraw_enabled: false,
+    read_only: true,
+  }
+}
+
+export function listSeedOverrides(): Record<string, SeedOverridePublic> {
+  const rows = listOverridesStmt.all() as Array<{
+    ref_id: string; label: string | null; expires_at_ms: number | null; masked_secret: string; updated_at_ms: number
+  }>
+  const out: Record<string, SeedOverridePublic> = {}
+  for (const r of rows) {
+    out[r.ref_id] = { ...r, trade_enabled: false, withdraw_enabled: false, read_only: true }
+  }
+  return out
+}
+
+export function clearSeedOverride(ref_id: string): boolean {
+  return clearOverrideStmt.run(ref_id).changes > 0
 }
 
 // ─── Adapter CRUD ──────────────────────────────────────────────────────────────
