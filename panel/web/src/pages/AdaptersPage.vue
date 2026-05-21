@@ -27,8 +27,10 @@
         <option value="ONCHAIN">On-Chain</option>
         <option value="DERIVATIVES">Derivatives</option>
         <option value="MARKET_DATA">Market Data</option>
+        <option value="ACCOUNT_DATA">Account Data</option>
         <option value="SENTIMENT">Sentiment</option>
         <option value="RESEARCH">Research</option>
+        <option value="INFRASTRUCTURE">Infrastructure</option>
       </select>
       <select v-model="filters.healthy" @change="resetAndLoad">
         <option value="">All health</option>

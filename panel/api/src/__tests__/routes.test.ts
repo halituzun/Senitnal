@@ -104,12 +104,12 @@ describe("Dashboard", () => {
     expect(body).toHaveProperty("portfolio")
     expect(body).toHaveProperty("adapter_hub")
     expect(body).toHaveProperty("pnl_summary")
-    expect(body.adapter_hub.total_adapters).toBe(15)
+    expect(body.adapter_hub.total_adapters).toBe(23)
   })
 })
 
 describe("Adapters", () => {
-  it("GET /api/adapters → 15 total", async () => {
+  it("GET /api/adapters → 23 total", async () => {
     const token = await getSession()
     const res = await app.inject({
       method: "GET",
@@ -117,7 +117,7 @@ describe("Adapters", () => {
       cookies: { panel_session: token },
     })
     expect(res.statusCode).toBe(200)
-    expect(res.json().total).toBe(15)
+    expect(res.json().total).toBe(23)
   })
 
   it("GET /api/adapters?trust_band=QUARANTINED → 1 quarantined", async () => {
