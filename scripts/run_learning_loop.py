@@ -1,22 +1,38 @@
 #!/usr/bin/env python3
-"""Run the learning loop with real Binance market data.
+"""Run the learning loop with real Binance + TAAPI market data.
 
 Usage:
     uv run scripts/run_learning_loop.py --once
     uv run scripts/run_learning_loop.py --interval 10
+
+Env vars:
+    TAAPI_API_KEY   — (optional) TAAPI.io free API key for indicators
 """
 
 from __future__ import annotations
 
 import argparse
 import time
-from services.intelligence_adapters.binance_adapter import fetch_all_snapshots
+from services.intelligence_adapters.binance_adapter import (
+    fetch_all_snapshots as fetch_binance,
+)
+from services.intelligence_adapters.taapi_adapter import (
+    TaapiConfig,
+    fetch_and_normalize,
+    is_enabled,
+)
 from sentinel.runtime.learning_loop import (
     DEFAULT_STRATEGIES,
     LearningState,
     export_snapshot,
     run_cycle_with_real_data,
 )
+
+SYMBOL_MAP = {
+    "btc-momentum-v3": "BTC/USDT",
+    "eth-mean-reversion": "ETH/USDT",
+    "sol-breakout-alpha": "SOL/USDT",
+}
 
 
 def main() -> None:
@@ -26,11 +42,17 @@ def main() -> None:
     parser.add_argument("--cycles", type=int, default=0)
     args = parser.parse_args()
 
+    taapi_config = TaapiConfig(enabled=True, symbols=("BTC/USDT", "ETH/USDT", "SOL/USDT"))
+    taapi_ok = is_enabled(taapi_config)
+
     state = LearningState()
     state.strategies = {s.strategy_id: s for s in DEFAULT_STRATEGIES}
 
     mode = "once" if args.once else f"every {args.interval}s"
-    print(f"♺ Learning loop (Binance) — {len(state.strategies)} strategies, {mode}")
+    sources = "Binance"
+    if taapi_ok:
+        sources += " + TAAPI"
+    print(f"♺ Learning loop ({sources}) — {len(state.strategies)} strategies, {mode}")
     print()
 
     cycle_count = 0
@@ -38,14 +60,30 @@ def main() -> None:
 
     try:
         while True:
-            micro, tech = fetch_all_snapshots()
-            state = run_cycle_with_real_data(state, micro, tech)
+            micro_snapshots, tech_snapshots = fetch_binance()
+
+            if taapi_ok:
+                for strategy in state.strategies.values():
+                    symbol = SYMBOL_MAP.get(strategy.strategy_id)
+                    if not symbol:
+                        continue
+                    taapi_snap = fetch_and_normalize(
+                        config=taapi_config,
+                        symbol=symbol,
+                        symbol_hash=symbol,
+                        timeframe="4h",
+                    )
+                    if taapi_snap:
+                        tech_snapshots.append(taapi_snap)
+
+            state = run_cycle_with_real_data(state, micro_snapshots, tech_snapshots)
             cycle_count += 1
 
             strategies = list(state.strategies.values())
             total_pnl = round(sum(s.pnl_today_try for s in strategies), 1)
             active_cnt = sum(1 for s in strategies if s.lifecycle_state in ("ACTIVE_LIVE", "LIMITED_LIVE") and s.enabled)
 
+            taapi_info = " TAAPI" if taapi_ok else ""
             print(
                 f"  [{state.cycle:04d}] signals={state.total_signals_processed} "
                 f"★={state.total_live_candidates} ✗={state.total_blocks} "

@@ -7,9 +7,13 @@ Never logs the secret.  Normalizes TAAPI responses into
 
 from __future__ import annotations
 
+import json
 import os
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
+from urllib.request import Request, urlopen
 
 from sentinel.intelligence.schemas import TechnicalIndicatorSnapshot
 
@@ -105,6 +109,118 @@ def write_snapshot_jsonl(
     out = config.spool_path / f"{snapshot.snapshot_id}.jsonl"
     out.write_text(snapshot.model_dump_json() + "\n", encoding="utf-8")
     return out
+
+
+def fetch_indicator(
+    *,
+    config: TaapiConfig,
+    indicator: str,
+    symbol: str,
+    timeframe: str = "4h",
+) -> dict[str, Any]:
+    """Fetch one indicator from TAAPI API.
+
+    Returns the raw JSON response.  Raises on HTTP/network errors.
+    API key from env var is NOT logged — redact_secret() is available.
+    """
+    api_key = os.environ.get(config.api_key_env, "")
+    if not api_key:
+        raise ValueError(f"${config.api_key_env} is not set")
+
+    url = (
+        f"{config.base_url}/{indicator}"
+        f"?secret={api_key}"
+        f"&exchange=binance"
+        f"&symbol={symbol}"
+        f"&interval={timeframe}"
+    )
+    req = Request(url, headers={"Accept": "application/json"})
+    with urlopen(req, timeout=10) as resp:
+        return json.loads(resp.read())  # type: ignore[no-any-return]
+
+
+def fetch_indicators_batch(
+    *,
+    config: TaapiConfig,
+    symbol: str,
+    timeframe: str = "4h",
+) -> dict[str, Any]:
+    """Fetch the 'bulk' endpoint — multiple indicators in one request.
+
+    TAAPI bulk endpoint: POST /bulk with JSON body of queries.
+    Much more efficient than individual calls.
+    """
+    api_key = os.environ.get(config.api_key_env, "")
+    if not api_key:
+        raise ValueError(f"${config.api_key_env} is not set")
+
+    queries = [
+        {
+            "indicator": ind,
+            "exchange": "binance",
+            "symbol": symbol,
+            "interval": timeframe,
+        }
+        for ind in config.indicators
+    ]
+
+    body = json.dumps({"secret": api_key, "construct": {"queries": queries}}).encode()
+    req = Request(
+        f"{config.base_url}/bulk",
+        data=body,
+        headers={"Content-Type": "application/json", "Accept": "application/json"},
+        method="POST",
+    )
+    with urlopen(req, timeout=15) as resp:
+        return json.loads(resp.read())  # type: ignore[no-any-return]
+
+
+def fetch_and_normalize(
+    *,
+    config: TaapiConfig,
+    symbol: str,
+    symbol_hash: str,
+    timeframe: str = "4h",
+) -> TechnicalIndicatorSnapshot | None:
+    """Fetch TAAPI indicators and return normalized snapshot. Returns None on failure."""
+    if not is_enabled(config):
+        return None
+
+    now_ms = int(time.time() * 1000)
+    try:
+        result = fetch_indicators_batch(
+            config=config, symbol=symbol, timeframe=timeframe
+        )
+    except Exception:
+        # Fallback: try individual RSI fetch
+        try:
+            payload = fetch_indicator(
+                config=config, indicator="rsi", symbol=symbol, timeframe=timeframe
+            )
+            result = {"data": [payload]}
+        except Exception:
+            return None
+
+    # Extract indicator values from bulk response
+    data = result.get("data", [])
+    payload: dict[str, object] = {}
+    for item in data:
+        if isinstance(item, dict):
+            for k, v in item.items():
+                if k not in ("exchange", "symbol", "interval", "secret", "backtrack", "chart", "period"):
+                    payload[k] = v
+
+    if not payload:
+        return None
+
+    return normalize_response_payload(
+        snapshot_id=f"taapi-{symbol.lower()}-{timeframe}-{now_ms}",
+        symbol_hash=symbol_hash,
+        timeframe=timeframe,
+        payload=payload,
+        now_ms=now_ms,
+        provenance_hash=f"taapi-bulk-{symbol.lower()}-{now_ms}",
+    )
 
 
 __all__ = [
