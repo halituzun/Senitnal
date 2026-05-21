@@ -21,6 +21,10 @@ from services.intelligence_adapters.taapi_adapter import (
     fetch_and_normalize,
     is_enabled,
 )
+from services.intelligence_adapters.gdelt_adapter import (
+    fetch_all_news,
+    compute_news_sentiment_summary,
+)
 from sentinel.runtime.learning_loop import (
     DEFAULT_STRATEGIES,
     LearningState,
@@ -52,6 +56,7 @@ def main() -> None:
     sources = "Binance"
     if taapi_ok:
         sources += " + TAAPI"
+    sources += " + GDELT"
     print(f"♺ Learning loop ({sources}) — {len(state.strategies)} strategies, {mode}")
     print()
 
@@ -68,13 +73,19 @@ def main() -> None:
                     if not symbol:
                         continue
                     taapi_snap = fetch_and_normalize(
-                        config=taapi_config,
-                        symbol=symbol,
-                        symbol_hash=symbol,
-                        timeframe="4h",
+                        config=taapi_config, symbol=symbol,
+                        symbol_hash=symbol, timeframe="4h",
                     )
                     if taapi_snap:
                         tech_snapshots.append(taapi_snap)
+
+            # Fetch news sentiment (graceful — skip on failure)
+            news_sentiment = {}
+            try:
+                news = fetch_all_news(["crypto", "macro", "geopolitical"], max_per_category=5)
+                news_sentiment = compute_news_sentiment_summary(news)
+            except Exception:
+                pass
 
             state = run_cycle_with_real_data(state, micro_snapshots, tech_snapshots)
             cycle_count += 1
@@ -83,7 +94,6 @@ def main() -> None:
             total_pnl = round(sum(s.pnl_today_try for s in strategies), 1)
             active_cnt = sum(1 for s in strategies if s.lifecycle_state in ("ACTIVE_LIVE", "LIMITED_LIVE") and s.enabled)
 
-            taapi_info = " TAAPI" if taapi_ok else ""
             print(
                 f"  [{state.cycle:04d}] signals={state.total_signals_processed} "
                 f"★={state.total_live_candidates} ✗={state.total_blocks} "
