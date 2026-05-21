@@ -96,7 +96,7 @@ class TestBuildPanelSnapshot:
 
     def test_daily_report_id_linked(self) -> None:
         allocs = [_alloc("s1")]
-        dr = build_daily_report(report_id="dr1", report_date_ms=1_000, allocations=allocs)
+        dr = build_daily_report(report_id="dr1", report_date_ms=1_000, allocations=tuple(allocs))
         snap = build_panel_snapshot(
             snapshot_id="snap-dr",
             captured_at_ms=1_000,
