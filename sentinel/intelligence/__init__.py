@@ -11,6 +11,15 @@ from sentinel.intelligence.fusion import (
     SignalFusionResult,
     compute_signal_fusion,
 )
+from sentinel.intelligence.historical_backtest import (
+    BacktestAggregate,
+    aggregate_records,
+)
+from sentinel.intelligence.historical_similarity import (
+    HistoricalSimilarityInput,
+    HistoricalSimilarityResult,
+    evaluate_historical_similarity,
+)
 from sentinel.intelligence.live_activation import (
     LiveActivationInput,
     LiveActivationResult,
@@ -23,6 +32,17 @@ from sentinel.intelligence.net_edge import (
     NetEdgeBreakdown,
     compute_net_edge,
     is_net_edge_actionable,
+)
+from sentinel.intelligence.reaction_memory import (
+    InMemoryReactionMemoryStore,
+    ReactionMemoryRecord,
+    ReactionPattern,
+    is_record_usable_for_live,
+)
+from sentinel.intelligence.reaction_taxonomy import (
+    HistoricalEventFamily,
+    MarketReactionMeasurement,
+    ReactionWindow,
 )
 from sentinel.intelligence.schemas import (
     CommodityMacroSnapshot,
@@ -41,8 +61,13 @@ from sentinel.intelligence.schemas import (
 
 __all__ = [
     "ActionabilityBand",
+    "BacktestAggregate",
     "CommodityMacroSnapshot",
     "GelAlMetricsObservation",
+    "HistoricalEventFamily",
+    "HistoricalSimilarityInput",
+    "HistoricalSimilarityResult",
+    "InMemoryReactionMemoryStore",
     "LiveActivationInput",
     "LiveActivationResult",
     "LiveActivationStatus",
@@ -53,19 +78,26 @@ __all__ = [
     "MacroEventKind",
     "MacroEventSnapshot",
     "MarketMicrostructureSnapshot",
+    "MarketReactionMeasurement",
     "MultiSourceObservation",
     "NetEdgeBreakdown",
     "NewsEventSnapshot",
     "NewsFamily",
+    "ReactionMemoryRecord",
+    "ReactionPattern",
+    "ReactionWindow",
     "SignalFusionInput",
     "SignalFusionResult",
     "SocialPlatform",
     "SocialSignalSnapshot",
     "SourceFamily",
     "TechnicalIndicatorSnapshot",
+    "aggregate_records",
     "compute_net_edge",
     "compute_signal_fusion",
+    "evaluate_historical_similarity",
     "evaluate_live_activation",
     "evaluate_live_conviction",
     "is_net_edge_actionable",
+    "is_record_usable_for_live",
 ]

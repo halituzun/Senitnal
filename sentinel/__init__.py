@@ -197,6 +197,15 @@ from sentinel.intelligence.fusion import (
     SignalFusionResult,
     compute_signal_fusion,
 )
+from sentinel.intelligence.historical_backtest import (
+    BacktestAggregate,
+    aggregate_records,
+)
+from sentinel.intelligence.historical_similarity import (
+    HistoricalSimilarityInput,
+    HistoricalSimilarityResult,
+    evaluate_historical_similarity,
+)
 from sentinel.intelligence.live_activation import (
     LiveActivationInput,
     LiveActivationResult,
@@ -209,6 +218,17 @@ from sentinel.intelligence.net_edge import (
     NetEdgeBreakdown,
     compute_net_edge,
     is_net_edge_actionable,
+)
+from sentinel.intelligence.reaction_memory import (
+    InMemoryReactionMemoryStore,
+    ReactionMemoryRecord,
+    ReactionPattern,
+    is_record_usable_for_live,
+)
+from sentinel.intelligence.reaction_taxonomy import (
+    HistoricalEventFamily,
+    MarketReactionMeasurement,
+    ReactionWindow,
 )
 from sentinel.intelligence.schemas import (
     CommodityMacroSnapshot,
@@ -363,6 +383,7 @@ __all__ = [
     "ActionabilityBand",
     "AdapterTrustRecord",
     "ApprovedActionIntent",
+    "BacktestAggregate",
     "BlockClass",
     "CanaryCandidateAction",
     "CanaryCandidateSource",
@@ -428,10 +449,14 @@ __all__ = [
     "GovernanceScopeKind",
     "GovernanceSignal",
     "GovernanceSignalSource",
+    "HistoricalEventFamily",
+    "HistoricalSimilarityInput",
+    "HistoricalSimilarityResult",
     "HumanApprovalRecord",
     "HumanApprovalStatus",
     "InMemoryExplicitMemoryStore",
     "InMemoryPolicyStore",
+    "InMemoryReactionMemoryStore",
     "InvariantCategory",
     "InvariantDefinition",
     "InvariantSeverity",
@@ -457,6 +482,7 @@ __all__ = [
     "MacroEventSnapshot",
     "MarketMicrostructureSnapshot",
     "MarketObservationEnvelope",
+    "MarketReactionMeasurement",
     "MarketRegimeObservationPayload",
     "MarketReplayResult",
     "MultiSourceObservation",
@@ -482,6 +508,9 @@ __all__ = [
     "PayloadSeed",
     "PrimerPayload",
     "ProvenanceRef",
+    "ReactionMemoryRecord",
+    "ReactionPattern",
+    "ReactionWindow",
     "ReplayBudget",
     "ReplayBudgetState",
     "ReplayEffectChannel",
@@ -508,6 +537,7 @@ __all__ = [
     "VetoRequest",
     "ViolationContext",
     "__version__",
+    "aggregate_records",
     "assert_invariant",
     "build_candidate_financial_memory_record",
     "build_deontic_policy_candidate_record",
@@ -538,6 +568,7 @@ __all__ = [
     "evaluate_financial_policy",
     "evaluate_gelal_shadow_event",
     "evaluate_governance_guard",
+    "evaluate_historical_similarity",
     "evaluate_live_activation",
     "evaluate_live_conviction",
     "evaluate_live_impact_guard",
@@ -546,6 +577,7 @@ __all__ = [
     "get_invariant",
     "is_human_approval_valid",
     "is_net_edge_actionable",
+    "is_record_usable_for_live",
     "list_invariants",
     "resolve_policy_conflicts",
     "route_observer_event",
