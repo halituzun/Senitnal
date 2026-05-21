@@ -1,13 +1,36 @@
 import type { FastifyInstance } from "fastify"
 import { requireAuth } from "../auth.js"
 import { ADAPTERS } from "../mock/data.js"
+import { addAdapter, listAdapters } from "../db/vault.js"
+
+type AdapterRecord = (typeof ADAPTERS)[number] & { is_user_added?: boolean }
+
+function allAdapters(): AdapterRecord[] {
+  const seed: AdapterRecord[] = ADAPTERS.map((a) => ({ ...a, is_user_added: false }))
+  const user: AdapterRecord[] = listAdapters().map((a) => ({
+    adapter_id: a.adapter_id,
+    name: a.name,
+    source_family: a.source_family,
+    trust_band: a.trust_band,
+    is_active: a.is_active,
+    is_fresh: false,
+    is_healthy: false,
+    last_seen_ms: null,
+    latency_ms: null,
+    error_rate: null,
+    credential_ref_id: a.credential_ref_id,
+    description: a.description ?? "",
+    is_user_added: true,
+  })) as AdapterRecord[]
+  return [...user, ...seed]
+}
 
 export async function adapterRoutes(app: FastifyInstance) {
   // GET /api/adapters — list all adapters with optional filters
   app.get<{
     Querystring: { trust_band?: string; source_family?: string; healthy?: string; active?: string }
   }>("/api/adapters", { preHandler: requireAuth }, async (request) => {
-    let result = [...ADAPTERS]
+    let result = allAdapters()
     const { trust_band, source_family, healthy, active } = request.query
 
     if (trust_band) {
@@ -29,10 +52,49 @@ export async function adapterRoutes(app: FastifyInstance) {
 
   // GET /api/adapters/:id
   app.get<{ Params: { id: string } }>("/api/adapters/:id", { preHandler: requireAuth }, async (request, reply) => {
-    const adapter = ADAPTERS.find((a) => a.adapter_id === request.params.id)
+    const adapter = allAdapters().find((a) => a.adapter_id === request.params.id)
     if (!adapter) return reply.code(404).send({ error: "Adapter not found" })
     return adapter
   })
+
+  // POST /api/adapters — register new adapter
+  app.post<{
+    Body: {
+      adapter_id: string
+      name: string
+      source_family: string
+      trust_band?: string
+      description?: string
+      credential_ref_id?: string
+    }
+  }>(
+    "/api/adapters",
+    {
+      preHandler: requireAuth,
+      schema: {
+        body: {
+          type: "object",
+          required: ["adapter_id", "name", "source_family"],
+          properties: {
+            adapter_id: { type: "string", minLength: 2, maxLength: 64 },
+            name: { type: "string", minLength: 1, maxLength: 200 },
+            source_family: { type: "string" },
+            trust_band: { type: "string" },
+            description: { type: "string", maxLength: 500 },
+            credential_ref_id: { type: "string" },
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      try {
+        const adapter = addAdapter(request.body)
+        return reply.code(201).send(adapter)
+      } catch (e) {
+        return reply.code(400).send({ error: e instanceof Error ? e.message : "Bad request" })
+      }
+    },
+  )
 
   // GET /api/adapter-trust — trust band summary
   app.get("/api/adapter-trust", { preHandler: requireAuth }, async () => {

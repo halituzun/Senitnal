@@ -223,6 +223,135 @@ describe("Credentials — security", () => {
       expect(String(c["masked_secret"])).toContain("•")
     }
   })
+
+  it("POST /api/credentials encrypts secret, returns only masked", async () => {
+    const token = await getSession()
+    const TEST_SECRET = "extremely-fake-secret-for-test-purposes-only-xyz"
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/credentials",
+      cookies: { panel_session: token },
+      payload: {
+        kind: "api_key",
+        adapter_id: "test-vault-adapter",
+        label: "Vault Test",
+        secret: TEST_SECRET,
+      },
+    })
+    expect(res.statusCode).toBe(201)
+    const body = res.json() as Record<string, unknown>
+    // Response must NOT contain the plaintext secret anywhere
+    const bodyStr = JSON.stringify(body)
+    expect(bodyStr).not.toContain(TEST_SECRET)
+    expect(bodyStr).not.toContain("extremely-fake")
+    expect(body.trade_enabled).toBe(false)
+    expect(body.withdraw_enabled).toBe(false)
+    expect(body.read_only).toBe(true)
+    expect(String(body.ref_id)).toMatch(/^cred-user-/)
+    expect(String(body.masked_secret)).toContain("•")
+  })
+
+  it("POST /api/credentials rejects short secret", async () => {
+    const token = await getSession()
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/credentials",
+      cookies: { panel_session: token },
+      payload: { kind: "api_key", adapter_id: "a", label: "x", secret: "short" },
+    })
+    expect(res.statusCode).toBe(400)
+  })
+
+  it("POST /api/credentials rejects invalid kind", async () => {
+    const token = await getSession()
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/credentials",
+      cookies: { panel_session: token },
+      payload: { kind: "trade_key", adapter_id: "a", label: "x", secret: "longenough12345" },
+    })
+    expect(res.statusCode).toBe(400)
+  })
+
+  it("DELETE /api/credentials/:id on seed → 403 (immutable)", async () => {
+    const token = await getSession()
+    const res = await app.inject({
+      method: "DELETE",
+      url: "/api/credentials/cred-taapi-prod",
+      cookies: { panel_session: token },
+    })
+    expect(res.statusCode).toBe(403)
+  })
+
+  it("DELETE /api/credentials/:id on user cred → soft-deletes", async () => {
+    const token = await getSession()
+    // First add one
+    const create = await app.inject({
+      method: "POST",
+      url: "/api/credentials",
+      cookies: { panel_session: token },
+      payload: { kind: "api_key", adapter_id: "x", label: "to-delete", secret: "deletetest12345678" },
+    })
+    const refId = create.json().ref_id as string
+
+    const del = await app.inject({
+      method: "DELETE",
+      url: `/api/credentials/${refId}`,
+      cookies: { panel_session: token },
+    })
+    expect(del.statusCode).toBe(200)
+    expect(del.json().credential.is_active).toBe(false)
+  })
+})
+
+describe("Adapters — write", () => {
+  it("POST /api/adapters creates new adapter", async () => {
+    const token = await getSession()
+    const adapterId = `test-adp-${Date.now()}`
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/adapters",
+      cookies: { panel_session: token },
+      payload: {
+        adapter_id: adapterId,
+        name: "Test Adapter",
+        source_family: "RESEARCH",
+      },
+    })
+    expect(res.statusCode).toBe(201)
+    expect(res.json().adapter_id).toBe(adapterId)
+    expect(res.json().is_user_added).toBe(true)
+  })
+
+  it("POST /api/adapters rejects bad adapter_id format", async () => {
+    const token = await getSession()
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/adapters",
+      cookies: { panel_session: token },
+      payload: {
+        adapter_id: "BAD ID WITH SPACES",
+        name: "Test",
+        source_family: "RESEARCH",
+      },
+    })
+    expect(res.statusCode).toBe(400)
+  })
+
+  it("POST /api/adapters rejects invalid source_family", async () => {
+    const token = await getSession()
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/adapters",
+      cookies: { panel_session: token },
+      payload: {
+        adapter_id: "test-bad-family",
+        name: "Test",
+        source_family: "MADE_UP_FAMILY",
+      },
+    })
+    expect(res.statusCode).toBe(400)
+  })
 })
 
 describe("Forbidden routes — no trade/execute/order", () => {

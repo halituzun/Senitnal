@@ -22,6 +22,7 @@ const router = createRouter({
     { path: "/adapters", name: "adapters", component: () => import("@/pages/AdaptersPage.vue") },
     { path: "/adapters/new", name: "adapters-new", component: () => import("@/pages/AdaptersNewPage.vue") },
     { path: "/credentials", name: "credentials", component: () => import("@/pages/CredentialsPage.vue") },
+    { path: "/credentials/new", name: "credentials-new", component: () => import("@/pages/CredentialsNewPage.vue") },
     { path: "/ingress-preview", name: "ingress-preview", component: () => import("@/pages/IngressPreviewPage.vue") },
     { path: "/audit-trail", name: "audit-trail", component: () => import("@/pages/AuditTrailPage.vue") },
     { path: "/ideas", name: "ideas", component: () => import("@/pages/IdeasPage.vue") },

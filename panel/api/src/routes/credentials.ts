@@ -2,13 +2,48 @@
 import type { FastifyInstance } from "fastify"
 import { requireAuth } from "../auth.js"
 import { CREDENTIALS } from "../mock/data.js"
+import { addCredential, listCredentials, getCredential, deactivateCredential } from "../db/vault.js"
+
+interface SafeCred {
+  ref_id: string
+  kind: string
+  adapter_id: string | null
+  label: string
+  masked_secret: string
+  created_at_ms: number
+  expires_at_ms: number | null
+  is_active: boolean
+  trade_enabled: false
+  withdraw_enabled: false
+  read_only: true
+  source: "seed" | "user"
+}
+
+function allCredentials(): SafeCred[] {
+  const seed: SafeCred[] = CREDENTIALS.map((c) => ({
+    ref_id: c.ref_id,
+    kind: c.kind,
+    adapter_id: c.adapter_id,
+    label: c.label,
+    masked_secret: c.masked_secret,
+    created_at_ms: c.created_at_ms,
+    expires_at_ms: c.expires_at_ms,
+    is_active: c.is_active,
+    trade_enabled: false,
+    withdraw_enabled: false,
+    read_only: true,
+    source: "seed" as const,
+  }))
+  const user: SafeCred[] = listCredentials().map((c) => ({ ...c, source: "user" as const }))
+  return [...user, ...seed]
+}
 
 export async function credentialRoutes(app: FastifyInstance) {
   // GET /api/credentials — list all credentials (masked)
   app.get<{
     Querystring: { kind?: string; active?: string; adapter_id?: string }
   }>("/api/credentials", { preHandler: requireAuth }, async (request) => {
-    let items = [...CREDENTIALS]
+    let items = allCredentials()
     const q = request.query
 
     if (q.kind) items = items.filter((c) => c.kind === q.kind.toLowerCase())
@@ -18,35 +53,8 @@ export async function credentialRoutes(app: FastifyInstance) {
       items = items.filter((c) => c.is_active === want)
     }
 
-    // SECURITY: strip any hypothetical full_secret field — only masked_secret passes through
-    const safe = items.map(({ masked_secret, ...rest }) => ({
-      ...rest,
-      masked_secret,
-      trade_enabled: false,
-      withdraw_enabled: false,
-      read_only: true,
-    }))
-
-    return { credentials: safe, total: safe.length }
+    return { credentials: items, total: items.length }
   })
-
-  // GET /api/credentials/:ref_id — single credential (masked)
-  app.get<{ Params: { ref_id: string } }>(
-    "/api/credentials/:ref_id",
-    { preHandler: requireAuth },
-    async (request, reply) => {
-      const cred = CREDENTIALS.find((c) => c.ref_id === request.params.ref_id)
-      if (!cred) return reply.code(404).send({ error: "Credential not found" })
-      const { masked_secret, ...rest } = cred
-      return {
-        ...rest,
-        masked_secret,
-        trade_enabled: false,
-        withdraw_enabled: false,
-        read_only: true,
-      }
-    },
-  )
 
   // GET /api/credentials/expiring-soon — credentials expiring within 30 days
   app.get<{ Querystring: { horizon_days?: string } }>(
@@ -56,19 +64,87 @@ export async function credentialRoutes(app: FastifyInstance) {
       const horizonDays = parseInt(request.query.horizon_days ?? "30", 10)
       const now = Date.now()
       const horizon = now + horizonDays * 86_400_000
-      const expiring = CREDENTIALS.filter(
-        (c) => c.expires_at_ms !== null && c.expires_at_ms > now && c.expires_at_ms <= horizon && c.is_active,
-      ).map((c) => ({
-        ref_id: c.ref_id,
-        label: c.label,
-        adapter_id: c.adapter_id,
-        expires_at_ms: c.expires_at_ms,
-        days_remaining: Math.ceil(((c.expires_at_ms ?? 0) - now) / 86_400_000),
-        trade_enabled: false,
-        withdraw_enabled: false,
-        read_only: true,
-      }))
+      const expiring = allCredentials()
+        .filter(
+          (c) => c.expires_at_ms !== null && c.expires_at_ms > now && c.expires_at_ms <= horizon && c.is_active,
+        )
+        .map((c) => ({
+          ref_id: c.ref_id,
+          label: c.label,
+          adapter_id: c.adapter_id,
+          expires_at_ms: c.expires_at_ms,
+          days_remaining: Math.ceil(((c.expires_at_ms ?? 0) - now) / 86_400_000),
+          trade_enabled: false,
+          withdraw_enabled: false,
+          read_only: true,
+        }))
       return { expiring, total: expiring.length, horizon_days: horizonDays }
+    },
+  )
+
+  // GET /api/credentials/:ref_id — single credential (masked)
+  app.get<{ Params: { ref_id: string } }>(
+    "/api/credentials/:ref_id",
+    { preHandler: requireAuth },
+    async (request, reply) => {
+      const cred = allCredentials().find((c) => c.ref_id === request.params.ref_id)
+      if (!cred) return reply.code(404).send({ error: "Credential not found" })
+      return cred
+    },
+  )
+
+  // POST /api/credentials — register new credential (secret encrypted, never returned)
+  app.post<{
+    Body: { kind: string; adapter_id: string; label: string; secret: string; expires_at_ms?: number | null }
+  }>(
+    "/api/credentials",
+    {
+      preHandler: requireAuth,
+      schema: {
+        body: {
+          type: "object",
+          required: ["kind", "adapter_id", "label", "secret"],
+          properties: {
+            kind: { type: "string", enum: ["api_key", "hmac_secret", "bearer_token", "oauth2_client"] },
+            adapter_id: { type: "string", minLength: 1, maxLength: 64 },
+            label: { type: "string", minLength: 1, maxLength: 200 },
+            secret: { type: "string", minLength: 8, maxLength: 4096 },
+            expires_at_ms: { type: ["integer", "null"] },
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      try {
+        const cred = addCredential({
+          kind: request.body.kind,
+          adapter_id: request.body.adapter_id,
+          label: request.body.label,
+          secret: request.body.secret,
+          expires_at_ms: request.body.expires_at_ms ?? null,
+        })
+        // SECURITY: response never contains the secret
+        return reply.code(201).send({ ...cred, source: "user" })
+      } catch (e) {
+        return reply.code(400).send({ error: e instanceof Error ? e.message : "Bad request" })
+      }
+    },
+  )
+
+  // DELETE /api/credentials/:ref_id — soft delete (sets is_active=false)
+  // Only works on user-added credentials. Seed credentials are immutable.
+  app.delete<{ Params: { ref_id: string } }>(
+    "/api/credentials/:ref_id",
+    { preHandler: requireAuth },
+    async (request, reply) => {
+      const ref_id = request.params.ref_id
+      if (!ref_id.startsWith("cred-user-")) {
+        return reply.code(403).send({ error: "Seed credentials are immutable. Only user-added credentials can be deleted." })
+      }
+      const ok = deactivateCredential(ref_id)
+      if (!ok) return reply.code(404).send({ error: "Credential not found" })
+      const updated = getCredential(ref_id)
+      return { ok: true, credential: updated }
     },
   )
 }

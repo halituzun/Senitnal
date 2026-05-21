@@ -5,7 +5,10 @@
         <div class="page-title">Credential Vault</div>
         <div class="page-subtitle">{{ data?.total ?? 0 }} credentials — secrets never shown in full</div>
       </div>
-      <button @click="load">Refresh</button>
+      <div style="display:flex;gap:8px">
+        <button @click="load">Refresh</button>
+        <router-link to="/credentials/new"><button class="primary">+ Add Credential</button></router-link>
+      </div>
     </div>
 
     <div v-if="expiring?.total && expiring.total > 0" class="expiry-banner">
@@ -40,13 +43,17 @@
           <th>Status</th>
           <th>Expires</th>
           <th>Flags</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="c in data.credentials" :key="c.ref_id">
           <td>
             <div style="font-weight:500">{{ c.label }}</div>
-            <div style="font-size:11px;color:var(--text-muted);font-family:monospace">{{ c.ref_id }}</div>
+            <div style="font-size:11px;color:var(--text-muted);font-family:monospace">
+              {{ c.ref_id }}
+              <span v-if="c.source === 'user'" class="badge info" style="margin-left:6px">user-added</span>
+            </div>
           </td>
           <td class="mono" style="font-size:11px">{{ c.adapter_id ?? "—" }}</td>
           <td><span class="badge info">{{ c.kind }}</span></td>
@@ -57,6 +64,16 @@
           </td>
           <td style="font-size:11px;color:var(--text-muted)">
             read-only · no-trade · no-withdraw
+          </td>
+          <td>
+            <button
+              v-if="c.source === 'user' && c.is_active"
+              @click="deleteCred(c.ref_id)"
+              :disabled="deleting === c.ref_id"
+              style="font-size:11px;padding:3px 8px;color:var(--error)"
+            >
+              {{ deleting === c.ref_id ? "…" : "Delete" }}
+            </button>
           </td>
         </tr>
       </tbody>
@@ -69,13 +86,30 @@
 import { reactive, ref, onMounted } from "vue"
 import { useFetch } from "@/composables/useFetch.js"
 
-interface Cred { ref_id: string; kind: string; adapter_id: string | null; label: string; masked_secret: string; trade_enabled: boolean; withdraw_enabled: boolean; read_only: boolean; created_at_ms: number; expires_at_ms: number | null; is_active: boolean }
+interface Cred { ref_id: string; kind: string; adapter_id: string | null; label: string; masked_secret: string; trade_enabled: boolean; withdraw_enabled: boolean; read_only: boolean; created_at_ms: number; expires_at_ms: number | null; is_active: boolean; source: "seed" | "user" }
 interface CredsResponse { credentials: Cred[]; total: number }
 interface ExpiringResponse { expiring: Array<{ ref_id: string; days_remaining: number }>; total: number }
 
 const filters = reactive({ kind: "", active: "" })
 const { data, loading, error, execute } = useFetch<CredsResponse>("")
 const expiring = ref<ExpiringResponse | null>(null)
+const deleting = ref<string | null>(null)
+
+async function deleteCred(refId: string) {
+  if (!confirm(`Delete credential ${refId}? This marks it inactive.`)) return
+  deleting.value = refId
+  try {
+    const res = await fetch(`/api/credentials/${refId}`, { method: "DELETE", credentials: "include" })
+    if (res.ok) {
+      load()
+    } else {
+      const err = (await res.json()) as { error?: string }
+      alert(err.error ?? `HTTP ${res.status}`)
+    }
+  } finally {
+    deleting.value = null
+  }
+}
 
 function buildUrl() {
   const p = new URLSearchParams()

@@ -225,3 +225,9 @@ panel/web/node_modules/
 panel/api/dist/
 panel/web/dist/
 .env.panel
+
+# Panel — runtime state
+panel/api/vault.db
+panel/api/vault.db-*
+vault.db
+vault.db-*

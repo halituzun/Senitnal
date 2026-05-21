@@ -61,7 +61,8 @@
           <router-link to="/adapters"><button type="button">Cancel</button></router-link>
         </div>
 
-        <div v-if="success" class="success-msg">Adapter registered (mock — not persisted in demo mode)</div>
+        <div v-if="errorMsg" class="error-msg">{{ errorMsg }}</div>
+        <div v-if="success" class="success-msg">✓ Adapter <code>{{ success.adapter_id }}</code> registered. Visible in Adapters list.</div>
       </form>
     </div>
   </div>
@@ -79,14 +80,44 @@ const form = reactive({
   credential_ref_id: "",
 })
 const submitting = ref(false)
-const success = ref(false)
+const success = ref<{ adapter_id: string } | null>(null)
+const errorMsg = ref("")
 
-function handleSubmit() {
+async function handleSubmit() {
   submitting.value = true
-  setTimeout(() => {
+  success.value = null
+  errorMsg.value = ""
+  try {
+    const body: Record<string, unknown> = {
+      adapter_id: form.adapter_id,
+      name: form.name,
+      source_family: form.source_family,
+      trust_band: form.trust_band,
+    }
+    if (form.description) body["description"] = form.description
+    if (form.credential_ref_id) body["credential_ref_id"] = form.credential_ref_id
+
+    const res = await fetch("/api/adapters", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(body),
+    })
+    if (res.ok) {
+      success.value = (await res.json()) as { adapter_id: string }
+      form.adapter_id = ""
+      form.name = ""
+      form.description = ""
+      form.credential_ref_id = ""
+    } else {
+      const err = (await res.json()) as { error?: string }
+      errorMsg.value = err.error ?? `HTTP ${res.status}`
+    }
+  } catch (e) {
+    errorMsg.value = e instanceof Error ? e.message : "Network error"
+  } finally {
     submitting.value = false
-    success.value = true
-  }, 800)
+  }
 }
 </script>
 
