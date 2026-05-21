@@ -49,21 +49,15 @@ class PanelSnapshot(BaseModel, frozen=True, extra="forbid"):
 
     @model_validator(mode="after")
     def _counts_consistent(self) -> PanelSnapshot:
-        active = sum(
-            1 for s in self.strategies if s.lifecycle_state in _ACTIVE_STATES
-        )
-        paused = sum(
-            1 for s in self.strategies if s.lifecycle_state in _PAUSED_STATES
-        )
+        active = sum(1 for s in self.strategies if s.lifecycle_state in _ACTIVE_STATES)
+        paused = sum(1 for s in self.strategies if s.lifecycle_state in _PAUSED_STATES)
         if self.active_strategy_count != active:
             raise ValueError(
-                f"active_strategy_count={self.active_strategy_count} "
-                f"does not match rows ({active})"
+                f"active_strategy_count={self.active_strategy_count} does not match rows ({active})"
             )
         if self.paused_strategy_count != paused:
             raise ValueError(
-                f"paused_strategy_count={self.paused_strategy_count} "
-                f"does not match rows ({paused})"
+                f"paused_strategy_count={self.paused_strategy_count} does not match rows ({paused})"
             )
         return self
 

@@ -68,9 +68,7 @@ def build_adapter_hub_status(
     enriched: list[AdapterSignalStatus] = []
     for s in adapter_statuses:
         fresh = _is_fresh(s.last_seen_ms, captured_at_ms, freshness_horizon_ms)
-        healthy = (
-            s.trust_band not in {TrustBand.REVOKED, TrustBand.QUARANTINED} and fresh
-        )
+        healthy = s.trust_band not in {TrustBand.REVOKED, TrustBand.QUARANTINED} and fresh
         enriched.append(
             AdapterSignalStatus(
                 adapter_id=s.adapter_id,

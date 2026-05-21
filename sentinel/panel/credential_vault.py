@@ -61,9 +61,7 @@ class CredentialReference(BaseModel, frozen=True, extra="forbid"):
             lower = v.lower()
             for pat in _SECRET_PATTERNS:
                 if pat in lower and len(v) > 32:
-                    raise ValueError(
-                        "label must not contain raw secret material"
-                    )
+                    raise ValueError("label must not contain raw secret material")
         return v
 
     @model_validator(mode="after")
@@ -91,9 +89,7 @@ class CredentialVaultConfig(BaseModel, frozen=True, extra="forbid"):
 
 def is_credential_valid(ref: CredentialReference, now_ms: int) -> bool:
     """Return True if the credential is active and not expired."""
-    return ref.is_active and not (
-        ref.expires_at_ms is not None and now_ms >= ref.expires_at_ms
-    )
+    return ref.is_active and not (ref.expires_at_ms is not None and now_ms >= ref.expires_at_ms)
 
 
 def list_expiring_soon(
@@ -106,7 +102,5 @@ def list_expiring_soon(
     return tuple(
         c
         for c in config.credentials
-        if c.expires_at_ms is not None
-        and now_ms < c.expires_at_ms <= horizon_ms
-        and c.is_active
+        if c.expires_at_ms is not None and now_ms < c.expires_at_ms <= horizon_ms and c.is_active
     )
