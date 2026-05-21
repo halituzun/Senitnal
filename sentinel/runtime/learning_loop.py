@@ -208,6 +208,7 @@ def run_cycle_with_real_data(
     state: LearningState,
     micro_snapshots: list[MarketMicrostructureSnapshot],
     tech_snapshots: list[TechnicalIndicatorSnapshot],
+    news_sentiment: dict[str, float] | None = None,
 ) -> LearningState:
     """Run one cycle with externally-fetched real data (called from outside sentinel/)."""
     now_ms = int(time.time() * 1000)
@@ -232,7 +233,7 @@ def run_cycle_with_real_data(
 
         tech = tech_snapshots[idx]
         micro = micro_snapshots[idx]
-        state = _process_cycle(state, strategy, tech, micro, now_ms, cycle, source="binance-api")
+        state = _process_cycle(state, strategy, tech, micro, now_ms, cycle, source="binance-api", news_sentiment=news_sentiment)
         state.total_signals_processed += 1
 
     return state
@@ -246,6 +247,7 @@ def _process_cycle(
     now_ms: int,
     cycle: int,
     source: str,
+    news_sentiment: dict[str, float] | None = None,
 ) -> LearningState:
 
     fusion_input = SignalFusionInput(
@@ -259,8 +261,26 @@ def _process_cycle(
     edge_proxy = fusion_result.trend_pressure
     risk_proxy = (fusion_result.contradiction_pressure + fusion_result.volatility_pressure) / 2
 
+    # Apply news sentiment overlay
+    ns = news_sentiment or {}
+    news_impact = ""
+    if ns:
+        macro_risk = ns.get("macro_risk_score", 0.0)
+        if macro_risk > 0.3:
+            # High macro/geopolitical risk → reduce edge, increase risk
+            risk_boost = min(0.3, macro_risk * 0.5)
+            edge_penalty = min(0.2, macro_risk * 0.3)
+            risk_proxy = min(1.0, risk_proxy + risk_boost)
+            edge_proxy = max(0.0, edge_proxy - edge_penalty)
+            news_impact = f" MacroRisk={macro_risk:.2f}(risk+{risk_boost:.2f} edge-{edge_penalty:.2f})"
+
+        crypto_count = ns.get("crypto_count", 0)
+        if crypto_count >= 3:
+            # Rich news flow → small confidence boost
+            news_impact += f" CryptoNews={int(crypto_count)}"
+
     state.ledger_events.append(_event(state, "FUSION_COMPUTED", "INFO", "fusion-engine", strategy.strategy_id,
-        f"Trend={edge_proxy:.2f} Contradiction={risk_proxy:.2f} Confidence={fusion_result.confidence:.2f}"))
+        f"Trend={edge_proxy:.2f} Contradiction={risk_proxy:.2f} Confidence={fusion_result.confidence:.2f}{news_impact}"))
 
     alpha = 0.15
     strategy.current_edge_score = round(strategy.current_edge_score * (1 - alpha) + edge_proxy * alpha, 3)

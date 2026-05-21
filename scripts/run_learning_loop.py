@@ -87,7 +87,7 @@ def main() -> None:
             except Exception:
                 pass
 
-            state = run_cycle_with_real_data(state, micro_snapshots, tech_snapshots)
+            state = run_cycle_with_real_data(state, micro_snapshots, tech_snapshots, news_sentiment)
             cycle_count += 1
 
             strategies = list(state.strategies.values())
