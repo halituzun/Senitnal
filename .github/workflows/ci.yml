@@ -96,3 +96,32 @@ jobs:
       - name: Web build
         working-directory: panel/web
         run: pnpm build
+
+  docker:
+    name: Docker — build verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build panel API image
+        uses: docker/build-push-action@v6
+        with:
+          context: panel
+          file: panel/docker/Dockerfile.api
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build panel Web image
+        uses: docker/build-push-action@v6
+        with:
+          context: panel
+          file: panel/docker/Dockerfile.web
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

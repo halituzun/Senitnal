@@ -226,6 +226,9 @@ panel/api/dist/
 panel/web/dist/
 .env.panel
 
+# Panel — Vite cache
+panel/web/.vite/
+
 # Panel — runtime state
 panel/api/vault.db
 panel/api/vault.db-*
