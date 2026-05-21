@@ -261,6 +261,23 @@ from sentinel.observer.ledger import JsonlObserverLedger
 from sentinel.observer.permanence import EventPermanence
 from sentinel.observer.ring_buffer import ObserverRingBuffer
 from sentinel.observer.router import RoutingOutcome, route_observer_event
+from sentinel.panel.adapter_hub import (
+    AdapterHubStatus,
+    AdapterSignalStatus,
+    build_adapter_hub_status,
+)
+from sentinel.panel.credential_vault import (
+    CredentialKind,
+    CredentialReference,
+    CredentialVaultConfig,
+    is_credential_valid,
+    list_expiring_soon,
+)
+from sentinel.panel.snapshot import (
+    PanelSnapshot,
+    PanelStrategyRow,
+    build_panel_snapshot,
+)
 from sentinel.paper.copilot import PaperCoPilotContext, evaluate_paper_opportunity
 from sentinel.paper.decision import (
     PaperCoPilotResult,
@@ -402,6 +419,8 @@ __all__ = [
     "MVP_REQUIRED_INVARIANTS",
     "AblationKind",
     "ActionabilityBand",
+    "AdapterHubStatus",
+    "AdapterSignalStatus",
     "AdapterTrustRecord",
     "ApprovedActionIntent",
     "BacktestAggregate",
@@ -418,6 +437,9 @@ __all__ = [
     "ConstitutionalViolation",
     "CounterfactualAblation",
     "CounterfactualAblationResult",
+    "CredentialKind",
+    "CredentialReference",
+    "CredentialVaultConfig",
     "DailyProductionReport",
     "DeonticDecision",
     "DeonticOutcome",
@@ -519,6 +541,8 @@ __all__ = [
     "ObserverRingBuffer",
     "OutcomeAlignmentEvidence",
     "OutcomeRef",
+    "PanelSnapshot",
+    "PanelStrategyRow",
     "PaperCoPilotBatchResult",
     "PaperCoPilotContext",
     "PaperCoPilotResult",
@@ -568,12 +592,14 @@ __all__ = [
     "__version__",
     "aggregate_records",
     "assert_invariant",
+    "build_adapter_hub_status",
     "build_candidate_financial_memory_record",
     "build_daily_report",
     "build_deontic_policy_candidate_record",
     "build_financial_recall_event",
     "build_gelal_shadow_audit_payload",
     "build_market_observation_audit_payload",
+    "build_panel_snapshot",
     "build_paper_opportunity_from_gelal_shadow",
     "build_paper_opportunity_from_market_observation",
     "build_weekly_report",
@@ -607,9 +633,11 @@ __all__ = [
     "evaluate_paper_opportunity",
     "generate_financial_agi_readiness_report",
     "get_invariant",
+    "is_credential_valid",
     "is_human_approval_valid",
     "is_net_edge_actionable",
     "is_record_usable_for_live",
+    "list_expiring_soon",
     "list_invariants",
     "resolve_policy_conflicts",
     "route_observer_event",
