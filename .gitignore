@@ -217,3 +217,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Panel — Node.js
+panel/node_modules/
+panel/api/node_modules/
+panel/web/node_modules/
+panel/api/dist/
+panel/web/dist/
+.env.panel

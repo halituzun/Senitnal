@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  sentinel-panel-api:
+    build:
+      context: panel
+      dockerfile: docker/Dockerfile.api
+    environment:
+      NODE_ENV: production
+      PANEL_API_PORT: "3787"
+      PANEL_API_HOST: "0.0.0.0"
+      PANEL_JWT_SECRET: "${PANEL_JWT_SECRET}"
+      PANEL_AUTH_EMAIL: "${PANEL_AUTH_EMAIL:-panel@senitnal.local}"
+      PANEL_AUTH_PASSWORD: "${PANEL_AUTH_PASSWORD}"
+    networks:
+      - panel-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3787/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  sentinel-panel-web:
+    build:
+      context: panel
+      dockerfile: docker/Dockerfile.web
+    networks:
+      - panel-net
+    restart: unless-stopped
+    depends_on:
+      - sentinel-panel-api
+
+  sentinel-panel-nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "8787:8787"
+    volumes:
+      - ./panel/nginx/nginx.conf:/etc/nginx/conf.d/panel.conf:ro
+    networks:
+      - panel-net
+    depends_on:
+      - sentinel-panel-api
+      - sentinel-panel-web
+    restart: unless-stopped
+
+  sentinel-panel-redis:
+    image: redis:7-alpine
+    command: redis-server --maxmemory 64mb --maxmemory-policy allkeys-lru
+    networks:
+      - panel-net
+    restart: unless-stopped
+    volumes:
+      - panel-redis-data:/data
+
+networks:
+  panel-net:
+    driver: bridge
+
+volumes:
+  panel-redis-data:
