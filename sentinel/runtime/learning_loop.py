@@ -128,10 +128,22 @@ def generate_observations(
     now_ms = int(time.time() * 1000)
     symbol = "BTCUSDT" if "btc" in strategy_id else "ETHUSDT" if "eth" in strategy_id else "SOLUSDT"
 
-    rsi = 30 + (edge * 60) + random.uniform(-5, 5)
+    # Market regime: 35% bull, 15% bear, 50% choppy
+    regime = random.random()
+    if regime < 0.35:       # Strong bullish
+        signal_edge = 0.6 + random.uniform(0, 0.4)
+        signal_risk = 0.1 + random.uniform(0, 0.25)
+    elif regime < 0.50:     # Strong bearish
+        signal_edge = random.uniform(0, 0.4)
+        signal_risk = 0.4 + random.uniform(0, 0.4)
+    else:                   # Choppy / sideways
+        signal_edge = 0.3 + random.uniform(0, 0.4)
+        signal_risk = 0.2 + random.uniform(0, 0.35)
+
+    rsi = 30 + (signal_edge * 60) + random.uniform(-8, 8)
     rsi = max(10, min(90, rsi))
-    macd_val = (edge - 0.5) * 4 + random.uniform(-0.5, 0.5)
-    bb_pos = 0.3 + (edge * 0.4) + random.uniform(-0.1, 0.1)
+    macd_val = (signal_edge - 0.5) * 5 + random.uniform(-0.5, 0.5)
+    bb_pos = 0.2 + (signal_edge * 0.6) + random.uniform(-0.15, 0.15)
 
     tech = TechnicalIndicatorSnapshot(
         snapshot_id=f"tech-{strategy_id}-{cycle}",
@@ -139,9 +151,9 @@ def generate_observations(
         symbol_hash=_hash(symbol),
         timeframe="4h",
         indicators={"rsi": round(rsi, 1), "macd": round(macd_val, 2), "bb_position": round(bb_pos, 2)},
-        trend_score=round(max(0.0, min(1.0, edge)), 2),
+        trend_score=round(max(0.0, min(1.0, signal_edge)), 2),
         momentum_score=round(max(0.0, min(1.0, macd_val + 0.5)), 2),
-        volatility_score=round(max(0.0, min(1.0, risk)), 2),
+        volatility_score=round(max(0.0, min(1.0, signal_risk)), 2),
         volume_score=round(max(0.0, min(1.0, 0.4 + random.random() * 0.4)), 2),
         reversal_score=round(max(0.0, min(1.0, 0.2 + random.random() * 0.3)), 2),
         exhaustion_score=round(max(0.0, min(1.0, 0.1 + random.random() * 0.3)), 2),
@@ -210,7 +222,7 @@ def run_cycle(state: LearningState) -> LearningState:
     state.ledger_events.append(_event(state, "FUSION_COMPUTED", "INFO", "fusion-engine", strategy.strategy_id,
         f"Trend={edge_proxy:.2f} Contradiction={risk_proxy:.2f} Confidence={fusion_result.confidence:.2f}"))
 
-    alpha = 0.3
+    alpha = 0.15
     strategy.current_edge_score = round(strategy.current_edge_score * (1 - alpha) + edge_proxy * alpha, 3)
     strategy.current_risk_score = round(strategy.current_risk_score * (1 - alpha) + risk_proxy * alpha, 3)
     strategy.current_confidence = round(strategy.current_confidence * (1 - alpha) + fusion_result.confidence * alpha, 3)
@@ -291,6 +303,20 @@ def run_cycle(state: LearningState) -> LearningState:
     if len(state.ledger_events) > 1000:
         state.ledger_events = state.ledger_events[-500:]
 
+    # Periodic system events
+    if state.cycle % 3 == 0:
+        stale_count = sum(1 for a in ADAPTER_POOL if random.random() < a["error_rate"] * 3)
+        state.ledger_events.append(_event(state, "INGRESS_COMPILED", "INFO", "ingress-compiler", None,
+            f"Ingress compilation: {len(ADAPTER_POOL)} sources checked, {len(ADAPTER_POOL) - stale_count} passed, {stale_count} stale-suppressed"))
+
+    if state.cycle % 5 == 0:
+        state.ledger_events.append(_event(state, "REPLAY_COMPLETED", "INFO", "replay-engine", strategy.strategy_id,
+            f"Counterfactual replay: {strategy.strategy_id} — edge would be {edge_proxy + random.uniform(-0.1, 0.1):.2f} with tighter spread"))
+
+    if state.cycle % 10 == 0:
+        state.ledger_events.append(_event(state, "CONSTITUTION_AUDIT", "INFO", "constitution-auditor", None,
+            f"Constitutional audit: 0 violations in last {len(state.decisions)} decisions. All invariants hold."))
+
     state.last_cycle_ms = now_ms
     return state
 
@@ -315,17 +341,23 @@ def export_snapshot(state: LearningState) -> Path:
         })
 
     adapters_out = []
-    for a in ADAPTER_POOL:
+    for i, a in enumerate(ADAPTER_POOL):
+        # Add health variety: 1 stale (fear-greed-index), 1 quarantined (cryptopanic-feed) on some cycles
+        is_stale = a["id"] == "fear-greed-index" and state.cycle % 3 != 0
+        is_quarantined = a["id"] == "cryptopanic-feed" and state.cycle > 5 and state.cycle % 4 == 0
+        trust_band = "QUARANTINED" if is_quarantined else "TRUSTED"
+
         adapters_out.append({
             "adapter_id": a["id"], "name": a["name"],
-            "source_family": a["family"], "trust_band": "TRUSTED",
-            "is_active": True, "is_fresh": True,
-            "is_healthy": random.random() > a["error_rate"] * 2,
-            "last_seen_ms": now_ms - random.randint(5000, 600000),
-            "latency_ms": a["latency"] + random.randint(-20, 50),
-            "error_rate": a["error_rate"] + random.uniform(-0.001, 0.003),
+            "source_family": a["family"], "trust_band": trust_band,
+            "is_active": not is_quarantined, "is_fresh": not is_stale,
+            "is_healthy": not is_stale and not is_quarantined and random.random() > a["error_rate"] * 2,
+            "last_seen_ms": now_ms - (8 * 3600000 if is_stale else random.randint(5000, 600000)),
+            "latency_ms": a["latency"] + random.randint(-20, 50) if not is_stale else None,
+            "error_rate": (0.12 if is_stale else a["error_rate"] + random.uniform(-0.001, 0.003)),
             "credential_ref_id": f"cred-{a['id']}",
             "description": f"{a['name']} — {a['family']} data feed",
+            **(dict(quarantine_reason="consecutive 5xx errors") if is_quarantined else {}),
         })
 
     total_allocated = sum(s.allocated_budget_try for s in state.strategies.values())
