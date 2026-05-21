@@ -188,6 +188,7 @@ def generate_observations(
 
 
 def run_cycle(state: LearningState) -> LearningState:
+    """Run one cycle with synthetic data (sentinel core, no external imports)."""
     now_ms = int(time.time() * 1000)
     state.cycle += 1
     cycle = state.cycle
@@ -199,14 +200,53 @@ def run_cycle(state: LearningState) -> LearningState:
         return state
 
     strategy = random.choice(active)
-
     tech, micro = generate_observations(strategy.strategy_id, strategy.current_edge_score, strategy.current_risk_score, cycle)
+    return _process_cycle(state, strategy, tech, micro, now_ms, cycle, source="taapi-pro")
 
-    state.ledger_events.append(_event(state, "SIGNAL_RECEIVED", "INFO", "taapi-pro", strategy.strategy_id,
-        f"RSI(14)={tech.indicators.get('rsi', 0):.1f} MACD={tech.indicators.get('macd', 0):.2f}"))
-    state.ledger_events.append(_event(state, "SIGNAL_RECEIVED", "INFO", "binance-ws", strategy.strategy_id,
-        f"Spread={micro.bid_ask_spread_pct:.4f} Imbalance={micro.imbalance_score:.2f}"))
-    state.total_signals_processed += 2
+
+def run_cycle_with_real_data(
+    state: LearningState,
+    micro_snapshots: list[MarketMicrostructureSnapshot],
+    tech_snapshots: list[TechnicalIndicatorSnapshot],
+) -> LearningState:
+    """Run one cycle with externally-fetched real data (called from outside sentinel/)."""
+    now_ms = int(time.time() * 1000)
+    state.cycle += 1
+    cycle = state.cycle
+
+    active = [s for s in state.strategies.values() if s.enabled and s.lifecycle_state in ("ACTIVE_LIVE", "LIMITED_LIVE")]
+    if not active:
+        state.ledger_events.append(_event(state, "NO_ACTIVE_STRATEGIES", "WARN", "learning-loop", None, "No active strategies"))
+        state.last_cycle_ms = now_ms
+        return state
+
+    symbol_map = {"btc": 0, "eth": 1, "sol": 2}
+    for strategy in active:
+        idx = -1
+        for prefix, i in symbol_map.items():
+            if prefix in strategy.strategy_id.lower():
+                idx = i
+                break
+        if idx < 0 or idx >= len(micro_snapshots) or idx >= len(tech_snapshots):
+            continue
+
+        tech = tech_snapshots[idx]
+        micro = micro_snapshots[idx]
+        state = _process_cycle(state, strategy, tech, micro, now_ms, cycle, source="binance-api")
+        state.total_signals_processed += 1
+
+    return state
+
+
+def _process_cycle(
+    state: LearningState,
+    strategy: StrategyState,
+    tech: TechnicalIndicatorSnapshot,
+    micro: MarketMicrostructureSnapshot,
+    now_ms: int,
+    cycle: int,
+    source: str,
+) -> LearningState:
 
     fusion_input = SignalFusionInput(
         fusion_id=f"fusion-{cycle}",
