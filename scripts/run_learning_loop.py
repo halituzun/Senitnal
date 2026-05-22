@@ -15,6 +15,7 @@ import argparse
 import time
 from services.intelligence_adapters.binance_adapter import (
     fetch_all_snapshots as fetch_binance,
+    fetch_prices,
 )
 from services.intelligence_adapters.taapi_adapter import (
     TaapiConfig,
@@ -70,6 +71,11 @@ def main() -> None:
     try:
         while True:
             micro_snapshots, tech_snapshots = fetch_binance()
+            prices = fetch_prices()
+            for sym, price in prices.items():
+                if sym not in state.last_prices:
+                    state.last_prices[sym] = price
+                state.last_prices["_current_" + sym] = price
 
             if taapi_ok:
                 for strategy in state.strategies.values():

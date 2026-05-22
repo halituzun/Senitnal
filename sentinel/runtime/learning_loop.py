@@ -80,6 +80,7 @@ class LearningState:
     total_predictions: int = 0
     adaptive_alpha: float = 0.15  # Learning rate, auto-adjusted
     last_cycle_pnl: float = 0.0
+    last_prices: dict[str, float] = field(default_factory=dict)  # symbol → last_price for PnL calc
 
     def next_event_id(self) -> str:
         self._event_idx += 1
@@ -348,8 +349,17 @@ def _process_cycle(
         state.total_live_candidates += 1
 
     if band in (ActionabilityBand.CANDIDATE, ActionabilityBand.LIVE_CANDIDATE):
-        pnl = (edge_proxy - 0.35) * strategy.max_entry_try * 0.02 + random.uniform(-5, 5)
-        pnl = round(pnl, 1)
+        # Real PnL: use price delta if available, else simulated
+        symbol = "BTCUSDT" if "btc" in strategy.strategy_id else "ETHUSDT" if "eth" in strategy.strategy_id else "SOLUSDT"
+        prev_price = state.last_prices.get(symbol)
+        current_price = state.last_prices.get("_current_" + symbol, 0)
+        if prev_price and current_price and prev_price > 0:
+            price_delta_pct = (current_price - prev_price) / prev_price
+            pnl = price_delta_pct * strategy.max_entry_try * (1 if edge_proxy > 0.4 else -1)
+            pnl = round(pnl, 1)
+        else:
+            pnl = (edge_proxy - 0.35) * strategy.max_entry_try * 0.02 + random.uniform(-5, 5)
+            pnl = round(pnl, 1)
         strategy.pnl_today_try = round(strategy.pnl_today_try + pnl, 1)
         strategy.pnl_week_try = round(strategy.pnl_week_try + pnl, 1)
         strategy.strategy_quality = round(min(1.0, strategy.strategy_quality + 0.02) if pnl > 0 else max(0.0, strategy.strategy_quality - 0.05), 3)

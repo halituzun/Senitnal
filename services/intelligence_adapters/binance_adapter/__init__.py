@@ -200,6 +200,17 @@ def fetch_all_snapshots(
     return micro_snapshots, tech_snapshots
 
 
+def fetch_prices(symbols: tuple[str, ...] | None = None) -> dict[str, float]:
+    """Fetch current prices. Returns {symbol: price}."""
+    if symbols is None:
+        symbols = DEFAULT_SYMBOLS
+    try:
+        tickers = fetch_24h_tickers(symbols)
+        return {s: float(tickers[s]["lastPrice"]) for s in symbols if s in tickers}
+    except Exception:
+        return {}
+
+
 __all__ = [
     "BinanceAdapterConfig",
     "DEFAULT_SYMBOLS",
