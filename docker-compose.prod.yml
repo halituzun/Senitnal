@@ -1,0 +1,78 @@
+# Production deployment — Cloudflare Tunnel + Docker
+# Usage: docker compose -f docker-compose.prod.yml up -d
+
+services:
+  sentinel-api:
+    build:
+      context: panel
+      dockerfile: docker/Dockerfile.api
+    environment:
+      NODE_ENV: production
+      PANEL_API_PORT: "3787"
+      PANEL_JWT_SECRET: "${PANEL_JWT_SECRET}"
+      PANEL_AUTH_EMAIL: "${PANEL_AUTH_EMAIL:-panel@senitnal.local}"
+      PANEL_AUTH_PASSWORD: "${PANEL_AUTH_PASSWORD}"
+      PANEL_VAULT_KEY: "${PANEL_VAULT_KEY}"
+    volumes:
+      - vault-data:/app/data
+      - ./panel/api/src/mock/snapshot.json:/app/dist/mock/snapshot.json:ro
+    networks:
+      - sentinel-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3787/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  sentinel-web:
+    build:
+      context: panel
+      dockerfile: docker/Dockerfile.web
+    networks:
+      - sentinel-net
+    restart: unless-stopped
+
+  sentinel-nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "8787:8787"
+    volumes:
+      - ./panel/nginx/nginx.conf:/etc/nginx/conf.d/panel.conf:ro
+    networks:
+      - sentinel-net
+    depends_on:
+      - sentinel-api
+      - sentinel-web
+    restart: unless-stopped
+
+  sentinel-learner:
+    build:
+      context: .
+      dockerfile: Dockerfile.learner
+    environment:
+      DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY}"
+      TAAPI_API_KEY: "${TAAPI_API_KEY}"
+      TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN}"
+      TELEGRAM_CHAT_ID: "${TELEGRAM_CHAT_ID}"
+    volumes:
+      - learner-data:/app/data
+      - ./panel/api/src/mock:/app/panel/api/src/mock
+    networks:
+      - sentinel-net
+    restart: unless-stopped
+
+  cloudflare-tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run --token "${CF_TUNNEL_TOKEN}"
+    networks:
+      - sentinel-net
+    restart: unless-stopped
+
+networks:
+  sentinel-net:
+    driver: bridge
+
+volumes:
+  vault-data:
+  learner-data:
