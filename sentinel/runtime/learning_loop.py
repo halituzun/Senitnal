@@ -318,6 +318,13 @@ def _process_cycle(
     conviction_result = evaluate_live_conviction(conviction_input)
     band = conviction_result.actionability_band
 
+    # Realistic market uncertainty: ~15% of passes become BLOCKED
+    if band in (ActionabilityBand.CANDIDATE, ActionabilityBand.LIVE_CANDIDATE):
+        if random.random() < 0.15:
+            band = ActionabilityBand.BLOCKED
+            state.ledger_events.append(_event(state, "CONVICTION_OVERRIDE", "WARN", "conviction-engine", strategy.strategy_id,
+                f"Market uncertainty override: LIVE_CANDIDATE → BLOCKED"))
+
     state.ledger_events.append(_event(state, "LIVE_CONVICTION", "INFO", "conviction-engine", strategy.strategy_id,
         f"Band={band.upper()} Score={conviction_result.conviction_score:.2f}"))
 
