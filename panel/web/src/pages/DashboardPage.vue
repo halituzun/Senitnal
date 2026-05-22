@@ -86,6 +86,23 @@
         </div>
       </div>
 
+      <!-- Market Sentiment -->
+      <div v-if="data.market_sentiment" class="section-header">Market Sentiment</div>
+      <div v-if="data.market_sentiment" class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Fear & Greed</div>
+          <div class="stat-value" :class="(data.market_sentiment.fear_greed || 50) > 60 ? 'warn' : (data.market_sentiment.fear_greed || 50) < 40 ? 'error' : 'ok'" style="font-size:20px">
+            {{ data.market_sentiment.fear_greed ?? '—' }}
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">CT Sentiment</div>
+          <div class="stat-value" :class="(data.market_sentiment.ct_sentiment || 0) > 0 ? 'ok' : (data.market_sentiment.ct_sentiment || 0) < 0 ? 'error' : ''" style="font-size:20px">
+            {{ data.market_sentiment.ct_sentiment != null ? (data.market_sentiment.ct_sentiment > 0 ? '+' : '') + (data.market_sentiment.ct_sentiment * 100).toFixed(0) + '%' : '—' }}
+          </div>
+        </div>
+      </div>
+
       <!-- Learning status -->
       <div v-if="data.learning" class="section-header">Learning Loop</div>
       <div v-if="data.learning" class="stat-grid">
@@ -161,6 +178,7 @@ interface Dashboard {
   adapter_hub: { total_adapters: number; healthy_count: number; stale_count: number; quarantined_count: number; revoked_count: number; degraded: boolean }
   recent_events: Array<{ id: string; ts_ms: number; severity: string; event_type: string; message: string }>
   learning?: { cycle: number; total_signals: number; total_live_candidates: number; total_blocks: number; total_memories: number; accuracy: number; adaptive_alpha: number; correct_predictions: number; total_predictions: number }
+  market_sentiment?: { fear_greed: number; ct_sentiment: number; ct_bullish: number }
   captured_at_ms: number
 }
 

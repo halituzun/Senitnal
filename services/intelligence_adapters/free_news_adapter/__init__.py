@@ -83,8 +83,34 @@ def fetch_sentiment() -> dict[str, float]:
         return {"sentiment": 0.0, "bullish_ratio": 0.0, "headline_count": 0.0}
 
 
+def fetch_coindesk_rss(limit: int = 10) -> list[dict[str, str]]:
+    """Fetch CoinDesk RSS feed headlines."""
+    url = "https://www.coindesk.com/arc/outboundfeeds/rss/"
+    req = Request(url, headers={"Accept": "application/xml", "User-Agent": "sentinel/1.0"})
+    with urlopen(req, timeout=10) as resp:
+        xml = resp.read().decode("utf-8", errors="ignore")
+
+    titles = re.findall(r"<title>(.*?)</title>", xml)
+    result: list[dict[str, str]] = []
+    for i in range(1, min(limit + 1, len(titles))):
+        result.append({"title": titles[i] if i < len(titles) else "", "published": ""})
+    return result
+
+
+def fetch_coindesk_sentiment() -> dict[str, float]:
+    """Fetch CoinDesk RSS and compute sentiment."""
+    try:
+        items = fetch_coindesk_rss(15)
+        headlines = [item["title"] for item in items if item["title"]]
+        return analyze_headline_sentiment(headlines)
+    except Exception:
+        return {"sentiment": 0.0, "bullish_ratio": 0.0, "headline_count": 0.0}
+
+
 __all__ = [
     "analyze_headline_sentiment",
+    "fetch_coindesk_rss",
+    "fetch_coindesk_sentiment",
     "fetch_cointelegraph_rss",
     "fetch_sentiment",
 ]
