@@ -394,6 +394,19 @@ def _process_cycle(
         state.ledger_events.append(_event(state, "PRODUCTION_DECISION", "INFO", "production-engine", strategy.strategy_id,
             f"PnL={pnl:+.1f} TRY Quality={strategy.strategy_quality:.2f} α={state.adaptive_alpha:.3f} acc={accuracy:.0%}"))
 
+        # Auto-pause: if quality drops below 0.12, pause strategy
+        if strategy.strategy_quality < 0.12 and strategy.lifecycle_state == "ACTIVE_LIVE":
+            strategy.lifecycle_state = "PAUSED"
+            strategy.allocated_budget_try = 0
+            state.ledger_events.append(_event(state, "STRATEGY_AUTO_PAUSED", "WARN", "auto-trainer", strategy.strategy_id,
+                f"Quality {strategy.strategy_quality:.2f} < 0.12 — auto-paused for retraining"))
+        # Auto-reactivate: if paused and quality recovers
+        elif strategy.strategy_quality > 0.30 and strategy.lifecycle_state == "PAUSED" and strategy.strategy_id != "bnb-arb-v1":
+            strategy.lifecycle_state = "LIMITED_LIVE"
+            strategy.allocated_budget_try = strategy.max_entry_try * 5
+            state.ledger_events.append(_event(state, "STRATEGY_REACTIVATED", "INFO", "auto-trainer", strategy.strategy_id,
+                f"Quality recovered to {strategy.strategy_quality:.2f} — reactivated"))
+
     if abs(edge_proxy - 0.5) > 0.15 or fusion_result.source_agreement_score > 0.6:
         pattern = "BULLISH" if edge_proxy > 0.5 else "BEARISH"
         state.memory_records.append({
