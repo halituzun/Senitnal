@@ -36,6 +36,7 @@ from sentinel.runtime.learning_loop import (
     export_snapshot,
     run_cycle_with_real_data,
 )
+from scripts.fetch_historical import get_historical_context
 
 SYMBOL_MAP = {
     "btc-momentum-v3": "BTC/USDT",
@@ -56,6 +57,14 @@ def main() -> None:
 
     state = LearningState()
     state.strategies = {s.strategy_id: s for s in DEFAULT_STRATEGIES}
+
+    # Load historical context for informed initial decisions
+    hist = get_historical_context()
+    for symbol, data in hist.get("symbols", {}).items():
+        daily = data.get("intervals", {}).get("daily", {})
+        if daily:
+            print(f"  Historical: {symbol} RSI={daily.get('rsi')} MACD={daily.get('macd_histogram')} "
+                  f"Δ={daily.get('price_change_pct')}% vol={daily.get('volatility')}%")
 
     mode = "once" if args.once else f"every {args.interval}s"
     sources = "Binance"
