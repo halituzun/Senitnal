@@ -77,8 +77,10 @@
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Attempts</div>
-          <div class="stat-value" style="font-size:20px">{{ data.portfolio.total_trade_attempts ?? 0 }}</div>
+          <div class="stat-label">Guard Phase</div>
+          <div class="stat-value ok" style="font-size:20px">
+            {{ data.guard_phase ?? 'shadow' }}
+          </div>
         </div>
       </div>
 
@@ -202,6 +204,7 @@ interface Dashboard {
   recent_events: Array<{ id: string; ts_ms: number; severity: string; event_type: string; message: string }>
   learning?: { cycle: number; total_signals: number; total_live_candidates: number; total_blocks: number; total_memories: number; accuracy: number; adaptive_alpha: number; correct_predictions: number; total_predictions: number }
   market_sentiment?: { fear_greed: number; ct_sentiment: number; ct_bullish: number }
+  guard_phase?: string
   captured_at_ms: number
 }
 

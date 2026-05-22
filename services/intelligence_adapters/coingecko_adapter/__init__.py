@@ -77,28 +77,39 @@ def fetch_global_data() -> dict[str, Any]:
 
 
 def fetch_market_sentiment() -> dict[str, float]:
-    """Compute market sentiment from CoinGecko data."""
+    """Compute market sentiment from CoinGecko + alternative.me data."""
     try:
         prices = fetch_prices()
         global_data = fetch_global_data()
     except Exception:
-        return {"sentiment": 0.0, "fear_greed": 50.0}
+        prices = {}
+        global_data = {}
 
-    # Sentiment from 24h price changes
+    # Fear & Greed from alternative.me (free, no auth)
+    fg_value = 50.0
+    fg_label = "neutral"
+    try:
+        import json
+        from urllib.request import Request, urlopen
+        req = Request("https://api.alternative.me/fng/?limit=1", headers={"Accept": "application/json"})
+        with urlopen(req, timeout=5) as resp:
+            fng = json.loads(resp.read())
+            fg_value = float(fng["data"][0]["value"])
+            fg_label = fng["data"][0]["value_classification"]
+    except Exception:
+        pass
+
     changes = [v.get("change_24h_pct", 0) for v in prices.values()]
     avg_change = sum(changes) / len(changes) if changes else 0
 
-    # Fear & Greed proxy: -100 to +100 scaled
     btc_dom = global_data.get("btc_dominance_pct", 50)
     mcap_change = global_data.get("market_cap_change_24h_pct", 0)
 
-    # High BTC dominance + negative change = fear
-    fear_score = 50 + (btc_dom - 50) * 0.5 - avg_change * 2
-    fear_score = max(0, min(100, fear_score))
-
     return {
         "sentiment_change_pct": round(avg_change, 2),
-        "fear_greed_index": round(fear_score, 1),
+        "fear_greed_index": round(fg_value / 100, 2),
+        "fear_greed_value": fg_value,
+        "fear_greed_label": fg_label,
         "btc_dominance": round(btc_dom, 1),
         "market_cap_change_pct": round(mcap_change, 2),
         "fetched_at_ms": int(time.time() * 1000),
