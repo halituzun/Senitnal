@@ -38,6 +38,7 @@ from sentinel.runtime.learning_loop import (
 )
 from scripts.fetch_historical import get_historical_context
 from services.intelligence_adapters.coingecko_adapter import fetch_market_sentiment as fetch_coingecko_sentiment
+from services.intelligence_adapters.free_news_adapter import fetch_sentiment as fetch_cointelegraph_sentiment
 
 SYMBOL_MAP = {
     "btc-momentum-v3": "BTC/USDT",
@@ -71,7 +72,7 @@ def main() -> None:
     sources = "Binance"
     if taapi_ok:
         sources += " + TAAPI"
-    sources += " + GDELT + CoinGecko"
+    sources += " + GDELT + CoinGecko + CoinTelegraph"
     print(f"♺ Learning loop ({sources}) — {len(state.strategies)} strategies, {mode}")
     print()
 
@@ -128,6 +129,15 @@ def main() -> None:
                 elif fg < 30:
                     news_sentiment["market_fear"] = 1.0
                 news_sentiment["fear_greed_index"] = fg / 100
+            except Exception:
+                pass
+
+            # CoinTelegraph RSS sentiment
+            try:
+                ct = fetch_cointelegraph_sentiment()
+                if ct.get("headline_count", 0) > 0:
+                    news_sentiment["ct_sentiment"] = ct.get("sentiment", 0)
+                    news_sentiment["ct_bullish"] = ct.get("bullish_ratio", 0)
             except Exception:
                 pass
 
