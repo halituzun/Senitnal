@@ -111,13 +111,13 @@
         </div>
         <div class="stat-card">
           <div class="stat-label">Accuracy</div>
-          <div class="stat-value" :class="data.learning.accuracy >= 0.5 ? 'ok' : 'warn'" style="font-size:20px">
-            {{ (data.learning.accuracy * 100).toFixed(0) }}%
+          <div class="stat-value" :class="(data.learning.accuracy || 0) >= 0.5 ? 'ok' : 'warn'" style="font-size:20px">
+            {{ data.learning.accuracy != null ? (data.learning.accuracy * 100).toFixed(0) + '%' : '—' }}
           </div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Learn Rate (α)</div>
-          <div class="stat-value" style="font-size:20px">{{ data.learning.adaptive_alpha }}</div>
+          <div class="stat-value" style="font-size:20px">{{ data.learning.adaptive_alpha ?? '—' }}</div>
         </div>
       </div>
 

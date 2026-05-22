@@ -365,7 +365,7 @@ def _process_cycle(
         state.ledger_events.append(_event(state, "PRODUCTION_DECISION", "INFO", "production-engine", strategy.strategy_id,
             f"PnL={pnl:+.1f} TRY Quality={strategy.strategy_quality:.2f} α={state.adaptive_alpha:.3f} acc={accuracy:.0%}"))
 
-    if abs(edge_proxy - 0.5) > 0.3 or fusion_result.source_agreement_score > 0.8:
+    if abs(edge_proxy - 0.5) > 0.15 or fusion_result.source_agreement_score > 0.6:
         pattern = "BULLISH" if edge_proxy > 0.5 else "BEARISH"
         state.memory_records.append({
             "memory_id": state.next_memory_id(),
