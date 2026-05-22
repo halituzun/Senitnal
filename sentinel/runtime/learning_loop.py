@@ -225,8 +225,16 @@ def run_cycle_with_real_data(
     cycle = state.cycle
 
     active = [s for s in state.strategies.values() if s.enabled and s.lifecycle_state in ("ACTIVE_LIVE", "LIMITED_LIVE")]
+    # Pre-check: auto-pause critically low quality strategies before processing
+    for s in list(active):
+        if s.strategy_quality < 0.12 and s.lifecycle_state == "ACTIVE_LIVE":
+            s.lifecycle_state = "PAUSED"
+            s.allocated_budget_try = 0
+            state.ledger_events.append(_event(state, "STRATEGY_AUTO_PAUSED", "WARN", "auto-trainer", s.strategy_id,
+                f"Pre-cycle pause: quality={s.strategy_quality:.2f} < 0.12"))
+    active = [s for s in active if s.lifecycle_state != "PAUSED"]
     if not active:
-        state.ledger_events.append(_event(state, "NO_ACTIVE_STRATEGIES", "WARN", "learning-loop", None, "No active strategies"))
+        state.ledger_events.append(_event(state, "NO_ACTIVE_STRATEGIES", "WARN", "learning-loop", None, "No active strategies (all paused or disabled)"))
         state.last_cycle_ms = now_ms
         return state
 
@@ -315,12 +323,12 @@ def _process_cycle(
 
             # Memory consensus influences decision
             if bullish_mems > bearish_mems and avg_mem_conf > 0.5:
-                edge_proxy = min(1.0, edge_proxy + 0.08)
-                confidence_boost = 0.05
+                edge_proxy = min(1.0, edge_proxy + 0.12)
+                confidence_boost = 0.10
                 news_impact += f" MemBull({bullish_mems}/{len(top)})"
             elif bearish_mems > bullish_mems and avg_mem_conf > 0.5:
-                edge_proxy = max(0.0, edge_proxy - 0.05)
-                confidence_boost = 0.03
+                edge_proxy = max(0.0, edge_proxy - 0.10)
+                confidence_boost = 0.06
                 news_impact += f" MemBear({bearish_mems}/{len(top)})"
             else:
                 confidence_boost = 0.0
