@@ -37,6 +37,7 @@ from sentinel.runtime.learning_loop import (
     run_cycle_with_real_data,
 )
 from scripts.fetch_historical import get_historical_context
+from scripts.backtest import run_backtest_pipeline
 from services.intelligence_adapters.coingecko_adapter import fetch_market_sentiment as fetch_coingecko_sentiment
 from services.intelligence_adapters.free_news_adapter import fetch_sentiment as fetch_cointelegraph_sentiment, fetch_coindesk_sentiment
 
@@ -151,6 +152,23 @@ def main() -> None:
 
             state = run_cycle_with_real_data(state, micro_snapshots, tech_snapshots, news_sentiment)
             cycle_count += 1
+
+            # Periodic backtest (every 100 cycles) to re-optimize strategies
+            if state.cycle % 100 == 0:
+                try:
+                    bt = run_backtest_pipeline()
+                    for sid, s in state.strategies.items():
+                        if sid in bt:
+                            optimal = bt[sid].get("optimal_rsi", {}).get("best_params", {})
+                            if optimal and hasattr(state, 'ledger_events'):
+                                state.ledger_events.append({
+                                    "id": f"bt-{state.cycle}", "ts_ms": int(__import__('time').time() * 1000),
+                                    "event_type": "BACKTEST_COMPLETED", "severity": "INFO",
+                                    "source": "backtest-engine", "strategy_id": sid, "adapter_id": None,
+                                    "message": f"Optimal RSI({optimal.get('rsi_period')},{optimal.get('oversold')}) hold={optimal.get('hold_days')}d"
+                                })
+                except Exception:
+                    pass
 
             strategies = list(state.strategies.values())
             total_pnl = round(sum(s.pnl_today_try for s in strategies), 1)
