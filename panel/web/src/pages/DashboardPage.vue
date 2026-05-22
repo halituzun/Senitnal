@@ -61,6 +61,27 @@
         </div>
       </div>
 
+      <!-- Execution Guard -->
+      <div v-if="data.portfolio" class="section-header">Execution Guard</div>
+      <div v-if="data.portfolio" class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Kill Switch</div>
+          <div class="stat-value" :class="data.portfolio.kill_switch_active ? 'error' : 'ok'" style="font-size:20px">
+            {{ data.portfolio.kill_switch_active ? 'ACTIVE' : 'OFF' }}
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Blocked</div>
+          <div class="stat-value" :class="(data.portfolio.blocked_trades || 0) > 0 ? 'error' : 'ok'" style="font-size:20px">
+            {{ data.portfolio.blocked_trades ?? 0 }}
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Attempts</div>
+          <div class="stat-value" style="font-size:20px">{{ data.portfolio.total_trade_attempts ?? 0 }}</div>
+        </div>
+      </div>
+
       <!-- Adapter hub -->
       <div class="section-header">Adapter Hub</div>
       <div class="stat-grid">
@@ -173,6 +194,8 @@ interface Dashboard {
     active_strategy_count: number
     paused_strategy_count: number
     kill_switch_active: boolean
+    blocked_trades?: number
+    total_trade_attempts?: number
   }
   pnl_summary: { today_try: number; week_try: number; month_try: number }
   adapter_hub: { total_adapters: number; healthy_count: number; stale_count: number; quarantined_count: number; revoked_count: number; degraded: boolean }

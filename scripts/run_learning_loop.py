@@ -60,6 +60,9 @@ def save_state(state: LearningState) -> None:
         "correct_predictions": state.correct_predictions,
         "total_predictions": state.total_predictions,
         "adaptive_alpha": state.adaptive_alpha,
+        "kill_switch_active": state.kill_switch_active,
+        "blocked_trades": state.blocked_trades,
+        "total_trade_attempts": state.total_trade_attempts,
         "strategies": [
             {
                 "strategy_id": s.strategy_id, "name": s.name,
@@ -100,8 +103,12 @@ def load_state() -> LearningState | None:
     state.correct_predictions = data.get("correct_predictions", 0)
     state.total_predictions = data.get("total_predictions", 0)
     state.adaptive_alpha = data.get("adaptive_alpha", 0.15)
+    state.kill_switch_active = data.get("kill_switch_active", False)
+    state.blocked_trades = data.get("blocked_trades", 0)
+    state.total_trade_attempts = data.get("total_trade_attempts", 0)
     state.last_prices = data.get("last_prices", {})
     state.market_sentiment = data.get("market_sentiment", {})
+    state._event_idx = data.get("cycle", 0) * 10  # Approximate
 
     for sdata in data.get("strategies", []):
         sid = sdata["strategy_id"]
