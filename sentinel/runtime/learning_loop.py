@@ -80,7 +80,8 @@ class LearningState:
     total_predictions: int = 0
     adaptive_alpha: float = 0.15  # Learning rate, auto-adjusted
     last_cycle_pnl: float = 0.0
-    last_prices: dict[str, float] = field(default_factory=dict)  # symbol → last_price for PnL calc
+    last_prices: dict[str, float] = field(default_factory=dict)
+    market_sentiment: dict[str, float] = field(default_factory=dict)  # symbol → last_price for PnL calc
 
     def next_event_id(self) -> str:
         self._event_idx += 1
@@ -269,6 +270,7 @@ def _process_cycle(
 
     # Apply news sentiment overlay
     ns = news_sentiment or {}
+    state.market_sentiment = ns  # Store for snapshot export
     news_impact = ""
     if ns:
         macro_risk = ns.get("macro_risk_score", 0.0)
@@ -514,6 +516,11 @@ def export_snapshot(state: LearningState) -> Path:
             for a in ADAPTER_POOL
         ],
         "memory_records": state.memory_records[-20:],
+        "market_sentiment": {
+            "fear_greed": round(state.market_sentiment.get("fear_greed_index", 0.5) * 100),
+            "ct_sentiment": state.market_sentiment.get("ct_sentiment", 0),
+            "ct_bullish": state.market_sentiment.get("ct_bullish", 0),
+        },
     }
 
     out_dir = Path(__file__).resolve().parents[2] / "panel" / "api" / "src" / "mock"
