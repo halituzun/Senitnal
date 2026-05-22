@@ -296,10 +296,18 @@ def main() -> None:
                 for sid, s in state.strategies.items():
                     if s.lifecycle_state == "PAUSED" and s.strategy_quality < 0.10:
                         alert_strategy_paused(sid, s.strategy_quality)
-                # Run Gel.Al guard cycle
+                # Run Gel.Al guard cycle — auto-advance phase based on quality
                 try:
                     qualities = {sid: s.strategy_quality for sid, s in state.strategies.items()}
-                    run_guard_cycle("shadow", qualities, state.kill_switch_active)
+                    avg_q = sum(qualities.values()) / max(1, len(qualities))
+                    phase = "shadow"
+                    if avg_q > 0.4 and state.cycle > 100:
+                        phase = "canary"
+                    if avg_q > 0.6 and state.cycle > 200:
+                        phase = "limited_live"
+                    if avg_q > 0.8 and state.cycle > 500:
+                        phase = "active_live"
+                    run_guard_cycle(phase, qualities, state.kill_switch_active)
                 except Exception:
                     pass
             if state.cycle % 5 == 0 or args.once:
