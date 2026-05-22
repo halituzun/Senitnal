@@ -80,7 +80,10 @@ class LearningState:
     adaptive_alpha: float = 0.15  # Learning rate, auto-adjusted
     last_cycle_pnl: float = 0.0
     last_prices: dict[str, float] = field(default_factory=dict)
-    market_sentiment: dict[str, float] = field(default_factory=dict)  # symbol → last_price for PnL calc
+    market_sentiment: dict[str, float] = field(default_factory=dict)
+    kill_switch_active: bool = False
+    blocked_trades: int = 0
+    total_trade_attempts: int = 0
 
     def next_event_id(self) -> str:
         self._event_idx += 1
@@ -373,6 +376,21 @@ def _process_cycle(
     conviction_result = evaluate_live_conviction(conviction_input)
     band = conviction_result.actionability_band
 
+    # Execution guard: block if quality critically low or risk too high
+    if strategy.strategy_quality < 0.06 or strategy.current_risk_score > 0.85:
+        band = ActionabilityBand.BLOCKED
+        state.blocked_trades += 1
+        state.ledger_events.append(_event(state, "EXECUTION_GUARD_BLOCK", "ERROR", "execution-guard", strategy.strategy_id,
+            f"Guard blocked: quality={strategy.strategy_quality:.2f} risk={strategy.current_risk_score:.2f} — below safety threshold"))
+    state.total_trade_attempts += 1
+
+    # Kill switch: activate if >50% of recent decisions blocked
+    if state.total_trade_attempts > 10 and state.blocked_trades / state.total_trade_attempts > 0.5:
+        state.kill_switch_active = True
+        band = ActionabilityBand.BLOCKED
+    elif state.kill_switch_active and state.blocked_trades / max(1, state.total_trade_attempts) < 0.3:
+        state.kill_switch_active = False
+
     # Realistic market uncertainty: ~15% of passes become BLOCKED
     if band in (ActionabilityBand.CANDIDATE, ActionabilityBand.LIVE_CANDIDATE):
         if random.random() < 0.15:
@@ -551,7 +569,9 @@ def export_snapshot(state: LearningState) -> Path:
             "max_total_daily_loss_try": 500, "max_open_orders": 5,
             "max_strategy_correlation": 0.7, "max_single_strategy_exposure": 0.5,
             "max_single_exchange_exposure": 0.7,
-            "kill_switch_active": False, "kill_switch_required": True,
+            "kill_switch_active": state.kill_switch_active, "kill_switch_required": True,
+            "blocked_trades": state.blocked_trades,
+            "total_trade_attempts": state.total_trade_attempts,
             "active_strategy_count": sum(1 for s in state.strategies.values() if s.lifecycle_state in ("ACTIVE_LIVE", "LIMITED_LIVE") and s.enabled),
             "paused_strategy_count": sum(1 for s in state.strategies.values() if s.lifecycle_state == "PAUSED"),
         },
