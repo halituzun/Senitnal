@@ -1,20 +1,20 @@
 {
-  "generated_at_ms": 1779441827631,
+  "generated_at_ms": 1779441857062,
   "generator": "sentinel.runtime.learning_loop",
   "sentinel_version": "v1.14",
   "learning_state": {
-    "cycle": 521,
-    "started_at_ms": 1779419858533,
-    "last_cycle_ms": 1779441827631,
-    "total_signals": 1473,
-    "total_blocks": 45,
+    "cycle": 732,
+    "started_at_ms": 1779409801992,
+    "last_cycle_ms": 1779441857062,
+    "total_signals": 2088,
+    "total_blocks": 24,
     "total_candidates": 0,
-    "total_live_candidates": 290,
-    "total_memories": 525,
-    "correct_predictions": 224,
-    "total_predictions": 290,
-    "accuracy": 0.772,
-    "adaptive_alpha": 0.35
+    "total_live_candidates": 145,
+    "total_memories": 684,
+    "correct_predictions": 77,
+    "total_predictions": 145,
+    "accuracy": 0.531,
+    "adaptive_alpha": 0.195
   },
   "portfolio": {
     "portfolio_id": "main-portfolio",
@@ -39,16 +39,16 @@
       "allocated_budget_try": 3500,
       "max_entry_try": 350,
       "max_trades_per_day": 8,
-      "current_edge_score": 0.35,
-      "current_risk_score": 0.004,
-      "current_confidence": 0.331,
+      "current_edge_score": 0.345,
+      "current_risk_score": 0.003,
+      "current_confidence": 0.332,
       "enabled": true,
       "strategy_quality": 0.1,
-      "pnl_today_try": 32.2,
-      "pnl_week_try": 32.2,
-      "total_decisions": 491,
-      "total_pass": 99,
-      "total_block": 22
+      "pnl_today_try": 26.0,
+      "pnl_week_try": 26.0,
+      "total_decisions": 696,
+      "total_pass": 63,
+      "total_block": 9
     },
     {
       "strategy_id": "eth-mean-reversion",
@@ -57,16 +57,16 @@
       "allocated_budget_try": 2800,
       "max_entry_try": 280,
       "max_trades_per_day": 12,
-      "current_edge_score": 0.356,
-      "current_risk_score": 0.004,
-      "current_confidence": 0.331,
+      "current_edge_score": 0.352,
+      "current_risk_score": 0.003,
+      "current_confidence": 0.332,
       "enabled": true,
-      "strategy_quality": 0.1,
-      "pnl_today_try": 19.2,
-      "pnl_week_try": 19.2,
-      "total_decisions": 491,
-      "total_pass": 101,
-      "total_block": 12
+      "strategy_quality": 0.12,
+      "pnl_today_try": 33.7,
+      "pnl_week_try": 33.7,
+      "total_decisions": 696,
+      "total_pass": 48,
+      "total_block": 8
     },
     {
       "strategy_id": "sol-breakout-alpha",
@@ -75,16 +75,16 @@
       "allocated_budget_try": 1200,
       "max_entry_try": 120,
       "max_trades_per_day": 5,
-      "current_edge_score": 0.437,
-      "current_risk_score": 0.001,
-      "current_confidence": 0.331,
+      "current_edge_score": 0.435,
+      "current_risk_score": 0.002,
+      "current_confidence": 0.332,
       "enabled": true,
       "strategy_quality": 0.11,
-      "pnl_today_try": 13.9,
-      "pnl_week_try": 13.9,
-      "total_decisions": 491,
-      "total_pass": 90,
-      "total_block": 11
+      "pnl_today_try": 1.4,
+      "pnl_week_try": 1.4,
+      "total_decisions": 696,
+      "total_pass": 34,
+      "total_block": 7
     },
     {
       "strategy_id": "bnb-arb-v1",
@@ -132,9 +132,9 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779441700348,
-      "latency_ms": 330,
-      "error_rate": 0.0030355929654631037,
+      "last_seen_ms": 1779441566344,
+      "latency_ms": 312,
+      "error_rate": 0.0022714097290200672,
       "credential_ref_id": "cred-taapi-pro",
       "description": "TAAPI Pro \u2014 TECHNICAL data feed"
     },
@@ -146,9 +146,9 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779441669945,
-      "latency_ms": 3,
-      "error_rate": 0.0009396491171334577,
+      "last_seen_ms": 1779441596860,
+      "latency_ms": 10,
+      "error_rate": 0.00027093997477204606,
       "credential_ref_id": "cred-binance-ws",
       "description": "Binance WS \u2014 MARKET_DATA data feed"
     },
@@ -160,9 +160,9 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779441356148,
-      "latency_ms": 578,
-      "error_rate": 0.006442739477028314,
+      "last_seen_ms": 1779441544646,
+      "latency_ms": 528,
+      "error_rate": 0.004831910278738328,
       "credential_ref_id": "cred-lunarcrush-social",
       "description": "LunarCrush \u2014 SOCIAL data feed"
     },
@@ -170,15 +170,16 @@
       "adapter_id": "cryptopanic-feed",
       "name": "CryptoPanic",
       "source_family": "NEWS",
-      "trust_band": "TRUSTED",
-      "is_active": true,
+      "trust_band": "QUARANTINED",
+      "is_active": false,
       "is_fresh": true,
-      "is_healthy": true,
-      "last_seen_ms": 1779441616262,
-      "latency_ms": 937,
-      "error_rate": 0.012206679369331948,
+      "is_healthy": false,
+      "last_seen_ms": 1779441380365,
+      "latency_ms": 883,
+      "error_rate": 0.011215797411246117,
       "credential_ref_id": "cred-cryptopanic-feed",
-      "description": "CryptoPanic \u2014 NEWS data feed"
+      "description": "CryptoPanic \u2014 NEWS data feed",
+      "quarantine_reason": "consecutive 5xx errors"
     },
     {
       "adapter_id": "glassnode-onchain",
@@ -188,9 +189,9 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779441247895,
-      "latency_ms": 1243,
-      "error_rate": 0.0041076215857964084,
+      "last_seen_ms": 1779441575227,
+      "latency_ms": 1195,
+      "error_rate": 0.002666305966136288,
       "credential_ref_id": "cred-glassnode-onchain",
       "description": "Glassnode \u2014 ONCHAIN data feed"
     },
@@ -202,9 +203,9 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779441695569,
-      "latency_ms": 418,
-      "error_rate": 0.007195445423215708,
+      "last_seen_ms": 1779441645105,
+      "latency_ms": 417,
+      "error_rate": 0.01094457085685687,
       "credential_ref_id": "cred-coinglass-futures",
       "description": "Coinglass \u2014 DERIVATIVES data feed"
     },
@@ -214,11 +215,11 @@
       "source_family": "SENTIMENT",
       "trust_band": "TRUSTED",
       "is_active": true,
-      "is_fresh": false,
-      "is_healthy": false,
-      "last_seen_ms": 1779413027631,
-      "latency_ms": null,
-      "error_rate": 0.12,
+      "is_fresh": true,
+      "is_healthy": true,
+      "last_seen_ms": 1779441522471,
+      "latency_ms": 3609,
+      "error_rate": 0.12115985014526437,
       "credential_ref_id": "cred-fear-greed-index",
       "description": "Fear & Greed \u2014 SENTIMENT data feed"
     },
@@ -230,167 +231,17 @@
       "is_active": true,
       "is_fresh": true,
       "is_healthy": true,
-      "last_seen_ms": 1779441669643,
-      "latency_ms": 280,
-      "error_rate": 0.003577092812726535,
+      "last_seen_ms": 1779441390026,
+      "latency_ms": 321,
+      "error_rate": 0.002413140101861902,
       "credential_ref_id": "cred-deribit-options",
       "description": "Deribit \u2014 DERIVATIVES data feed"
     }
   ],
   "ledger_events": [
     {
-      "id": "ev-06649",
-      "ts_ms": 1779441689398,
-      "event_type": "FUSION_COMPUTED",
-      "severity": "INFO",
-      "source": "fusion-engine",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "fusion-engine",
-      "message": "Trend=0.34 Contradiction=0.00 Confidence=0.33"
-    },
-    {
-      "id": "ev-06650",
-      "ts_ms": 1779441689398,
-      "event_type": "NET_EDGE_COMPUTED",
-      "severity": "INFO",
-      "source": "net-edge",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "net-edge",
-      "message": "Gross=0.0102 Net=0.0084 (costs deducted)"
-    },
-    {
-      "id": "ev-06651",
-      "ts_ms": 1779441689398,
-      "event_type": "LIVE_CONVICTION",
-      "severity": "INFO",
-      "source": "conviction-engine",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "conviction-engine",
-      "message": "Band=WATCH Score=0.03"
-    },
-    {
-      "id": "ev-06652",
-      "ts_ms": 1779441689398,
-      "event_type": "MEMORY_WRITE",
-      "severity": "INFO",
-      "source": "memory-write-gate",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "memory-write-gate",
-      "message": "Memory stored: BEARISH (conf=0.33)"
-    },
-    {
-      "id": "ev-06653",
-      "ts_ms": 1779441689398,
-      "event_type": "FUSION_COMPUTED",
-      "severity": "INFO",
-      "source": "fusion-engine",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "fusion-engine",
-      "message": "Trend=0.35 Contradiction=0.00 Confidence=0.33"
-    },
-    {
-      "id": "ev-06654",
-      "ts_ms": 1779441689398,
-      "event_type": "NET_EDGE_COMPUTED",
-      "severity": "INFO",
-      "source": "net-edge",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "net-edge",
-      "message": "Gross=0.0104 Net=0.0086 (costs deducted)"
-    },
-    {
-      "id": "ev-06655",
-      "ts_ms": 1779441689398,
-      "event_type": "LIVE_CONVICTION",
-      "severity": "INFO",
-      "source": "conviction-engine",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "conviction-engine",
-      "message": "Band=WATCH Score=0.03"
-    },
-    {
-      "id": "ev-06656",
-      "ts_ms": 1779441689398,
-      "event_type": "MEMORY_WRITE",
-      "severity": "INFO",
-      "source": "memory-write-gate",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "memory-write-gate",
-      "message": "Memory stored: BEARISH (conf=0.33)"
-    },
-    {
-      "id": "ev-06657",
-      "ts_ms": 1779441689398,
-      "event_type": "FUSION_COMPUTED",
-      "severity": "INFO",
-      "source": "fusion-engine",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "fusion-engine",
-      "message": "Trend=0.43 Contradiction=0.00 Confidence=0.33"
-    },
-    {
-      "id": "ev-06658",
-      "ts_ms": 1779441689398,
-      "event_type": "NET_EDGE_COMPUTED",
-      "severity": "INFO",
-      "source": "net-edge",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "net-edge",
-      "message": "Gross=0.0129 Net=0.0110 (costs deducted)"
-    },
-    {
-      "id": "ev-06659",
-      "ts_ms": 1779441689398,
-      "event_type": "LIVE_CONVICTION",
-      "severity": "INFO",
-      "source": "conviction-engine",
-      "strategy_id": "sol-breakout-alpha",
-      "adapter_id": "conviction-engine",
-      "message": "Band=WATCH Score=0.04"
-    },
-    {
-      "id": "ev-06660",
-      "ts_ms": 1779441738304,
-      "event_type": "FUSION_COMPUTED",
-      "severity": "INFO",
-      "source": "fusion-engine",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "fusion-engine",
-      "message": "Trend=0.35 Contradiction=0.00 Confidence=0.33"
-    },
-    {
-      "id": "ev-06661",
-      "ts_ms": 1779441738304,
-      "event_type": "NET_EDGE_COMPUTED",
-      "severity": "INFO",
-      "source": "net-edge",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "net-edge",
-      "message": "Gross=0.0106 Net=0.0088 (costs deducted)"
-    },
-    {
-      "id": "ev-06662",
-      "ts_ms": 1779441738304,
-      "event_type": "LIVE_CONVICTION",
-      "severity": "INFO",
-      "source": "conviction-engine",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "conviction-engine",
-      "message": "Band=WATCH Score=0.03"
-    },
-    {
-      "id": "ev-06663",
-      "ts_ms": 1779441738304,
-      "event_type": "INGRESS_COMPILED",
-      "severity": "INFO",
-      "source": "ingress-compiler",
-      "strategy_id": null,
-      "adapter_id": "ingress-compiler",
-      "message": "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed"
-    },
-    {
-      "id": "ev-06664",
-      "ts_ms": 1779441738304,
+      "id": "ev-09075",
+      "ts_ms": 1779441715940,
       "event_type": "EVIDENCE_STORED",
       "severity": "INFO",
       "source": "evidence-gate",
@@ -399,28 +250,28 @@
       "message": "Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40"
     },
     {
-      "id": "ev-06665",
-      "ts_ms": 1779441738304,
+      "id": "ev-09076",
+      "ts_ms": 1779441715940,
       "event_type": "FUSION_COMPUTED",
       "severity": "INFO",
       "source": "fusion-engine",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "fusion-engine",
-      "message": "Trend=0.36 Contradiction=0.00 Confidence=0.33"
+      "message": "Trend=0.35 Contradiction=0.00 Confidence=0.33"
     },
     {
-      "id": "ev-06666",
-      "ts_ms": 1779441738304,
+      "id": "ev-09077",
+      "ts_ms": 1779441715940,
       "event_type": "NET_EDGE_COMPUTED",
       "severity": "INFO",
       "source": "net-edge",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "net-edge",
-      "message": "Gross=0.0109 Net=0.0091 (costs deducted)"
+      "message": "Gross=0.0106 Net=0.0088 (costs deducted)"
     },
     {
-      "id": "ev-06667",
-      "ts_ms": 1779441738304,
+      "id": "ev-09078",
+      "ts_ms": 1779441715940,
       "event_type": "LIVE_CONVICTION",
       "severity": "INFO",
       "source": "conviction-engine",
@@ -429,8 +280,8 @@
       "message": "Band=WATCH Score=0.03"
     },
     {
-      "id": "ev-06668",
-      "ts_ms": 1779441738304,
+      "id": "ev-09079",
+      "ts_ms": 1779441715940,
       "event_type": "INGRESS_COMPILED",
       "severity": "INFO",
       "source": "ingress-compiler",
@@ -439,18 +290,18 @@
       "message": "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed"
     },
     {
-      "id": "ev-06669",
-      "ts_ms": 1779441738304,
+      "id": "ev-09080",
+      "ts_ms": 1779441715940,
       "event_type": "EVIDENCE_STORED",
       "severity": "INFO",
       "source": "evidence-gate",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "evidence-gate",
-      "message": "Evidence bundle: trend=0.36 contradiction=0.00 sources_agreed=0.40"
+      "message": "Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40"
     },
     {
-      "id": "ev-06670",
-      "ts_ms": 1779441738304,
+      "id": "ev-09081",
+      "ts_ms": 1779441715940,
       "event_type": "FUSION_COMPUTED",
       "severity": "INFO",
       "source": "fusion-engine",
@@ -459,8 +310,8 @@
       "message": "Trend=0.44 Contradiction=0.00 Confidence=0.33"
     },
     {
-      "id": "ev-06671",
-      "ts_ms": 1779441738304,
+      "id": "ev-09082",
+      "ts_ms": 1779441715940,
       "event_type": "NET_EDGE_COMPUTED",
       "severity": "INFO",
       "source": "net-edge",
@@ -469,8 +320,8 @@
       "message": "Gross=0.0131 Net=0.0112 (costs deducted)"
     },
     {
-      "id": "ev-06672",
-      "ts_ms": 1779441738304,
+      "id": "ev-09083",
+      "ts_ms": 1779441715940,
       "event_type": "LIVE_CONVICTION",
       "severity": "INFO",
       "source": "conviction-engine",
@@ -479,18 +330,18 @@
       "message": "Band=WATCH Score=0.04"
     },
     {
-      "id": "ev-06673",
-      "ts_ms": 1779441738304,
+      "id": "ev-09084",
+      "ts_ms": 1779441715940,
       "event_type": "INGRESS_COMPILED",
       "severity": "INFO",
       "source": "ingress-compiler",
       "strategy_id": null,
       "adapter_id": "ingress-compiler",
-      "message": "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed"
+      "message": "Ingress compilation: 8 sources checked, 7 passed, 1 stale-suppressed"
     },
     {
-      "id": "ev-06674",
-      "ts_ms": 1779441738304,
+      "id": "ev-09085",
+      "ts_ms": 1779441715940,
       "event_type": "EVIDENCE_STORED",
       "severity": "INFO",
       "source": "evidence-gate",
@@ -499,78 +350,78 @@
       "message": "Evidence bundle: trend=0.44 contradiction=0.00 sources_agreed=0.40"
     },
     {
-      "id": "ev-06675",
-      "ts_ms": 1779441778218,
+      "id": "ev-09086",
+      "ts_ms": 1779441757204,
       "event_type": "FUSION_COMPUTED",
       "severity": "INFO",
       "source": "fusion-engine",
       "strategy_id": "btc-momentum-v3",
       "adapter_id": "fusion-engine",
-      "message": "Trend=0.36 Contradiction=0.00 Confidence=0.33"
+      "message": "Trend=0.35 Contradiction=0.00 Confidence=0.33"
     },
     {
-      "id": "ev-06676",
-      "ts_ms": 1779441778218,
+      "id": "ev-09087",
+      "ts_ms": 1779441757204,
       "event_type": "NET_EDGE_COMPUTED",
       "severity": "INFO",
       "source": "net-edge",
       "strategy_id": "btc-momentum-v3",
+      "adapter_id": "net-edge",
+      "message": "Gross=0.0106 Net=0.0088 (costs deducted)"
+    },
+    {
+      "id": "ev-09088",
+      "ts_ms": 1779441757205,
+      "event_type": "LIVE_CONVICTION",
+      "severity": "INFO",
+      "source": "conviction-engine",
+      "strategy_id": "btc-momentum-v3",
+      "adapter_id": "conviction-engine",
+      "message": "Band=WATCH Score=0.03"
+    },
+    {
+      "id": "ev-09089",
+      "ts_ms": 1779441757205,
+      "event_type": "REPLAY_COMPLETED",
+      "severity": "INFO",
+      "source": "replay-engine",
+      "strategy_id": "btc-momentum-v3",
+      "adapter_id": "replay-engine",
+      "message": "Counterfactual replay: btc-momentum-v3 \u2014 edge would be 0.29 with tighter spread"
+    },
+    {
+      "id": "ev-09090",
+      "ts_ms": 1779441757205,
+      "event_type": "CONSTITUTION_AUDIT",
+      "severity": "INFO",
+      "source": "constitution-auditor",
+      "strategy_id": null,
+      "adapter_id": "constitution-auditor",
+      "message": "Constitutional audit: 0 violations in last 2080 decisions. All invariants hold."
+    },
+    {
+      "id": "ev-09091",
+      "ts_ms": 1779441757205,
+      "event_type": "FUSION_COMPUTED",
+      "severity": "INFO",
+      "source": "fusion-engine",
+      "strategy_id": "eth-mean-reversion",
+      "adapter_id": "fusion-engine",
+      "message": "Trend=0.36 Contradiction=0.00 Confidence=0.33"
+    },
+    {
+      "id": "ev-09092",
+      "ts_ms": 1779441757205,
+      "event_type": "NET_EDGE_COMPUTED",
+      "severity": "INFO",
+      "source": "net-edge",
+      "strategy_id": "eth-mean-reversion",
       "adapter_id": "net-edge",
       "message": "Gross=0.0107 Net=0.0089 (costs deducted)"
     },
     {
-      "id": "ev-06677",
-      "ts_ms": 1779441778218,
-      "event_type": "LIVE_CONVICTION",
-      "severity": "INFO",
-      "source": "conviction-engine",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "conviction-engine",
-      "message": "Band=WATCH Score=0.03"
-    },
-    {
-      "id": "ev-06678",
-      "ts_ms": 1779441778218,
-      "event_type": "REPLAY_COMPLETED",
-      "severity": "INFO",
-      "source": "replay-engine",
-      "strategy_id": "btc-momentum-v3",
-      "adapter_id": "replay-engine",
-      "message": "Counterfactual replay: btc-momentum-v3 \u2014 edge would be 0.40 with tighter spread"
-    },
-    {
-      "id": "ev-06679",
-      "ts_ms": 1779441778218,
-      "event_type": "CONSTITUTION_AUDIT",
-      "severity": "INFO",
-      "source": "constitution-auditor",
-      "strategy_id": null,
-      "adapter_id": "constitution-auditor",
-      "message": "Constitutional audit: 0 violations in last 1468 decisions. All invariants hold."
-    },
-    {
-      "id": "ev-06680",
-      "ts_ms": 1779441778218,
-      "event_type": "FUSION_COMPUTED",
-      "severity": "INFO",
-      "source": "fusion-engine",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "fusion-engine",
-      "message": "Trend=0.36 Contradiction=0.00 Confidence=0.33"
-    },
-    {
-      "id": "ev-06681",
-      "ts_ms": 1779441778218,
-      "event_type": "NET_EDGE_COMPUTED",
-      "severity": "INFO",
-      "source": "net-edge",
-      "strategy_id": "eth-mean-reversion",
-      "adapter_id": "net-edge",
-      "message": "Gross=0.0108 Net=0.0089 (costs deducted)"
-    },
-    {
-      "id": "ev-06682",
-      "ts_ms": 1779441778218,
+      "id": "ev-09093",
+      "ts_ms": 1779441757205,
       "event_type": "LIVE_CONVICTION",
       "severity": "INFO",
       "source": "conviction-engine",
@@ -579,28 +430,28 @@
       "message": "Band=WATCH Score=0.03"
     },
     {
-      "id": "ev-06683",
-      "ts_ms": 1779441778218,
+      "id": "ev-09094",
+      "ts_ms": 1779441757205,
       "event_type": "REPLAY_COMPLETED",
       "severity": "INFO",
       "source": "replay-engine",
       "strategy_id": "eth-mean-reversion",
       "adapter_id": "replay-engine",
-      "message": "Counterfactual replay: eth-mean-reversion \u2014 edge would be 0.39 with tighter spread"
+      "message": "Counterfactual replay: eth-mean-reversion \u2014 edge would be 0.45 with tighter spread"
     },
     {
-      "id": "ev-06684",
-      "ts_ms": 1779441778218,
+      "id": "ev-09095",
+      "ts_ms": 1779441757205,
       "event_type": "CONSTITUTION_AUDIT",
       "severity": "INFO",
       "source": "constitution-auditor",
       "strategy_id": null,
       "adapter_id": "constitution-auditor",
-      "message": "Constitutional audit: 0 violations in last 1469 decisions. All invariants hold."
+      "message": "Constitutional audit: 0 violations in last 2081 decisions. All invariants hold."
     },
     {
-      "id": "ev-06685",
-      "ts_ms": 1779441778218,
+      "id": "ev-09096",
+      "ts_ms": 1779441757205,
       "event_type": "FUSION_COMPUTED",
       "severity": "INFO",
       "source": "fusion-engine",
@@ -609,8 +460,8 @@
       "message": "Trend=0.44 Contradiction=0.00 Confidence=0.33"
     },
     {
-      "id": "ev-06686",
-      "ts_ms": 1779441778218,
+      "id": "ev-09097",
+      "ts_ms": 1779441757205,
       "event_type": "NET_EDGE_COMPUTED",
       "severity": "INFO",
       "source": "net-edge",
@@ -619,8 +470,8 @@
       "message": "Gross=0.0132 Net=0.0113 (costs deducted)"
     },
     {
-      "id": "ev-06687",
-      "ts_ms": 1779441778218,
+      "id": "ev-09098",
+      "ts_ms": 1779441757205,
       "event_type": "LIVE_CONVICTION",
       "severity": "INFO",
       "source": "conviction-engine",
@@ -629,28 +480,28 @@
       "message": "Band=WATCH Score=0.04"
     },
     {
-      "id": "ev-06688",
-      "ts_ms": 1779441778218,
+      "id": "ev-09099",
+      "ts_ms": 1779441757205,
       "event_type": "REPLAY_COMPLETED",
       "severity": "INFO",
       "source": "replay-engine",
       "strategy_id": "sol-breakout-alpha",
       "adapter_id": "replay-engine",
-      "message": "Counterfactual replay: sol-breakout-alpha \u2014 edge would be 0.39 with tighter spread"
+      "message": "Counterfactual replay: sol-breakout-alpha \u2014 edge would be 0.35 with tighter spread"
     },
     {
-      "id": "ev-06689",
-      "ts_ms": 1779441778218,
+      "id": "ev-09100",
+      "ts_ms": 1779441757205,
       "event_type": "CONSTITUTION_AUDIT",
       "severity": "INFO",
       "source": "constitution-auditor",
       "strategy_id": null,
       "adapter_id": "constitution-auditor",
-      "message": "Constitutional audit: 0 violations in last 1470 decisions. All invariants hold."
+      "message": "Constitutional audit: 0 violations in last 2082 decisions. All invariants hold."
     },
     {
-      "id": "ev-06690",
-      "ts_ms": 1779441827631,
+      "id": "ev-09101",
+      "ts_ms": 1779441805177,
       "event_type": "FUSION_COMPUTED",
       "severity": "INFO",
       "source": "fusion-engine",
@@ -659,8 +510,8 @@
       "message": "Trend=0.36 Contradiction=0.00 Confidence=0.33"
     },
     {
-      "id": "ev-06691",
-      "ts_ms": 1779441827631,
+      "id": "ev-09102",
+      "ts_ms": 1779441805177,
       "event_type": "NET_EDGE_COMPUTED",
       "severity": "INFO",
       "source": "net-edge",
@@ -669,8 +520,8 @@
       "message": "Gross=0.0107 Net=0.0089 (costs deducted)"
     },
     {
-      "id": "ev-06692",
-      "ts_ms": 1779441827631,
+      "id": "ev-09103",
+      "ts_ms": 1779441805177,
       "event_type": "LIVE_CONVICTION",
       "severity": "INFO",
       "source": "conviction-engine",
@@ -679,8 +530,8 @@
       "message": "Band=WATCH Score=0.03"
     },
     {
-      "id": "ev-06693",
-      "ts_ms": 1779441827631,
+      "id": "ev-09104",
+      "ts_ms": 1779441805177,
       "event_type": "FUSION_COMPUTED",
       "severity": "INFO",
       "source": "fusion-engine",
@@ -689,8 +540,8 @@
       "message": "Trend=0.36 Contradiction=0.00 Confidence=0.33"
     },
     {
-      "id": "ev-06694",
-      "ts_ms": 1779441827631,
+      "id": "ev-09105",
+      "ts_ms": 1779441805177,
       "event_type": "NET_EDGE_COMPUTED",
       "severity": "INFO",
       "source": "net-edge",
@@ -699,8 +550,8 @@
       "message": "Gross=0.0108 Net=0.0089 (costs deducted)"
     },
     {
-      "id": "ev-06695",
-      "ts_ms": 1779441827631,
+      "id": "ev-09106",
+      "ts_ms": 1779441805177,
       "event_type": "LIVE_CONVICTION",
       "severity": "INFO",
       "source": "conviction-engine",
@@ -709,8 +560,8 @@
       "message": "Band=WATCH Score=0.03"
     },
     {
-      "id": "ev-06696",
-      "ts_ms": 1779441827631,
+      "id": "ev-09107",
+      "ts_ms": 1779441805177,
       "event_type": "FUSION_COMPUTED",
       "severity": "INFO",
       "source": "fusion-engine",
@@ -719,8 +570,8 @@
       "message": "Trend=0.44 Contradiction=0.00 Confidence=0.33"
     },
     {
-      "id": "ev-06697",
-      "ts_ms": 1779441827631,
+      "id": "ev-09108",
+      "ts_ms": 1779441805177,
       "event_type": "NET_EDGE_COMPUTED",
       "severity": "INFO",
       "source": "net-edge",
@@ -729,172 +580,322 @@
       "message": "Gross=0.0132 Net=0.0113 (costs deducted)"
     },
     {
-      "id": "ev-06698",
-      "ts_ms": 1779441827631,
+      "id": "ev-09109",
+      "ts_ms": 1779441805177,
       "event_type": "LIVE_CONVICTION",
       "severity": "INFO",
       "source": "conviction-engine",
       "strategy_id": "sol-breakout-alpha",
       "adapter_id": "conviction-engine",
       "message": "Band=WATCH Score=0.04"
+    },
+    {
+      "id": "ev-09110",
+      "ts_ms": 1779441857062,
+      "event_type": "FUSION_COMPUTED",
+      "severity": "INFO",
+      "source": "fusion-engine",
+      "strategy_id": "btc-momentum-v3",
+      "adapter_id": "fusion-engine",
+      "message": "Trend=0.35 Contradiction=0.00 Confidence=0.33"
+    },
+    {
+      "id": "ev-09111",
+      "ts_ms": 1779441857062,
+      "event_type": "NET_EDGE_COMPUTED",
+      "severity": "INFO",
+      "source": "net-edge",
+      "strategy_id": "btc-momentum-v3",
+      "adapter_id": "net-edge",
+      "message": "Gross=0.0106 Net=0.0088 (costs deducted)"
+    },
+    {
+      "id": "ev-09112",
+      "ts_ms": 1779441857062,
+      "event_type": "LIVE_CONVICTION",
+      "severity": "INFO",
+      "source": "conviction-engine",
+      "strategy_id": "btc-momentum-v3",
+      "adapter_id": "conviction-engine",
+      "message": "Band=WATCH Score=0.03"
+    },
+    {
+      "id": "ev-09113",
+      "ts_ms": 1779441857062,
+      "event_type": "INGRESS_COMPILED",
+      "severity": "INFO",
+      "source": "ingress-compiler",
+      "strategy_id": null,
+      "adapter_id": "ingress-compiler",
+      "message": "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed"
+    },
+    {
+      "id": "ev-09114",
+      "ts_ms": 1779441857062,
+      "event_type": "EVIDENCE_STORED",
+      "severity": "INFO",
+      "source": "evidence-gate",
+      "strategy_id": "btc-momentum-v3",
+      "adapter_id": "evidence-gate",
+      "message": "Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40"
+    },
+    {
+      "id": "ev-09115",
+      "ts_ms": 1779441857062,
+      "event_type": "FUSION_COMPUTED",
+      "severity": "INFO",
+      "source": "fusion-engine",
+      "strategy_id": "eth-mean-reversion",
+      "adapter_id": "fusion-engine",
+      "message": "Trend=0.36 Contradiction=0.00 Confidence=0.33"
+    },
+    {
+      "id": "ev-09116",
+      "ts_ms": 1779441857062,
+      "event_type": "NET_EDGE_COMPUTED",
+      "severity": "INFO",
+      "source": "net-edge",
+      "strategy_id": "eth-mean-reversion",
+      "adapter_id": "net-edge",
+      "message": "Gross=0.0108 Net=0.0089 (costs deducted)"
+    },
+    {
+      "id": "ev-09117",
+      "ts_ms": 1779441857062,
+      "event_type": "LIVE_CONVICTION",
+      "severity": "INFO",
+      "source": "conviction-engine",
+      "strategy_id": "eth-mean-reversion",
+      "adapter_id": "conviction-engine",
+      "message": "Band=WATCH Score=0.03"
+    },
+    {
+      "id": "ev-09118",
+      "ts_ms": 1779441857062,
+      "event_type": "INGRESS_COMPILED",
+      "severity": "INFO",
+      "source": "ingress-compiler",
+      "strategy_id": null,
+      "adapter_id": "ingress-compiler",
+      "message": "Ingress compilation: 8 sources checked, 7 passed, 1 stale-suppressed"
+    },
+    {
+      "id": "ev-09119",
+      "ts_ms": 1779441857062,
+      "event_type": "EVIDENCE_STORED",
+      "severity": "INFO",
+      "source": "evidence-gate",
+      "strategy_id": "eth-mean-reversion",
+      "adapter_id": "evidence-gate",
+      "message": "Evidence bundle: trend=0.36 contradiction=0.00 sources_agreed=0.40"
+    },
+    {
+      "id": "ev-09120",
+      "ts_ms": 1779441857062,
+      "event_type": "FUSION_COMPUTED",
+      "severity": "INFO",
+      "source": "fusion-engine",
+      "strategy_id": "sol-breakout-alpha",
+      "adapter_id": "fusion-engine",
+      "message": "Trend=0.44 Contradiction=0.00 Confidence=0.33"
+    },
+    {
+      "id": "ev-09121",
+      "ts_ms": 1779441857062,
+      "event_type": "NET_EDGE_COMPUTED",
+      "severity": "INFO",
+      "source": "net-edge",
+      "strategy_id": "sol-breakout-alpha",
+      "adapter_id": "net-edge",
+      "message": "Gross=0.0132 Net=0.0113 (costs deducted)"
+    },
+    {
+      "id": "ev-09122",
+      "ts_ms": 1779441857062,
+      "event_type": "LIVE_CONVICTION",
+      "severity": "INFO",
+      "source": "conviction-engine",
+      "strategy_id": "sol-breakout-alpha",
+      "adapter_id": "conviction-engine",
+      "message": "Band=WATCH Score=0.04"
+    },
+    {
+      "id": "ev-09123",
+      "ts_ms": 1779441857062,
+      "event_type": "INGRESS_COMPILED",
+      "severity": "INFO",
+      "source": "ingress-compiler",
+      "strategy_id": null,
+      "adapter_id": "ingress-compiler",
+      "message": "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed"
+    },
+    {
+      "id": "ev-09124",
+      "ts_ms": 1779441857062,
+      "event_type": "EVIDENCE_STORED",
+      "severity": "INFO",
+      "source": "evidence-gate",
+      "strategy_id": "sol-breakout-alpha",
+      "adapter_id": "evidence-gate",
+      "message": "Evidence bundle: trend=0.44 contradiction=0.00 sources_agreed=0.40"
     }
   ],
   "decisions": [
     {
-      "decision_id": "dec-01454",
-      "ts_ms": 1779441560037,
+      "decision_id": "dec-02069",
+      "ts_ms": 1779441587360,
       "strategy_id": "eth-mean-reversion",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01455",
-      "ts_ms": 1779441560037,
+      "decision_id": "dec-02070",
+      "ts_ms": 1779441587360,
       "strategy_id": "sol-breakout-alpha",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.04"
     },
     {
-      "decision_id": "dec-01456",
-      "ts_ms": 1779441610610,
+      "decision_id": "dec-02071",
+      "ts_ms": 1779441623446,
       "strategy_id": "btc-momentum-v3",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01457",
-      "ts_ms": 1779441610610,
+      "decision_id": "dec-02072",
+      "ts_ms": 1779441623446,
       "strategy_id": "eth-mean-reversion",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01458",
-      "ts_ms": 1779441610610,
+      "decision_id": "dec-02073",
+      "ts_ms": 1779441623446,
       "strategy_id": "sol-breakout-alpha",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.04"
     },
     {
-      "decision_id": "dec-01459",
-      "ts_ms": 1779441648516,
+      "decision_id": "dec-02074",
+      "ts_ms": 1779441673656,
       "strategy_id": "btc-momentum-v3",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01460",
-      "ts_ms": 1779441648516,
+      "decision_id": "dec-02075",
+      "ts_ms": 1779441673656,
       "strategy_id": "eth-mean-reversion",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01461",
-      "ts_ms": 1779441648516,
+      "decision_id": "dec-02076",
+      "ts_ms": 1779441673656,
       "strategy_id": "sol-breakout-alpha",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.04"
     },
     {
-      "decision_id": "dec-01462",
-      "ts_ms": 1779441689398,
+      "decision_id": "dec-02077",
+      "ts_ms": 1779441715940,
       "strategy_id": "btc-momentum-v3",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01463",
-      "ts_ms": 1779441689398,
+      "decision_id": "dec-02078",
+      "ts_ms": 1779441715940,
       "strategy_id": "eth-mean-reversion",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01464",
-      "ts_ms": 1779441689398,
+      "decision_id": "dec-02079",
+      "ts_ms": 1779441715940,
       "strategy_id": "sol-breakout-alpha",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.04"
     },
     {
-      "decision_id": "dec-01465",
-      "ts_ms": 1779441738304,
+      "decision_id": "dec-02080",
+      "ts_ms": 1779441757204,
       "strategy_id": "btc-momentum-v3",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01466",
-      "ts_ms": 1779441738304,
+      "decision_id": "dec-02081",
+      "ts_ms": 1779441757204,
       "strategy_id": "eth-mean-reversion",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01467",
-      "ts_ms": 1779441738304,
+      "decision_id": "dec-02082",
+      "ts_ms": 1779441757204,
       "strategy_id": "sol-breakout-alpha",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.04"
     },
     {
-      "decision_id": "dec-01468",
-      "ts_ms": 1779441778218,
+      "decision_id": "dec-02083",
+      "ts_ms": 1779441805177,
       "strategy_id": "btc-momentum-v3",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01469",
-      "ts_ms": 1779441778218,
+      "decision_id": "dec-02084",
+      "ts_ms": 1779441805177,
       "strategy_id": "eth-mean-reversion",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01470",
-      "ts_ms": 1779441778218,
+      "decision_id": "dec-02085",
+      "ts_ms": 1779441805177,
       "strategy_id": "sol-breakout-alpha",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.04"
     },
     {
-      "decision_id": "dec-01471",
-      "ts_ms": 1779441827631,
+      "decision_id": "dec-02086",
+      "ts_ms": 1779441857062,
       "strategy_id": "btc-momentum-v3",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01472",
-      "ts_ms": 1779441827631,
+      "decision_id": "dec-02087",
+      "ts_ms": 1779441857062,
       "strategy_id": "eth-mean-reversion",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
       "reason": "Band=watch score=0.03"
     },
     {
-      "decision_id": "dec-01473",
-      "ts_ms": 1779441827631,
+      "decision_id": "dec-02088",
+      "ts_ms": 1779441857062,
       "strategy_id": "sol-breakout-alpha",
       "gate_name": "conviction_gate",
       "outcome": "BLOCK",
@@ -929,7 +930,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778837027631,
+      "created_at_ms": 1778837057062,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -943,7 +944,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778837027631,
+      "created_at_ms": 1778837057062,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -957,7 +958,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778837027631,
+      "created_at_ms": 1778837057062,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -971,7 +972,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778837027631,
+      "created_at_ms": 1778837057062,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -985,7 +986,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778837027631,
+      "created_at_ms": 1778837057062,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -999,7 +1000,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778837027631,
+      "created_at_ms": 1778837057062,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -1013,7 +1014,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778837027631,
+      "created_at_ms": 1778837057062,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -1027,7 +1028,7 @@
       "trade_enabled": false,
       "withdraw_enabled": false,
       "read_only": true,
-      "created_at_ms": 1778837027631,
+      "created_at_ms": 1778837057062,
       "expires_at_ms": null,
       "is_active": true,
       "source": "seed"
@@ -1035,203 +1036,203 @@
   ],
   "memory_records": [
     {
-      "memory_id": "mem-00506",
-      "strategy_id": "btc-momentum-v3",
-      "pattern_type": "BEARISH_PATTERN",
-      "description": "C509: BEARISH trend=0.32 contradiction=0.00",
-      "confidence": 0.33,
-      "last_seen_ms": 1779441281311,
-      "sample_count": 479,
-      "usable_for_live": false
-    },
-    {
-      "memory_id": "mem-00507",
+      "memory_id": "mem-00665",
       "strategy_id": "eth-mean-reversion",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C509: BEARISH trend=0.34 contradiction=0.00",
+      "description": "C719: BEARISH trend=0.34 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441281311,
-      "sample_count": 479,
+      "last_seen_ms": 1779441298784,
+      "sample_count": 683,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00508",
+      "memory_id": "mem-00666",
       "strategy_id": "btc-momentum-v3",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C510: BEARISH trend=0.32 contradiction=0.00",
+      "description": "C720: BEARISH trend=0.33 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441326890,
-      "sample_count": 480,
+      "last_seen_ms": 1779441332573,
+      "sample_count": 684,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00509",
+      "memory_id": "mem-00667",
       "strategy_id": "eth-mean-reversion",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C510: BEARISH trend=0.34 contradiction=0.00",
+      "description": "C720: BEARISH trend=0.34 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441326890,
-      "sample_count": 480,
+      "last_seen_ms": 1779441332573,
+      "sample_count": 684,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00510",
+      "memory_id": "mem-00668",
       "strategy_id": "btc-momentum-v3",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C511: BEARISH trend=0.33 contradiction=0.00",
+      "description": "C721: BEARISH trend=0.33 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441367117,
-      "sample_count": 481,
+      "last_seen_ms": 1779441376810,
+      "sample_count": 685,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00511",
+      "memory_id": "mem-00669",
       "strategy_id": "eth-mean-reversion",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C511: BEARISH trend=0.35 contradiction=0.00",
+      "description": "C721: BEARISH trend=0.35 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441367117,
-      "sample_count": 481,
+      "last_seen_ms": 1779441376810,
+      "sample_count": 685,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00512",
+      "memory_id": "mem-00670",
       "strategy_id": "btc-momentum-v3",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C512: BEARISH trend=0.33 contradiction=0.00",
+      "description": "C722: BEARISH trend=0.34 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441414986,
-      "sample_count": 482,
+      "last_seen_ms": 1779441424343,
+      "sample_count": 686,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00513",
+      "memory_id": "mem-00671",
       "strategy_id": "eth-mean-reversion",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C512: BEARISH trend=0.35 contradiction=0.00",
+      "description": "C722: BEARISH trend=0.35 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441414986,
-      "sample_count": 482,
+      "last_seen_ms": 1779441424343,
+      "sample_count": 686,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00514",
+      "memory_id": "mem-00672",
       "strategy_id": "btc-momentum-v3",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C513: BEARISH trend=0.34 contradiction=0.00",
+      "description": "C723: BEARISH trend=0.34 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441458605,
-      "sample_count": 483,
+      "last_seen_ms": 1779441470946,
+      "sample_count": 687,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00515",
+      "memory_id": "mem-00673",
       "strategy_id": "eth-mean-reversion",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C513: BEARISH trend=0.35 contradiction=0.00",
+      "description": "C723: BEARISH trend=0.34 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441458605,
-      "sample_count": 483,
+      "last_seen_ms": 1779441470946,
+      "sample_count": 687,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00516",
+      "memory_id": "mem-00674",
       "strategy_id": "btc-momentum-v3",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C514: BEARISH trend=0.33 contradiction=0.00",
+      "description": "C724: BEARISH trend=0.33 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441514721,
-      "sample_count": 484,
+      "last_seen_ms": 1779441517947,
+      "sample_count": 688,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00517",
+      "memory_id": "mem-00675",
       "strategy_id": "eth-mean-reversion",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C514: BEARISH trend=0.34 contradiction=0.00",
+      "description": "C724: BEARISH trend=0.34 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441514721,
-      "sample_count": 484,
+      "last_seen_ms": 1779441517947,
+      "sample_count": 688,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00518",
+      "memory_id": "mem-00676",
       "strategy_id": "btc-momentum-v3",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C515: BEARISH trend=0.33 contradiction=0.00",
+      "description": "C725: BEARISH trend=0.33 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441560037,
-      "sample_count": 485,
+      "last_seen_ms": 1779441566826,
+      "sample_count": 689,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00519",
+      "memory_id": "mem-00677",
       "strategy_id": "eth-mean-reversion",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C515: BEARISH trend=0.34 contradiction=0.00",
+      "description": "C725: BEARISH trend=0.34 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441560037,
-      "sample_count": 485,
+      "last_seen_ms": 1779441566826,
+      "sample_count": 689,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00520",
+      "memory_id": "mem-00678",
       "strategy_id": "btc-momentum-v3",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C516: BEARISH trend=0.35 contradiction=0.00",
+      "description": "C726: BEARISH trend=0.34 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441610610,
-      "sample_count": 486,
+      "last_seen_ms": 1779441587360,
+      "sample_count": 690,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00521",
+      "memory_id": "mem-00679",
       "strategy_id": "eth-mean-reversion",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C516: BEARISH trend=0.35 contradiction=0.00",
+      "description": "C726: BEARISH trend=0.35 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441610610,
-      "sample_count": 486,
+      "last_seen_ms": 1779441587360,
+      "sample_count": 690,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00522",
+      "memory_id": "mem-00680",
       "strategy_id": "btc-momentum-v3",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C517: BEARISH trend=0.34 contradiction=0.00",
+      "description": "C727: BEARISH trend=0.34 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441648516,
-      "sample_count": 487,
+      "last_seen_ms": 1779441623446,
+      "sample_count": 691,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00523",
+      "memory_id": "mem-00681",
       "strategy_id": "eth-mean-reversion",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C517: BEARISH trend=0.35 contradiction=0.00",
+      "description": "C727: BEARISH trend=0.35 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441648516,
-      "sample_count": 487,
+      "last_seen_ms": 1779441623446,
+      "sample_count": 691,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00524",
+      "memory_id": "mem-00682",
       "strategy_id": "btc-momentum-v3",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C518: BEARISH trend=0.34 contradiction=0.00",
+      "description": "C728: BEARISH trend=0.34 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441689398,
-      "sample_count": 488,
+      "last_seen_ms": 1779441673656,
+      "sample_count": 692,
       "usable_for_live": false
     },
     {
-      "memory_id": "mem-00525",
+      "memory_id": "mem-00683",
       "strategy_id": "eth-mean-reversion",
       "pattern_type": "BEARISH_PATTERN",
-      "description": "C518: BEARISH trend=0.35 contradiction=0.00",
+      "description": "C728: BEARISH trend=0.35 contradiction=0.00",
       "confidence": 0.33,
-      "last_seen_ms": 1779441689398,
-      "sample_count": 488,
+      "last_seen_ms": 1779441673656,
+      "sample_count": 692,
+      "usable_for_live": false
+    },
+    {
+      "memory_id": "mem-00684",
+      "strategy_id": "btc-momentum-v3",
+      "pattern_type": "BEARISH_PATTERN",
+      "description": "C729: BEARISH trend=0.35 contradiction=0.00",
+      "confidence": 0.33,
+      "last_seen_ms": 1779441715940,
+      "sample_count": 693,
       "usable_for_live": false
     }
   ]

@@ -234,3 +234,4 @@ panel/api/vault.db
 panel/api/vault.db-*
 vault.db
 vault.db-*
+.opencode/\n.playwright-mcp/\ndeepseek_proxy.py
