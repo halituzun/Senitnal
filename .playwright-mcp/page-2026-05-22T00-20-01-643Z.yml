@@ -1,0 +1,93 @@
+- generic [ref=e16]:
+  - navigation [ref=e17]:
+    - generic [ref=e18]:
+      - generic [ref=e19]: ◈
+      - generic [ref=e20]: Senitnal
+    - generic [ref=e21]:
+      - link "Dashboard" [ref=e22] [cursor=pointer]:
+        - /url: /dashboard
+      - generic [ref=e23]: Intelligence
+      - link "Evidence" [active] [ref=e24] [cursor=pointer]:
+        - /url: /evidence
+      - link "Ledger" [ref=e25] [cursor=pointer]:
+        - /url: /observer-ledger
+      - link "Ingress" [ref=e26] [cursor=pointer]:
+        - /url: /ingress-preview
+      - link "Sources" [ref=e27] [cursor=pointer]:
+        - /url: /sources
+      - generic [ref=e28]: Decisions
+      - link "Decisions" [ref=e29] [cursor=pointer]:
+        - /url: /decisions
+      - link "Memory" [ref=e30] [cursor=pointer]:
+        - /url: /memory-recall
+      - link "Replay" [ref=e31] [cursor=pointer]:
+        - /url: /replay
+      - link "Portfolio" [ref=e32] [cursor=pointer]:
+        - /url: /portfolio
+      - generic [ref=e33]: System
+      - link "Health" [ref=e34] [cursor=pointer]:
+        - /url: /health
+      - link "Policy" [ref=e35] [cursor=pointer]:
+        - /url: /policy
+      - link "Audit Trail" [ref=e36] [cursor=pointer]:
+        - /url: /audit-trail
+      - generic [ref=e37]: Adapters
+      - link "Adapters" [ref=e38] [cursor=pointer]:
+        - /url: /adapters
+      - link "Trust" [ref=e39] [cursor=pointer]:
+        - /url: /adapter-trust
+      - link "Sources" [ref=e40] [cursor=pointer]:
+        - /url: /source-trust
+      - link "Exchanges" [ref=e41] [cursor=pointer]:
+        - /url: /exchanges
+      - generic [ref=e42]: Config
+      - link "Credentials" [ref=e43] [cursor=pointer]:
+        - /url: /credentials
+      - link "Ideas" [ref=e44] [cursor=pointer]:
+        - /url: /ideas
+    - generic [ref=e45]:
+      - generic [ref=e46]: panel@senitnal.local
+      - button "Sign out" [ref=e47] [cursor=pointer]
+  - main [ref=e48]:
+    - generic [ref=e527]:
+      - generic [ref=e528]:
+        - generic [ref=e529]:
+          - generic [ref=e530]: Evidence
+          - generic [ref=e531]: Signal evidence bundles
+        - button "Refresh" [ref=e532] [cursor=pointer]
+      - combobox [ref=e534]:
+        - option "All strategies" [selected]
+        - option "btc-momentum-v3"
+        - option "eth-mean-reversion"
+        - option "sol-breakout-alpha"
+      - table [ref=e535]:
+        - rowgroup [ref=e536]:
+          - row "Time Strategy Message" [ref=e537]:
+            - columnheader "Time" [ref=e538]
+            - columnheader "Strategy" [ref=e539]
+            - columnheader "Message" [ref=e540]
+        - rowgroup [ref=e541]:
+          - 'row "03:16:22 btc-momentum-v3 Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e542]':
+            - cell "03:16:22" [ref=e543]
+            - cell "btc-momentum-v3" [ref=e544]
+            - 'cell "Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e545]'
+          - 'row "03:16:22 eth-mean-reversion Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e546]':
+            - cell "03:16:22" [ref=e547]
+            - cell "eth-mean-reversion" [ref=e548]
+            - 'cell "Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e549]'
+          - 'row "03:16:22 sol-breakout-alpha Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e550]':
+            - cell "03:16:22" [ref=e551]
+            - cell "sol-breakout-alpha" [ref=e552]
+            - 'cell "Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e553]'
+          - 'row "03:16:58 btc-momentum-v3 Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e554]':
+            - cell "03:16:58" [ref=e555]
+            - cell "btc-momentum-v3" [ref=e556]
+            - 'cell "Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e557]'
+          - 'row "03:16:58 eth-mean-reversion Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e558]':
+            - cell "03:16:58" [ref=e559]
+            - cell "eth-mean-reversion" [ref=e560]
+            - 'cell "Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e561]'
+          - 'row "03:16:58 sol-breakout-alpha Evidence bundle: trend=0.36 contradiction=0.00 sources_agreed=0.40" [ref=e562]':
+            - cell "03:16:58" [ref=e563]
+            - cell "sol-breakout-alpha" [ref=e564]
+            - 'cell "Evidence bundle: trend=0.36 contradiction=0.00 sources_agreed=0.40" [ref=e565]'

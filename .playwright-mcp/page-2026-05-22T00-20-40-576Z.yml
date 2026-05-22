@@ -1,0 +1,96 @@
+- generic [ref=e16]:
+  - navigation [ref=e17]:
+    - generic [ref=e18]:
+      - generic [ref=e19]: ◈
+      - generic [ref=e20]: Senitnal
+    - generic [ref=e21]:
+      - link "Dashboard" [ref=e22] [cursor=pointer]:
+        - /url: /dashboard
+      - generic [ref=e23]: Intelligence
+      - link "Evidence" [ref=e24] [cursor=pointer]:
+        - /url: /evidence
+      - link "Ledger" [ref=e25] [cursor=pointer]:
+        - /url: /observer-ledger
+      - link "Ingress" [active] [ref=e26] [cursor=pointer]:
+        - /url: /ingress-preview
+      - link "Sources" [ref=e27] [cursor=pointer]:
+        - /url: /sources
+      - generic [ref=e28]: Decisions
+      - link "Decisions" [ref=e29] [cursor=pointer]:
+        - /url: /decisions
+      - link "Memory" [ref=e30] [cursor=pointer]:
+        - /url: /memory-recall
+      - link "Replay" [ref=e31] [cursor=pointer]:
+        - /url: /replay
+      - link "Portfolio" [ref=e32] [cursor=pointer]:
+        - /url: /portfolio
+      - generic [ref=e33]: System
+      - link "Health" [ref=e34] [cursor=pointer]:
+        - /url: /health
+      - link "Policy" [ref=e35] [cursor=pointer]:
+        - /url: /policy
+      - link "Audit Trail" [ref=e36] [cursor=pointer]:
+        - /url: /audit-trail
+      - generic [ref=e37]: Adapters
+      - link "Adapters" [ref=e38] [cursor=pointer]:
+        - /url: /adapters
+      - link "Trust" [ref=e39] [cursor=pointer]:
+        - /url: /adapter-trust
+      - link "Sources" [ref=e40] [cursor=pointer]:
+        - /url: /source-trust
+      - link "Exchanges" [ref=e41] [cursor=pointer]:
+        - /url: /exchanges
+      - generic [ref=e42]: Config
+      - link "Credentials" [ref=e43] [cursor=pointer]:
+        - /url: /credentials
+      - link "Ideas" [ref=e44] [cursor=pointer]:
+        - /url: /ideas
+    - generic [ref=e45]:
+      - generic [ref=e46]: panel@senitnal.local
+      - button "Sign out" [ref=e47] [cursor=pointer]
+  - main [ref=e48]:
+    - generic [ref=e621]:
+      - generic [ref=e622]:
+        - generic [ref=e623]:
+          - generic [ref=e624]: Ingress Preview
+          - generic [ref=e625]: Latest intelligence ingress compilation
+        - button "Refresh" [ref=e626] [cursor=pointer]
+      - generic [ref=e627]:
+        - generic [ref=e628]:
+          - generic [ref=e629]: Total Adapters
+          - generic [ref=e630]: "8"
+        - generic [ref=e631]:
+          - generic [ref=e632]: Active
+          - generic [ref=e633]: "8"
+        - generic [ref=e634]:
+          - generic [ref=e635]: Healthy
+          - generic [ref=e636]: "8"
+        - generic [ref=e637]:
+          - generic [ref=e638]: Stale
+          - generic [ref=e639]: "0"
+      - generic [ref=e640]: Latest Compilation
+      - generic [ref=e641]:
+        - generic [ref=e642]: 22.05.2026 03:16:58
+        - generic [ref=e643]: "Ingress compilation: 8 sources checked, 7 passed, 1 stale-suppressed"
+      - generic [ref=e644]: Recent Compilations
+      - table [ref=e645]:
+        - rowgroup [ref=e646]:
+          - row "Time Message" [ref=e647]:
+            - columnheader "Time" [ref=e648]
+            - columnheader "Message" [ref=e649]
+        - rowgroup [ref=e650]:
+          - 'row "22.05.2026 03:16:58 Ingress compilation: 8 sources checked, 7 passed, 1 stale-suppressed" [ref=e651]':
+            - cell "22.05.2026 03:16:58" [ref=e652]
+            - 'cell "Ingress compilation: 8 sources checked, 7 passed, 1 stale-suppressed" [ref=e653]'
+          - 'row "22.05.2026 03:16:58 Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed" [ref=e654]':
+            - cell "22.05.2026 03:16:58" [ref=e655]
+            - 'cell "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed" [ref=e656]'
+          - 'row "22.05.2026 03:16:58 Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed" [ref=e657]':
+            - cell "22.05.2026 03:16:58" [ref=e658]
+            - 'cell "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed" [ref=e659]'
+          - 'row "22.05.2026 03:16:22 Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed" [ref=e660]':
+            - cell "22.05.2026 03:16:22" [ref=e661]
+            - 'cell "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed" [ref=e662]'
+          - 'row "22.05.2026 03:16:22 Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed" [ref=e663]':
+            - cell "22.05.2026 03:16:22" [ref=e664]
+            - 'cell "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed" [ref=e665]'

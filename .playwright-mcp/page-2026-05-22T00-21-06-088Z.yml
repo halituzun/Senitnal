@@ -1,0 +1,86 @@
+- generic [ref=e16]:
+  - navigation [ref=e17]:
+    - generic [ref=e18]:
+      - generic [ref=e19]: ◈
+      - generic [ref=e20]: Senitnal
+    - generic [ref=e21]:
+      - link "Dashboard" [ref=e22] [cursor=pointer]:
+        - /url: /dashboard
+      - generic [ref=e23]: Intelligence
+      - link "Evidence" [ref=e24] [cursor=pointer]:
+        - /url: /evidence
+      - link "Ledger" [ref=e25] [cursor=pointer]:
+        - /url: /observer-ledger
+      - link "Ingress" [ref=e26] [cursor=pointer]:
+        - /url: /ingress-preview
+      - link "Sources" [ref=e27] [cursor=pointer]:
+        - /url: /sources
+      - generic [ref=e28]: Decisions
+      - link "Decisions" [ref=e29] [cursor=pointer]:
+        - /url: /decisions
+      - link "Memory" [ref=e30] [cursor=pointer]:
+        - /url: /memory-recall
+      - link "Replay" [ref=e31] [cursor=pointer]:
+        - /url: /replay
+      - link "Portfolio" [ref=e32] [cursor=pointer]:
+        - /url: /portfolio
+      - generic [ref=e33]: System
+      - link "Health" [ref=e34] [cursor=pointer]:
+        - /url: /health
+      - link "Policy" [ref=e35] [cursor=pointer]:
+        - /url: /policy
+      - link "Audit Trail" [ref=e36] [cursor=pointer]:
+        - /url: /audit-trail
+      - generic [ref=e37]: Adapters
+      - link "Adapters" [ref=e38] [cursor=pointer]:
+        - /url: /adapters
+      - link "Trust" [ref=e39] [cursor=pointer]:
+        - /url: /adapter-trust
+      - link "Sources" [ref=e40] [cursor=pointer]:
+        - /url: /source-trust
+      - link "Exchanges" [active] [ref=e41] [cursor=pointer]:
+        - /url: /exchanges
+      - generic [ref=e42]: Config
+      - link "Credentials" [ref=e43] [cursor=pointer]:
+        - /url: /credentials
+      - link "Ideas" [ref=e44] [cursor=pointer]:
+        - /url: /ideas
+    - generic [ref=e45]:
+      - generic [ref=e46]: panel@senitnal.local
+      - button "Sign out" [ref=e47] [cursor=pointer]
+  - main [ref=e48]:
+    - generic [ref=e765]:
+      - generic [ref=e766]:
+        - generic [ref=e767]:
+          - generic [ref=e768]: Exchanges
+          - generic [ref=e769]: Read-only exchange connections — no trade access
+        - button "Refresh" [ref=e770] [cursor=pointer]
+      - combobox [ref=e772]:
+        - option "All status" [selected]
+        - option "Operational"
+        - option "Degraded"
+        - option "Down"
+      - table [ref=e773]:
+        - rowgroup [ref=e774]:
+          - row "Exchange Status Latency Flags" [ref=e775]:
+            - columnheader "Exchange" [ref=e776]
+            - columnheader "Status" [ref=e777]
+            - columnheader "Latency" [ref=e778]
+            - columnheader "Flags" [ref=e779]
+        - rowgroup [ref=e780]:
+          - row "Binance binance OPERATIONAL 18ms read-only · no-trade" [ref=e781]:
+            - cell "Binance binance" [ref=e782]:
+              - generic [ref=e783]: Binance
+              - generic [ref=e784]: binance
+            - cell "OPERATIONAL" [ref=e785]:
+              - generic [ref=e786]: OPERATIONAL
+            - cell "18ms" [ref=e787]
+            - cell "read-only · no-trade" [ref=e788]
+          - row "BTCTürk btcturk OPERATIONAL 55ms read-only · no-trade" [ref=e789]:
+            - cell "BTCTürk btcturk" [ref=e790]:
+              - generic [ref=e791]: BTCTürk
+              - generic [ref=e792]: btcturk
+            - cell "OPERATIONAL" [ref=e793]:
+              - generic [ref=e794]: OPERATIONAL
+            - cell "55ms" [ref=e795]
+            - cell "read-only · no-trade" [ref=e796]

@@ -1,0 +1,92 @@
+- generic [ref=e16]:
+  - navigation [ref=e17]:
+    - generic [ref=e18]:
+      - generic [ref=e19]: ◈
+      - generic [ref=e20]: Senitnal
+    - generic [ref=e21]:
+      - link "Dashboard" [ref=e22] [cursor=pointer]:
+        - /url: /dashboard
+      - generic [ref=e23]: Intelligence
+      - link "Evidence" [ref=e24] [cursor=pointer]:
+        - /url: /evidence
+      - link "Ledger" [ref=e25] [cursor=pointer]:
+        - /url: /observer-ledger
+      - link "Ingress" [ref=e26] [cursor=pointer]:
+        - /url: /ingress-preview
+      - link "Sources" [ref=e27] [cursor=pointer]:
+        - /url: /sources
+      - generic [ref=e28]: Decisions
+      - link "Decisions" [ref=e29] [cursor=pointer]:
+        - /url: /decisions
+      - link "Memory" [ref=e30] [cursor=pointer]:
+        - /url: /memory-recall
+      - link "Replay" [ref=e31] [cursor=pointer]:
+        - /url: /replay
+      - link "Portfolio" [ref=e32] [cursor=pointer]:
+        - /url: /portfolio
+      - generic [ref=e33]: System
+      - link "Health" [ref=e34] [cursor=pointer]:
+        - /url: /health
+      - link "Policy" [ref=e35] [cursor=pointer]:
+        - /url: /policy
+      - link "Audit Trail" [active] [ref=e36] [cursor=pointer]:
+        - /url: /audit-trail
+      - generic [ref=e37]: Adapters
+      - link "Adapters" [ref=e38] [cursor=pointer]:
+        - /url: /adapters
+      - link "Trust" [ref=e39] [cursor=pointer]:
+        - /url: /adapter-trust
+      - link "Sources" [ref=e40] [cursor=pointer]:
+        - /url: /source-trust
+      - link "Exchanges" [ref=e41] [cursor=pointer]:
+        - /url: /exchanges
+      - generic [ref=e42]: Config
+      - link "Credentials" [ref=e43] [cursor=pointer]:
+        - /url: /credentials
+      - link "Ideas" [ref=e44] [cursor=pointer]:
+        - /url: /ideas
+    - generic [ref=e45]:
+      - generic [ref=e46]: panel@senitnal.local
+      - button "Sign out" [ref=e47] [cursor=pointer]
+  - main [ref=e48]:
+    - generic [ref=e666]:
+      - generic [ref=e667]:
+        - generic [ref=e668]:
+          - generic [ref=e669]: Audit Trail
+          - generic [ref=e670]: Security and policy events
+        - button "Refresh" [ref=e671] [cursor=pointer]
+      - combobox [ref=e673]:
+        - option "All severities" [selected]
+        - option "WARN"
+        - option "ERROR"
+      - table [ref=e674]:
+        - rowgroup [ref=e675]:
+          - row "Time Severity Type Message" [ref=e676]:
+            - columnheader "Time" [ref=e677]
+            - columnheader "Severity" [ref=e678]
+            - columnheader "Type" [ref=e679]
+            - columnheader "Message" [ref=e680]
+        - rowgroup [ref=e681]:
+          - 'row "22.05.2026 03:16:22 INFO CONSTITUTION_AUDIT Constitutional audit: 0 violations in last 628 decisions. All invariants hold." [ref=e682]':
+            - cell "22.05.2026 03:16:22" [ref=e683]
+            - cell "INFO" [ref=e684]:
+              - generic [ref=e685]: INFO
+            - cell "CONSTITUTION_AUDIT" [ref=e686]
+            - 'cell "Constitutional audit: 0 violations in last 628 decisions. All invariants hold." [ref=e687]'
+          - 'row "22.05.2026 03:16:22 INFO CONSTITUTION_AUDIT Constitutional audit: 0 violations in last 629 decisions. All invariants hold." [ref=e688]':
+            - cell "22.05.2026 03:16:22" [ref=e689]
+            - cell "INFO" [ref=e690]:
+              - generic [ref=e691]: INFO
+            - cell "CONSTITUTION_AUDIT" [ref=e692]
+            - 'cell "Constitutional audit: 0 violations in last 629 decisions. All invariants hold." [ref=e693]'
+          - 'row "22.05.2026 03:16:22 INFO CONSTITUTION_AUDIT Constitutional audit: 0 violations in last 630 decisions. All invariants hold." [ref=e694]':
+            - cell "22.05.2026 03:16:22" [ref=e695]
+            - cell "INFO" [ref=e696]:
+              - generic [ref=e697]: INFO
+            - cell "CONSTITUTION_AUDIT" [ref=e698]
+            - 'cell "Constitutional audit: 0 violations in last 630 decisions. All invariants hold." [ref=e699]'
+      - generic [ref=e700]:
+        - generic [ref=e701]: 3 entries
+        - button "‹" [disabled] [ref=e702]
+        - generic [ref=e703]: 1 / 1
+        - button "›" [disabled] [ref=e704]

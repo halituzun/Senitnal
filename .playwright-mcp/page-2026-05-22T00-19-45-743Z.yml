@@ -1,0 +1,167 @@
+- generic [ref=e16]:
+  - navigation [ref=e17]:
+    - generic [ref=e18]:
+      - generic [ref=e19]: ◈
+      - generic [ref=e20]: Senitnal
+    - generic [ref=e21]:
+      - link "Dashboard" [ref=e22] [cursor=pointer]:
+        - /url: /dashboard
+      - generic [ref=e23]: Intelligence
+      - link "Evidence" [ref=e24] [cursor=pointer]:
+        - /url: /evidence
+      - link "Ledger" [ref=e25] [cursor=pointer]:
+        - /url: /observer-ledger
+      - link "Ingress" [ref=e26] [cursor=pointer]:
+        - /url: /ingress-preview
+      - link "Sources" [ref=e27] [cursor=pointer]:
+        - /url: /sources
+      - generic [ref=e28]: Decisions
+      - link "Decisions" [ref=e29] [cursor=pointer]:
+        - /url: /decisions
+      - link "Memory" [ref=e30] [cursor=pointer]:
+        - /url: /memory-recall
+      - link "Replay" [ref=e31] [cursor=pointer]:
+        - /url: /replay
+      - link "Portfolio" [active] [ref=e32] [cursor=pointer]:
+        - /url: /portfolio
+      - generic [ref=e33]: System
+      - link "Health" [ref=e34] [cursor=pointer]:
+        - /url: /health
+      - link "Policy" [ref=e35] [cursor=pointer]:
+        - /url: /policy
+      - link "Audit Trail" [ref=e36] [cursor=pointer]:
+        - /url: /audit-trail
+      - generic [ref=e37]: Adapters
+      - link "Adapters" [ref=e38] [cursor=pointer]:
+        - /url: /adapters
+      - link "Trust" [ref=e39] [cursor=pointer]:
+        - /url: /adapter-trust
+      - link "Sources" [ref=e40] [cursor=pointer]:
+        - /url: /source-trust
+      - link "Exchanges" [ref=e41] [cursor=pointer]:
+        - /url: /exchanges
+      - generic [ref=e42]: Config
+      - link "Credentials" [ref=e43] [cursor=pointer]:
+        - /url: /credentials
+      - link "Ideas" [ref=e44] [cursor=pointer]:
+        - /url: /ideas
+    - generic [ref=e45]:
+      - generic [ref=e46]: panel@senitnal.local
+      - button "Sign out" [ref=e47] [cursor=pointer]
+  - main [ref=e48]:
+    - generic [ref=e192]:
+      - generic [ref=e193]:
+        - generic [ref=e194]:
+          - generic [ref=e195]: Strategy Portfolio
+          - generic [ref=e196]: Live production strategy lifecycle & allocation
+        - button "Refresh" [ref=e197] [cursor=pointer]
+      - generic [ref=e198]:
+        - generic [ref=e199]:
+          - generic [ref=e200]: Capital
+          - generic [ref=e201]: 7.500 / 10.000 TRY
+          - generic [ref=e202]: 75.0% allocated
+        - generic [ref=e203]:
+          - generic [ref=e204]: Active Strategies
+          - generic [ref=e205]: "3"
+          - generic [ref=e206]: 1 paused
+        - generic [ref=e207]:
+          - generic [ref=e208]: Max Daily Loss
+          - generic [ref=e209]: 500 TRY
+          - generic [ref=e210]: 5 max open orders
+        - generic [ref=e211]:
+          - generic [ref=e212]: Kill Switch
+          - generic [ref=e213]: Inactive
+          - generic [ref=e214]: Max correlation 0.7
+      - generic [ref=e215]:
+        - generic [ref=e216]:
+          - generic [ref=e217]: Strategies
+          - generic [ref=e218]:
+            - combobox [ref=e219]:
+              - option "All States" [selected]
+              - option "Active Live"
+              - option "Limited Live"
+              - option "Paused"
+              - option "Rollback Required"
+            - combobox [ref=e220]:
+              - option "All" [selected]
+              - option "Enabled"
+              - option "Disabled"
+        - table [ref=e221]:
+          - rowgroup [ref=e222]:
+            - row "Strategy Lifecycle Allocated (TRY) Edge Risk Confidence Quality P&L Today P&L Week" [ref=e223]:
+              - columnheader "Strategy" [ref=e224]
+              - columnheader "Lifecycle" [ref=e225]
+              - columnheader "Allocated (TRY)" [ref=e226]
+              - columnheader "Edge" [ref=e227]
+              - columnheader "Risk" [ref=e228]
+              - columnheader "Confidence" [ref=e229]
+              - columnheader "Quality" [ref=e230]
+              - columnheader "P&L Today" [ref=e231]
+              - columnheader "P&L Week" [ref=e232]
+          - rowgroup [ref=e233]:
+            - row "BTC Momentum v3 btc-momentum-v3 ACTIVE LIVE 3.500 0.35 0.00 0.33 0.14 -7.4 -7.4" [ref=e234]:
+              - cell "BTC Momentum v3 btc-momentum-v3" [ref=e235]:
+                - generic [ref=e236]: BTC Momentum v3
+                - generic [ref=e237]: btc-momentum-v3
+              - cell "ACTIVE LIVE" [ref=e238]:
+                - generic [ref=e239]: ACTIVE LIVE
+              - cell "3.500" [ref=e240]
+              - cell "0.35" [ref=e241]
+              - cell "0.00" [ref=e242]
+              - cell "0.33" [ref=e243]
+              - cell "0.14" [ref=e244]
+              - cell "-7.4" [ref=e245]
+              - cell "-7.4" [ref=e246]
+            - row "ETH Mean Reversion eth-mean-reversion ACTIVE LIVE 2.800 0.35 0.00 0.33 0.14 +30.0 +30.0" [ref=e247]:
+              - cell "ETH Mean Reversion eth-mean-reversion" [ref=e248]:
+                - generic [ref=e249]: ETH Mean Reversion
+                - generic [ref=e250]: eth-mean-reversion
+              - cell "ACTIVE LIVE" [ref=e251]:
+                - generic [ref=e252]: ACTIVE LIVE
+              - cell "2.800" [ref=e253]
+              - cell "0.35" [ref=e254]
+              - cell "0.00" [ref=e255]
+              - cell "0.33" [ref=e256]
+              - cell "0.14" [ref=e257]
+              - cell "+30.0" [ref=e258]
+              - cell "+30.0" [ref=e259]
+            - row "SOL Breakout Alpha sol-breakout-alpha LIMITED LIVE 1.200 0.35 0.01 0.33 0.17 -12.6 -12.6" [ref=e260]:
+              - cell "SOL Breakout Alpha sol-breakout-alpha" [ref=e261]:
+                - generic [ref=e262]: SOL Breakout Alpha
+                - generic [ref=e263]: sol-breakout-alpha
+              - cell "LIMITED LIVE" [ref=e264]:
+                - generic [ref=e265]: LIMITED LIVE
+              - cell "1.200" [ref=e266]
+              - cell "0.35" [ref=e267]
+              - cell "0.01" [ref=e268]
+              - cell "0.33" [ref=e269]
+              - cell "0.17" [ref=e270]
+              - cell "-12.6" [ref=e271]
+              - cell "-12.6" [ref=e272]
+            - row "BNB Cross-Exchange Arb bnb-arb-v1 PAUSED 0 0.35 0.50 0.45 0.40 0.0 0.0" [ref=e273]:
+              - cell "BNB Cross-Exchange Arb bnb-arb-v1" [ref=e274]:
+                - generic [ref=e275]: BNB Cross-Exchange Arb
+                - generic [ref=e276]: bnb-arb-v1
+              - cell "PAUSED" [ref=e277]:
+                - generic [ref=e278]: PAUSED
+              - cell "0" [ref=e279]
+              - cell "0.35" [ref=e280]
+              - cell "0.50" [ref=e281]
+              - cell "0.45" [ref=e282]
+              - cell "0.40" [ref=e283]
+              - cell "0.0" [ref=e284]
+              - cell "0.0" [ref=e285]
+            - row "XRP Sentiment v2 xrp-sentiment-v2 ROLLBACK REQUIRED 0 0.20 0.70 0.30 0.20 0.0 0.0" [ref=e286]:
+              - cell "XRP Sentiment v2 xrp-sentiment-v2" [ref=e287]:
+                - generic [ref=e288]: XRP Sentiment v2
+                - generic [ref=e289]: xrp-sentiment-v2
+              - cell "ROLLBACK REQUIRED" [ref=e290]:
+                - generic [ref=e291]: ROLLBACK REQUIRED
+              - cell "0" [ref=e292]
+              - cell "0.20" [ref=e293]
+              - cell "0.70" [ref=e294]
+              - cell "0.30" [ref=e295]
+              - cell "0.20" [ref=e296]
+              - cell "0.0" [ref=e297]
+              - cell "0.0" [ref=e298]
+        - generic [ref=e299]: 5 strategies

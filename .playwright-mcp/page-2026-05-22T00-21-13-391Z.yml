@@ -1,0 +1,213 @@
+- generic [ref=e16]:
+  - navigation [ref=e17]:
+    - generic [ref=e18]:
+      - generic [ref=e19]: ◈
+      - generic [ref=e20]: Senitnal
+    - generic [ref=e21]:
+      - link "Dashboard" [ref=e22] [cursor=pointer]:
+        - /url: /dashboard
+      - generic [ref=e23]: Intelligence
+      - link "Evidence" [ref=e24] [cursor=pointer]:
+        - /url: /evidence
+      - link "Ledger" [ref=e25] [cursor=pointer]:
+        - /url: /observer-ledger
+      - link "Ingress" [ref=e26] [cursor=pointer]:
+        - /url: /ingress-preview
+      - link "Sources" [ref=e27] [cursor=pointer]:
+        - /url: /sources
+      - generic [ref=e28]: Decisions
+      - link "Decisions" [ref=e29] [cursor=pointer]:
+        - /url: /decisions
+      - link "Memory" [ref=e30] [cursor=pointer]:
+        - /url: /memory-recall
+      - link "Replay" [ref=e31] [cursor=pointer]:
+        - /url: /replay
+      - link "Portfolio" [ref=e32] [cursor=pointer]:
+        - /url: /portfolio
+      - generic [ref=e33]: System
+      - link "Health" [ref=e34] [cursor=pointer]:
+        - /url: /health
+      - link "Policy" [ref=e35] [cursor=pointer]:
+        - /url: /policy
+      - link "Audit Trail" [ref=e36] [cursor=pointer]:
+        - /url: /audit-trail
+      - generic [ref=e37]: Adapters
+      - link "Adapters" [ref=e38] [cursor=pointer]:
+        - /url: /adapters
+      - link "Trust" [ref=e39] [cursor=pointer]:
+        - /url: /adapter-trust
+      - link "Sources" [ref=e40] [cursor=pointer]:
+        - /url: /source-trust
+      - link "Exchanges" [ref=e41] [cursor=pointer]:
+        - /url: /exchanges
+      - generic [ref=e42]: Config
+      - link "Credentials" [active] [ref=e43] [cursor=pointer]:
+        - /url: /credentials
+      - link "Ideas" [ref=e44] [cursor=pointer]:
+        - /url: /ideas
+    - generic [ref=e45]:
+      - generic [ref=e46]: panel@senitnal.local
+      - button "Sign out" [ref=e47] [cursor=pointer]
+  - main [ref=e48]:
+    - generic [ref=e797]:
+      - generic [ref=e798]:
+        - generic [ref=e799]:
+          - generic [ref=e800]: Credential Vault
+          - generic [ref=e801]: 8 credentials — secrets never shown in full
+        - generic [ref=e802]:
+          - button "Refresh" [ref=e803] [cursor=pointer]
+          - link "+ Add Credential" [ref=e804] [cursor=pointer]:
+            - /url: /credentials/new
+            - button "+ Add Credential" [ref=e805]
+      - generic [ref=e806]:
+        - combobox [ref=e807]:
+          - option "All kinds" [selected]
+          - option "API Key"
+          - option "HMAC Secret"
+          - option "Bearer Token"
+          - option "OAuth2 Client"
+        - combobox [ref=e808]:
+          - option "All status" [selected]
+          - option "Active"
+          - option "Inactive"
+        - button "Clear" [ref=e809] [cursor=pointer]
+      - table [ref=e810]:
+        - rowgroup [ref=e811]:
+          - row "Label Adapter Kind Secret Status Expires Flags" [ref=e812]:
+            - columnheader "Label" [ref=e813]
+            - columnheader "Adapter" [ref=e814]
+            - columnheader "Kind" [ref=e815]
+            - columnheader "Secret" [ref=e816]
+            - columnheader "Status" [ref=e817]
+            - columnheader "Expires" [ref=e818]
+            - columnheader "Flags" [ref=e819]
+            - columnheader [ref=e820]
+        - rowgroup [ref=e821]:
+          - row "TAAPI Pro cred-taapi-pro taapi-pro api_key ••••••••••••••••xxxx Active Never read-only · no-trade · no-withdraw Edit" [ref=e822]:
+            - cell "TAAPI Pro cred-taapi-pro" [ref=e823]:
+              - generic [ref=e824]: TAAPI Pro
+              - generic [ref=e825]: cred-taapi-pro
+            - cell "taapi-pro" [ref=e826]
+            - cell "api_key" [ref=e827]:
+              - generic [ref=e828]: api_key
+            - cell "••••••••••••••••xxxx" [ref=e829]
+            - cell "Active" [ref=e830]:
+              - generic [ref=e831]: Active
+            - cell "Never" [ref=e832]
+            - cell "read-only · no-trade · no-withdraw" [ref=e833]
+            - cell "Edit" [ref=e834]:
+              - link "Edit" [ref=e835] [cursor=pointer]:
+                - /url: /credentials/cred-taapi-pro/edit
+                - button "Edit" [ref=e836]
+          - row "Binance WS cred-binance-ws binance-ws api_key ••••••••••••••••xxxx Active Never read-only · no-trade · no-withdraw Edit" [ref=e837]:
+            - cell "Binance WS cred-binance-ws" [ref=e838]:
+              - generic [ref=e839]: Binance WS
+              - generic [ref=e840]: cred-binance-ws
+            - cell "binance-ws" [ref=e841]
+            - cell "api_key" [ref=e842]:
+              - generic [ref=e843]: api_key
+            - cell "••••••••••••••••xxxx" [ref=e844]
+            - cell "Active" [ref=e845]:
+              - generic [ref=e846]: Active
+            - cell "Never" [ref=e847]
+            - cell "read-only · no-trade · no-withdraw" [ref=e848]
+            - cell "Edit" [ref=e849]:
+              - link "Edit" [ref=e850] [cursor=pointer]:
+                - /url: /credentials/cred-binance-ws/edit
+                - button "Edit" [ref=e851]
+          - row "LunarCrush cred-lunarcrush-social lunarcrush-social api_key ••••••••••••••••xxxx Active Never read-only · no-trade · no-withdraw Edit" [ref=e852]:
+            - cell "LunarCrush cred-lunarcrush-social" [ref=e853]:
+              - generic [ref=e854]: LunarCrush
+              - generic [ref=e855]: cred-lunarcrush-social
+            - cell "lunarcrush-social" [ref=e856]
+            - cell "api_key" [ref=e857]:
+              - generic [ref=e858]: api_key
+            - cell "••••••••••••••••xxxx" [ref=e859]
+            - cell "Active" [ref=e860]:
+              - generic [ref=e861]: Active
+            - cell "Never" [ref=e862]
+            - cell "read-only · no-trade · no-withdraw" [ref=e863]
+            - cell "Edit" [ref=e864]:
+              - link "Edit" [ref=e865] [cursor=pointer]:
+                - /url: /credentials/cred-lunarcrush-social/edit
+                - button "Edit" [ref=e866]
+          - row "CryptoPanic cred-cryptopanic-feed cryptopanic-feed api_key ••••••••••••••••xxxx Active Never read-only · no-trade · no-withdraw Edit" [ref=e867]:
+            - cell "CryptoPanic cred-cryptopanic-feed" [ref=e868]:
+              - generic [ref=e869]: CryptoPanic
+              - generic [ref=e870]: cred-cryptopanic-feed
+            - cell "cryptopanic-feed" [ref=e871]
+            - cell "api_key" [ref=e872]:
+              - generic [ref=e873]: api_key
+            - cell "••••••••••••••••xxxx" [ref=e874]
+            - cell "Active" [ref=e875]:
+              - generic [ref=e876]: Active
+            - cell "Never" [ref=e877]
+            - cell "read-only · no-trade · no-withdraw" [ref=e878]
+            - cell "Edit" [ref=e879]:
+              - link "Edit" [ref=e880] [cursor=pointer]:
+                - /url: /credentials/cred-cryptopanic-feed/edit
+                - button "Edit" [ref=e881]
+          - row "Glassnode cred-glassnode-onchain glassnode-onchain api_key ••••••••••••••••xxxx Active Never read-only · no-trade · no-withdraw Edit" [ref=e882]:
+            - cell "Glassnode cred-glassnode-onchain" [ref=e883]:
+              - generic [ref=e884]: Glassnode
+              - generic [ref=e885]: cred-glassnode-onchain
+            - cell "glassnode-onchain" [ref=e886]
+            - cell "api_key" [ref=e887]:
+              - generic [ref=e888]: api_key
+            - cell "••••••••••••••••xxxx" [ref=e889]
+            - cell "Active" [ref=e890]:
+              - generic [ref=e891]: Active
+            - cell "Never" [ref=e892]
+            - cell "read-only · no-trade · no-withdraw" [ref=e893]
+            - cell "Edit" [ref=e894]:
+              - link "Edit" [ref=e895] [cursor=pointer]:
+                - /url: /credentials/cred-glassnode-onchain/edit
+                - button "Edit" [ref=e896]
+          - row "Coinglass cred-coinglass-futures coinglass-futures api_key ••••••••••••••••xxxx Active Never read-only · no-trade · no-withdraw Edit" [ref=e897]:
+            - cell "Coinglass cred-coinglass-futures" [ref=e898]:
+              - generic [ref=e899]: Coinglass
+              - generic [ref=e900]: cred-coinglass-futures
+            - cell "coinglass-futures" [ref=e901]
+            - cell "api_key" [ref=e902]:
+              - generic [ref=e903]: api_key
+            - cell "••••••••••••••••xxxx" [ref=e904]
+            - cell "Active" [ref=e905]:
+              - generic [ref=e906]: Active
+            - cell "Never" [ref=e907]
+            - cell "read-only · no-trade · no-withdraw" [ref=e908]
+            - cell "Edit" [ref=e909]:
+              - link "Edit" [ref=e910] [cursor=pointer]:
+                - /url: /credentials/cred-coinglass-futures/edit
+                - button "Edit" [ref=e911]
+          - row "Fear & Greed cred-fear-greed-index fear-greed-index api_key ••••••••••••••••xxxx Active Never read-only · no-trade · no-withdraw Edit" [ref=e912]:
+            - cell "Fear & Greed cred-fear-greed-index" [ref=e913]:
+              - generic [ref=e914]: Fear & Greed
+              - generic [ref=e915]: cred-fear-greed-index
+            - cell "fear-greed-index" [ref=e916]
+            - cell "api_key" [ref=e917]:
+              - generic [ref=e918]: api_key
+            - cell "••••••••••••••••xxxx" [ref=e919]
+            - cell "Active" [ref=e920]:
+              - generic [ref=e921]: Active
+            - cell "Never" [ref=e922]
+            - cell "read-only · no-trade · no-withdraw" [ref=e923]
+            - cell "Edit" [ref=e924]:
+              - link "Edit" [ref=e925] [cursor=pointer]:
+                - /url: /credentials/cred-fear-greed-index/edit
+                - button "Edit" [ref=e926]
+          - row "Deribit cred-deribit-options deribit-options api_key ••••••••••••••••xxxx Active Never read-only · no-trade · no-withdraw Edit" [ref=e927]:
+            - cell "Deribit cred-deribit-options" [ref=e928]:
+              - generic [ref=e929]: Deribit
+              - generic [ref=e930]: cred-deribit-options
+            - cell "deribit-options" [ref=e931]
+            - cell "api_key" [ref=e932]:
+              - generic [ref=e933]: api_key
+            - cell "••••••••••••••••xxxx" [ref=e934]
+            - cell "Active" [ref=e935]:
+              - generic [ref=e936]: Active
+            - cell "Never" [ref=e937]
+            - cell "read-only · no-trade · no-withdraw" [ref=e938]
+            - cell "Edit" [ref=e939]:
+              - link "Edit" [ref=e940] [cursor=pointer]:
+                - /url: /credentials/cred-deribit-options/edit
+                - button "Edit" [ref=e941]

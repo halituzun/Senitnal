@@ -1,0 +1,87 @@
+- generic [ref=e16]:
+  - navigation [ref=e17]:
+    - generic [ref=e18]:
+      - generic [ref=e19]: ◈
+      - generic [ref=e20]: Senitnal
+    - generic [ref=e21]:
+      - link "Dashboard" [ref=e22] [cursor=pointer]:
+        - /url: /dashboard
+      - generic [ref=e23]: Intelligence
+      - link "Evidence" [ref=e24] [cursor=pointer]:
+        - /url: /evidence
+      - link "Ledger" [ref=e25] [cursor=pointer]:
+        - /url: /observer-ledger
+      - link "Ingress" [ref=e26] [cursor=pointer]:
+        - /url: /ingress-preview
+      - link "Sources" [ref=e27] [cursor=pointer]:
+        - /url: /sources
+      - generic [ref=e28]: Decisions
+      - link "Decisions" [ref=e29] [cursor=pointer]:
+        - /url: /decisions
+      - link "Memory" [ref=e30] [cursor=pointer]:
+        - /url: /memory-recall
+      - link "Replay" [active] [ref=e31] [cursor=pointer]:
+        - /url: /replay
+      - link "Portfolio" [ref=e32] [cursor=pointer]:
+        - /url: /portfolio
+      - generic [ref=e33]: System
+      - link "Health" [ref=e34] [cursor=pointer]:
+        - /url: /health
+      - link "Policy" [ref=e35] [cursor=pointer]:
+        - /url: /policy
+      - link "Audit Trail" [ref=e36] [cursor=pointer]:
+        - /url: /audit-trail
+      - generic [ref=e37]: Adapters
+      - link "Adapters" [ref=e38] [cursor=pointer]:
+        - /url: /adapters
+      - link "Trust" [ref=e39] [cursor=pointer]:
+        - /url: /adapter-trust
+      - link "Sources" [ref=e40] [cursor=pointer]:
+        - /url: /source-trust
+      - link "Exchanges" [ref=e41] [cursor=pointer]:
+        - /url: /exchanges
+      - generic [ref=e42]: Config
+      - link "Credentials" [ref=e43] [cursor=pointer]:
+        - /url: /credentials
+      - link "Ideas" [ref=e44] [cursor=pointer]:
+        - /url: /ideas
+    - generic [ref=e45]:
+      - generic [ref=e46]: panel@senitnal.local
+      - button "Sign out" [ref=e47] [cursor=pointer]
+  - main [ref=e48]:
+    - generic [ref=e587]:
+      - generic [ref=e588]:
+        - generic [ref=e589]:
+          - generic [ref=e590]: Replay
+          - generic [ref=e591]: Strategy simulation history
+        - button "Refresh" [ref=e592] [cursor=pointer]
+      - combobox [ref=e594]:
+        - option "All strategies" [selected]
+        - option "bnb-arb-v1"
+        - option "btc-momentum-v3"
+      - table [ref=e595]:
+        - rowgroup [ref=e596]:
+          - row "Time Type Strategy Message" [ref=e597]:
+            - columnheader "Time" [ref=e598]
+            - columnheader "Type" [ref=e599]
+            - columnheader "Strategy" [ref=e600]
+            - columnheader "Message" [ref=e601]
+        - rowgroup [ref=e602]:
+          - 'row "03:16 REPLAY_COMPLETED btc-momentum-v3 Counterfactual replay: btc-momentum-v3 — edge would be 0.35 with tighter spread" [ref=e603]':
+            - cell "03:16" [ref=e604]
+            - cell "REPLAY_COMPLETED" [ref=e605]:
+              - generic [ref=e606]: REPLAY_COMPLETED
+            - cell "btc-momentum-v3" [ref=e607]
+            - 'cell "Counterfactual replay: btc-momentum-v3 — edge would be 0.35 with tighter spread" [ref=e608]'
+          - 'row "03:16 REPLAY_COMPLETED eth-mean-reversion Counterfactual replay: eth-mean-reversion — edge would be 0.39 with tighter spread" [ref=e609]':
+            - cell "03:16" [ref=e610]
+            - cell "REPLAY_COMPLETED" [ref=e611]:
+              - generic [ref=e612]: REPLAY_COMPLETED
+            - cell "eth-mean-reversion" [ref=e613]
+            - 'cell "Counterfactual replay: eth-mean-reversion — edge would be 0.39 with tighter spread" [ref=e614]'
+          - 'row "03:16 REPLAY_COMPLETED sol-breakout-alpha Counterfactual replay: sol-breakout-alpha — edge would be 0.33 with tighter spread" [ref=e615]':
+            - cell "03:16" [ref=e616]
+            - cell "REPLAY_COMPLETED" [ref=e617]:
+              - generic [ref=e618]: REPLAY_COMPLETED
+            - cell "sol-breakout-alpha" [ref=e619]
+            - 'cell "Counterfactual replay: sol-breakout-alpha — edge would be 0.33 with tighter spread" [ref=e620]'

@@ -1,0 +1,282 @@
+- generic [ref=e16]:
+  - navigation [ref=e17]:
+    - generic [ref=e18]:
+      - generic [ref=e19]: ◈
+      - generic [ref=e20]: Senitnal
+    - generic [ref=e21]:
+      - link "Dashboard" [ref=e22] [cursor=pointer]:
+        - /url: /dashboard
+      - generic [ref=e23]: Intelligence
+      - link "Evidence" [ref=e24] [cursor=pointer]:
+        - /url: /evidence
+      - link "Ledger" [active] [ref=e25] [cursor=pointer]:
+        - /url: /observer-ledger
+      - link "Ingress" [ref=e26] [cursor=pointer]:
+        - /url: /ingress-preview
+      - link "Sources" [ref=e27] [cursor=pointer]:
+        - /url: /sources
+      - generic [ref=e28]: Decisions
+      - link "Decisions" [ref=e29] [cursor=pointer]:
+        - /url: /decisions
+      - link "Memory" [ref=e30] [cursor=pointer]:
+        - /url: /memory-recall
+      - link "Replay" [ref=e31] [cursor=pointer]:
+        - /url: /replay
+      - link "Portfolio" [ref=e32] [cursor=pointer]:
+        - /url: /portfolio
+      - generic [ref=e33]: System
+      - link "Health" [ref=e34] [cursor=pointer]:
+        - /url: /health
+      - link "Policy" [ref=e35] [cursor=pointer]:
+        - /url: /policy
+      - link "Audit Trail" [ref=e36] [cursor=pointer]:
+        - /url: /audit-trail
+      - generic [ref=e37]: Adapters
+      - link "Adapters" [ref=e38] [cursor=pointer]:
+        - /url: /adapters
+      - link "Trust" [ref=e39] [cursor=pointer]:
+        - /url: /adapter-trust
+      - link "Sources" [ref=e40] [cursor=pointer]:
+        - /url: /source-trust
+      - link "Exchanges" [ref=e41] [cursor=pointer]:
+        - /url: /exchanges
+      - generic [ref=e42]: Config
+      - link "Credentials" [ref=e43] [cursor=pointer]:
+        - /url: /credentials
+      - link "Ideas" [ref=e44] [cursor=pointer]:
+        - /url: /ideas
+    - generic [ref=e45]:
+      - generic [ref=e46]: panel@senitnal.local
+      - button "Sign out" [ref=e47] [cursor=pointer]
+  - main [ref=e48]:
+    - generic [ref=e300]:
+      - generic [ref=e301]:
+        - generic [ref=e302]:
+          - generic [ref=e303]: Observer Ledger
+          - generic [ref=e304]: 50 events
+        - button "Refresh" [ref=e305] [cursor=pointer]
+      - generic [ref=e306]:
+        - combobox [ref=e307]:
+          - option "All severities" [selected]
+          - option "INFO"
+          - option "WARN"
+          - option "ERROR"
+        - textbox "Strategy ID" [ref=e308]
+        - textbox "Adapter ID" [ref=e309]
+        - textbox "Source" [ref=e310]
+        - button "Clear" [ref=e311] [cursor=pointer]
+      - table [ref=e312]:
+        - rowgroup [ref=e313]:
+          - row "Time Severity Type Source Strategy Message" [ref=e314]:
+            - columnheader "Time" [ref=e315]
+            - columnheader "Severity" [ref=e316]
+            - columnheader "Type" [ref=e317]
+            - columnheader "Source" [ref=e318]
+            - columnheader "Strategy" [ref=e319]
+            - columnheader "Message" [ref=e320]
+        - rowgroup [ref=e321]:
+          - row "03:16:58 INFO FUSION_COMPUTED fusion-engine btc-momentum-v3 Trend=0.35 Contradiction=0.00 Confidence=0.33" [ref=e322]:
+            - cell "03:16:58" [ref=e323]
+            - cell "INFO" [ref=e324]:
+              - generic [ref=e325]: INFO
+            - cell "FUSION_COMPUTED" [ref=e326]
+            - cell "fusion-engine" [ref=e327]
+            - cell "btc-momentum-v3" [ref=e328]
+            - cell "Trend=0.35 Contradiction=0.00 Confidence=0.33" [ref=e329]
+          - row "03:16:58 INFO NET_EDGE_COMPUTED net-edge btc-momentum-v3 Gross=0.0106 Net=0.0088 (costs deducted)" [ref=e330]:
+            - cell "03:16:58" [ref=e331]
+            - cell "INFO" [ref=e332]:
+              - generic [ref=e333]: INFO
+            - cell "NET_EDGE_COMPUTED" [ref=e334]
+            - cell "net-edge" [ref=e335]
+            - cell "btc-momentum-v3" [ref=e336]
+            - cell "Gross=0.0106 Net=0.0088 (costs deducted)" [ref=e337]
+          - row "03:16:58 INFO LIVE_CONVICTION conviction-engine btc-momentum-v3 Band=WATCH Score=0.04" [ref=e338]:
+            - cell "03:16:58" [ref=e339]
+            - cell "INFO" [ref=e340]:
+              - generic [ref=e341]: INFO
+            - cell "LIVE_CONVICTION" [ref=e342]
+            - cell "conviction-engine" [ref=e343]
+            - cell "btc-momentum-v3" [ref=e344]
+            - cell "Band=WATCH Score=0.04" [ref=e345]
+          - 'row "03:16:58 INFO INGRESS_COMPILED ingress-compiler — Ingress compilation: 8 sources checked, 7 passed, 1 stale-suppressed" [ref=e346]':
+            - cell "03:16:58" [ref=e347]
+            - cell "INFO" [ref=e348]:
+              - generic [ref=e349]: INFO
+            - cell "INGRESS_COMPILED" [ref=e350]
+            - cell "ingress-compiler" [ref=e351]
+            - cell "—" [ref=e352]
+            - 'cell "Ingress compilation: 8 sources checked, 7 passed, 1 stale-suppressed" [ref=e353]'
+          - 'row "03:16:58 INFO EVIDENCE_STORED evidence-gate btc-momentum-v3 Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e354]':
+            - cell "03:16:58" [ref=e355]
+            - cell "INFO" [ref=e356]:
+              - generic [ref=e357]: INFO
+            - cell "EVIDENCE_STORED" [ref=e358]
+            - cell "evidence-gate" [ref=e359]
+            - cell "btc-momentum-v3" [ref=e360]
+            - 'cell "Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e361]'
+          - row "03:16:58 INFO FUSION_COMPUTED fusion-engine eth-mean-reversion Trend=0.35 Contradiction=0.00 Confidence=0.33" [ref=e362]:
+            - cell "03:16:58" [ref=e363]
+            - cell "INFO" [ref=e364]:
+              - generic [ref=e365]: INFO
+            - cell "FUSION_COMPUTED" [ref=e366]
+            - cell "fusion-engine" [ref=e367]
+            - cell "eth-mean-reversion" [ref=e368]
+            - cell "Trend=0.35 Contradiction=0.00 Confidence=0.33" [ref=e369]
+          - row "03:16:58 INFO NET_EDGE_COMPUTED net-edge eth-mean-reversion Gross=0.0106 Net=0.0088 (costs deducted)" [ref=e370]:
+            - cell "03:16:58" [ref=e371]
+            - cell "INFO" [ref=e372]:
+              - generic [ref=e373]: INFO
+            - cell "NET_EDGE_COMPUTED" [ref=e374]
+            - cell "net-edge" [ref=e375]
+            - cell "eth-mean-reversion" [ref=e376]
+            - cell "Gross=0.0106 Net=0.0088 (costs deducted)" [ref=e377]
+          - row "03:16:58 INFO LIVE_CONVICTION conviction-engine eth-mean-reversion Band=WATCH Score=0.04" [ref=e378]:
+            - cell "03:16:58" [ref=e379]
+            - cell "INFO" [ref=e380]:
+              - generic [ref=e381]: INFO
+            - cell "LIVE_CONVICTION" [ref=e382]
+            - cell "conviction-engine" [ref=e383]
+            - cell "eth-mean-reversion" [ref=e384]
+            - cell "Band=WATCH Score=0.04" [ref=e385]
+          - 'row "03:16:58 INFO INGRESS_COMPILED ingress-compiler — Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed" [ref=e386]':
+            - cell "03:16:58" [ref=e387]
+            - cell "INFO" [ref=e388]:
+              - generic [ref=e389]: INFO
+            - cell "INGRESS_COMPILED" [ref=e390]
+            - cell "ingress-compiler" [ref=e391]
+            - cell "—" [ref=e392]
+            - 'cell "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed" [ref=e393]'
+          - 'row "03:16:58 INFO EVIDENCE_STORED evidence-gate eth-mean-reversion Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e394]':
+            - cell "03:16:58" [ref=e395]
+            - cell "INFO" [ref=e396]:
+              - generic [ref=e397]: INFO
+            - cell "EVIDENCE_STORED" [ref=e398]
+            - cell "evidence-gate" [ref=e399]
+            - cell "eth-mean-reversion" [ref=e400]
+            - 'cell "Evidence bundle: trend=0.35 contradiction=0.00 sources_agreed=0.40" [ref=e401]'
+          - row "03:16:58 INFO FUSION_COMPUTED fusion-engine sol-breakout-alpha Trend=0.36 Contradiction=0.00 Confidence=0.33" [ref=e402]:
+            - cell "03:16:58" [ref=e403]
+            - cell "INFO" [ref=e404]:
+              - generic [ref=e405]: INFO
+            - cell "FUSION_COMPUTED" [ref=e406]
+            - cell "fusion-engine" [ref=e407]
+            - cell "sol-breakout-alpha" [ref=e408]
+            - cell "Trend=0.36 Contradiction=0.00 Confidence=0.33" [ref=e409]
+          - row "03:16:58 INFO NET_EDGE_COMPUTED net-edge sol-breakout-alpha Gross=0.0108 Net=0.0088 (costs deducted)" [ref=e410]:
+            - cell "03:16:58" [ref=e411]
+            - cell "INFO" [ref=e412]:
+              - generic [ref=e413]: INFO
+            - cell "NET_EDGE_COMPUTED" [ref=e414]
+            - cell "net-edge" [ref=e415]
+            - cell "sol-breakout-alpha" [ref=e416]
+            - cell "Gross=0.0108 Net=0.0088 (costs deducted)" [ref=e417]
+          - row "03:16:58 INFO LIVE_CONVICTION conviction-engine sol-breakout-alpha Band=WATCH Score=0.05" [ref=e418]:
+            - cell "03:16:58" [ref=e419]
+            - cell "INFO" [ref=e420]:
+              - generic [ref=e421]: INFO
+            - cell "LIVE_CONVICTION" [ref=e422]
+            - cell "conviction-engine" [ref=e423]
+            - cell "sol-breakout-alpha" [ref=e424]
+            - cell "Band=WATCH Score=0.05" [ref=e425]
+          - 'row "03:16:58 INFO INGRESS_COMPILED ingress-compiler — Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed" [ref=e426]':
+            - cell "03:16:58" [ref=e427]
+            - cell "INFO" [ref=e428]:
+              - generic [ref=e429]: INFO
+            - cell "INGRESS_COMPILED" [ref=e430]
+            - cell "ingress-compiler" [ref=e431]
+            - cell "—" [ref=e432]
+            - 'cell "Ingress compilation: 8 sources checked, 8 passed, 0 stale-suppressed" [ref=e433]'
+          - 'row "03:16:58 INFO EVIDENCE_STORED evidence-gate sol-breakout-alpha Evidence bundle: trend=0.36 contradiction=0.00 sources_agreed=0.40" [ref=e434]':
+            - cell "03:16:58" [ref=e435]
+            - cell "INFO" [ref=e436]:
+              - generic [ref=e437]: INFO
+            - cell "EVIDENCE_STORED" [ref=e438]
+            - cell "evidence-gate" [ref=e439]
+            - cell "sol-breakout-alpha" [ref=e440]
+            - 'cell "Evidence bundle: trend=0.36 contradiction=0.00 sources_agreed=0.40" [ref=e441]'
+          - row "03:16:45 INFO FUSION_COMPUTED fusion-engine btc-momentum-v3 Trend=0.35 Contradiction=0.00 Confidence=0.33" [ref=e442]:
+            - cell "03:16:45" [ref=e443]
+            - cell "INFO" [ref=e444]:
+              - generic [ref=e445]: INFO
+            - cell "FUSION_COMPUTED" [ref=e446]
+            - cell "fusion-engine" [ref=e447]
+            - cell "btc-momentum-v3" [ref=e448]
+            - cell "Trend=0.35 Contradiction=0.00 Confidence=0.33" [ref=e449]
+          - row "03:16:45 INFO NET_EDGE_COMPUTED net-edge btc-momentum-v3 Gross=0.0106 Net=0.0088 (costs deducted)" [ref=e450]:
+            - cell "03:16:45" [ref=e451]
+            - cell "INFO" [ref=e452]:
+              - generic [ref=e453]: INFO
+            - cell "NET_EDGE_COMPUTED" [ref=e454]
+            - cell "net-edge" [ref=e455]
+            - cell "btc-momentum-v3" [ref=e456]
+            - cell "Gross=0.0106 Net=0.0088 (costs deducted)" [ref=e457]
+          - row "03:16:45 INFO LIVE_CONVICTION conviction-engine btc-momentum-v3 Band=WATCH Score=0.04" [ref=e458]:
+            - cell "03:16:45" [ref=e459]
+            - cell "INFO" [ref=e460]:
+              - generic [ref=e461]: INFO
+            - cell "LIVE_CONVICTION" [ref=e462]
+            - cell "conviction-engine" [ref=e463]
+            - cell "btc-momentum-v3" [ref=e464]
+            - cell "Band=WATCH Score=0.04" [ref=e465]
+          - row "03:16:45 INFO FUSION_COMPUTED fusion-engine eth-mean-reversion Trend=0.35 Contradiction=0.00 Confidence=0.33" [ref=e466]:
+            - cell "03:16:45" [ref=e467]
+            - cell "INFO" [ref=e468]:
+              - generic [ref=e469]: INFO
+            - cell "FUSION_COMPUTED" [ref=e470]
+            - cell "fusion-engine" [ref=e471]
+            - cell "eth-mean-reversion" [ref=e472]
+            - cell "Trend=0.35 Contradiction=0.00 Confidence=0.33" [ref=e473]
+          - row "03:16:45 INFO NET_EDGE_COMPUTED net-edge eth-mean-reversion Gross=0.0106 Net=0.0088 (costs deducted)" [ref=e474]:
+            - cell "03:16:45" [ref=e475]
+            - cell "INFO" [ref=e476]:
+              - generic [ref=e477]: INFO
+            - cell "NET_EDGE_COMPUTED" [ref=e478]
+            - cell "net-edge" [ref=e479]
+            - cell "eth-mean-reversion" [ref=e480]
+            - cell "Gross=0.0106 Net=0.0088 (costs deducted)" [ref=e481]
+          - row "03:16:45 INFO LIVE_CONVICTION conviction-engine eth-mean-reversion Band=WATCH Score=0.04" [ref=e482]:
+            - cell "03:16:45" [ref=e483]
+            - cell "INFO" [ref=e484]:
+              - generic [ref=e485]: INFO
+            - cell "LIVE_CONVICTION" [ref=e486]
+            - cell "conviction-engine" [ref=e487]
+            - cell "eth-mean-reversion" [ref=e488]
+            - cell "Band=WATCH Score=0.04" [ref=e489]
+          - row "03:16:45 INFO FUSION_COMPUTED fusion-engine sol-breakout-alpha Trend=0.36 Contradiction=0.00 Confidence=0.33" [ref=e490]:
+            - cell "03:16:45" [ref=e491]
+            - cell "INFO" [ref=e492]:
+              - generic [ref=e493]: INFO
+            - cell "FUSION_COMPUTED" [ref=e494]
+            - cell "fusion-engine" [ref=e495]
+            - cell "sol-breakout-alpha" [ref=e496]
+            - cell "Trend=0.36 Contradiction=0.00 Confidence=0.33" [ref=e497]
+          - row "03:16:45 INFO NET_EDGE_COMPUTED net-edge sol-breakout-alpha Gross=0.0108 Net=0.0088 (costs deducted)" [ref=e498]:
+            - cell "03:16:45" [ref=e499]
+            - cell "INFO" [ref=e500]:
+              - generic [ref=e501]: INFO
+            - cell "NET_EDGE_COMPUTED" [ref=e502]
+            - cell "net-edge" [ref=e503]
+            - cell "sol-breakout-alpha" [ref=e504]
+            - cell "Gross=0.0108 Net=0.0088 (costs deducted)" [ref=e505]
+          - row "03:16:45 INFO LIVE_CONVICTION conviction-engine sol-breakout-alpha Band=WATCH Score=0.05" [ref=e506]:
+            - cell "03:16:45" [ref=e507]
+            - cell "INFO" [ref=e508]:
+              - generic [ref=e509]: INFO
+            - cell "LIVE_CONVICTION" [ref=e510]
+            - cell "conviction-engine" [ref=e511]
+            - cell "sol-breakout-alpha" [ref=e512]
+            - cell "Band=WATCH Score=0.05" [ref=e513]
+          - row "03:16:34 INFO FUSION_COMPUTED fusion-engine btc-momentum-v3 Trend=0.35 Contradiction=0.00 Confidence=0.33" [ref=e514]:
+            - cell "03:16:34" [ref=e515]
+            - cell "INFO" [ref=e516]:
+              - generic [ref=e517]: INFO
+            - cell "FUSION_COMPUTED" [ref=e518]
+            - cell "fusion-engine" [ref=e519]
+            - cell "btc-momentum-v3" [ref=e520]
+            - cell "Trend=0.35 Contradiction=0.00 Confidence=0.33" [ref=e521]
+      - generic [ref=e522]:
+        - generic [ref=e523]: 50 events
+        - button "‹ Prev" [disabled] [ref=e524]
+        - generic [ref=e525]: 1 / 2
+        - button "Next ›" [ref=e526] [cursor=pointer]
