@@ -13,7 +13,6 @@ import argparse
 import hashlib
 import json
 import random
-import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -297,13 +296,56 @@ def _process_cycle(
         if crypto_count >= 3:
             news_impact += f" News={int(crypto_count)}"
 
+    # Memory recall: check historical patterns for similar conditions
+    confidence_boost = 0.0
+    if state.memory_records:
+        matching = [m for m in state.memory_records
+                    if m.get("strategy_id") == strategy.strategy_id
+                    and m.get("usable_for_live")]
+        if matching:
+            # Sort by recency and confidence
+            matching.sort(key=lambda m: (m.get("confidence", 0), m.get("last_seen_ms", 0)), reverse=True)
+            top = matching[:3]
+            avg_mem_conf = sum(m.get("confidence", 0) for m in top) / len(top)
+            bullish_mems = sum(1 for m in top if "BULLISH" in str(m.get("pattern_type", "")))
+            bearish_mems = len(top) - bullish_mems
+
+            # Memory consensus influences decision
+            if bullish_mems > bearish_mems and avg_mem_conf > 0.5:
+                edge_proxy = min(1.0, edge_proxy + 0.08)
+                confidence_boost = 0.05
+                news_impact += f" MemBull({bullish_mems}/{len(top)})"
+            elif bearish_mems > bullish_mems and avg_mem_conf > 0.5:
+                edge_proxy = max(0.0, edge_proxy - 0.05)
+                confidence_boost = 0.03
+                news_impact += f" MemBear({bearish_mems}/{len(top)})"
+            else:
+                confidence_boost = 0.0
+
+    # Backtest-enhanced quality: check if better params exist
+    bt_path = __import__("pathlib").Path("data/historical/backtest_results.json")
+    if bt_path.exists() and state.cycle % 50 == 0:
+        try:
+            bt = json.loads(bt_path.read_text())
+            if strategy.strategy_id in bt:
+                bt_result = bt[strategy.strategy_id]
+                optimal = bt_result.get("optimal_rsi", {})
+                bt_winrate = optimal.get("win_rate", 0)
+                bt_expectancy = optimal.get("expectancy", 0)
+                if bt_winrate > 0.5 and bt_expectancy > 0:
+                    # Reset quality based on backtest evidence
+                    strategy.strategy_quality = min(0.8, strategy.strategy_quality + 0.15)
+                    news_impact += f" BT(wr={bt_winrate:.0%})"
+        except Exception:
+            pass
+
     state.ledger_events.append(_event(state, "FUSION_COMPUTED", "INFO", "fusion-engine", strategy.strategy_id,
         f"Trend={edge_proxy:.2f} Contradiction={risk_proxy:.2f} Confidence={fusion_result.confidence:.2f}{news_impact}"))
 
     alpha = state.adaptive_alpha
     strategy.current_edge_score = round(strategy.current_edge_score * (1 - alpha) + edge_proxy * alpha, 3)
     strategy.current_risk_score = round(strategy.current_risk_score * (1 - alpha) + risk_proxy * alpha, 3)
-    strategy.current_confidence = round(strategy.current_confidence * (1 - alpha) + fusion_result.confidence * alpha, 3)
+    strategy.current_confidence = round(strategy.current_confidence * (1 - alpha) + fusion_result.confidence * alpha + confidence_boost * alpha, 3)
 
     gross_edge = edge_proxy * 0.03
     net_edge = compute_net_edge(
