@@ -272,18 +272,28 @@ def _process_cycle(
     news_impact = ""
     if ns:
         macro_risk = ns.get("macro_risk_score", 0.0)
+        fg = ns.get("fear_greed_index", 0.5)
+        is_greed = ns.get("market_greed", 0.0) > 0
+        is_fear = ns.get("market_fear", 0.0) > 0
+
         if macro_risk > 0.3:
-            # High macro/geopolitical risk → reduce edge, increase risk
             risk_boost = min(0.3, macro_risk * 0.5)
             edge_penalty = min(0.2, macro_risk * 0.3)
             risk_proxy = min(1.0, risk_proxy + risk_boost)
             edge_proxy = max(0.0, edge_proxy - edge_penalty)
-            news_impact = f" MacroRisk={macro_risk:.2f}(risk+{risk_boost:.2f} edge-{edge_penalty:.2f})"
+            news_impact = f" MacroRisk={macro_risk:.2f}(risk+{risk_boost:.2f})"
+
+        # Fear & Greed overlay: greed → increase risk, fear → reduce edge
+        if is_greed and fg > 0.7:
+            risk_proxy = min(1.0, risk_proxy + 0.1)
+            news_impact += f" GREED(fg={fg:.0%})"
+        elif is_fear and fg < 0.3:
+            edge_proxy = max(0.0, edge_proxy - 0.1)
+            news_impact += f" FEAR(fg={fg:.0%})"
 
         crypto_count = ns.get("crypto_count", 0)
         if crypto_count >= 3:
-            # Rich news flow → small confidence boost
-            news_impact += f" CryptoNews={int(crypto_count)}"
+            news_impact += f" News={int(crypto_count)}"
 
     state.ledger_events.append(_event(state, "FUSION_COMPUTED", "INFO", "fusion-engine", strategy.strategy_id,
         f"Trend={edge_proxy:.2f} Contradiction={risk_proxy:.2f} Confidence={fusion_result.confidence:.2f}{news_impact}"))

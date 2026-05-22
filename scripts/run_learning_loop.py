@@ -37,6 +37,7 @@ from sentinel.runtime.learning_loop import (
     run_cycle_with_real_data,
 )
 from scripts.fetch_historical import get_historical_context
+from services.intelligence_adapters.coingecko_adapter import fetch_market_sentiment as fetch_coingecko_sentiment
 
 SYMBOL_MAP = {
     "btc-momentum-v3": "BTC/USDT",
@@ -70,7 +71,7 @@ def main() -> None:
     sources = "Binance"
     if taapi_ok:
         sources += " + TAAPI"
-    sources += " + GDELT"
+    sources += " + GDELT + CoinGecko"
     print(f"♺ Learning loop ({sources}) — {len(state.strategies)} strategies, {mode}")
     print()
 
@@ -115,6 +116,18 @@ def main() -> None:
                             news_sentiment["macro_risk_score"] = ai_sentiment["risk_score"]
                     except Exception:
                         pass
+            except Exception:
+                pass
+
+            # CoinGecko market sentiment
+            try:
+                cg = fetch_coingecko_sentiment()
+                fg = cg.get("fear_greed_index", 50)
+                if fg > 70:
+                    news_sentiment["market_greed"] = 1.0
+                elif fg < 30:
+                    news_sentiment["market_fear"] = 1.0
+                news_sentiment["fear_greed_index"] = fg / 100
             except Exception:
                 pass
 
