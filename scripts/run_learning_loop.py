@@ -150,7 +150,13 @@ def main() -> None:
         print(f"♺ Resumed from saved state (cycle {state.cycle}, α={state.adaptive_alpha:.3f})")
     else:
         state = LearningState()
-    state.strategies = {s.strategy_id: s for s in DEFAULT_STRATEGIES}
+
+    # Merge: loaded strategies override defaults
+    defaults = {s.strategy_id: s for s in DEFAULT_STRATEGIES}
+    for sid, s in state.strategies.items():
+        if sid in defaults:
+            defaults[sid] = s
+    state.strategies = defaults
 
     # Load historical context for informed initial decisions
     hist = get_historical_context()
