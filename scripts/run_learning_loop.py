@@ -12,7 +12,9 @@ Env vars:
 from __future__ import annotations
 
 import argparse
+import json
 import time
+from pathlib import Path
 from services.intelligence_adapters.binance_adapter import (
     fetch_all_snapshots as fetch_binance,
     fetch_prices,
@@ -33,6 +35,7 @@ from services.intelligence_adapters.deepseek_adapter import (
 from sentinel.runtime.learning_loop import (
     DEFAULT_STRATEGIES,
     LearningState,
+    StrategyState,
     export_snapshot,
     run_cycle_with_real_data,
 )
@@ -40,6 +43,89 @@ from scripts.fetch_historical import get_historical_context
 from scripts.backtest import run_backtest_pipeline
 from services.intelligence_adapters.coingecko_adapter import fetch_market_sentiment as fetch_coingecko_sentiment
 from services.intelligence_adapters.free_news_adapter import fetch_sentiment as fetch_cointelegraph_sentiment, fetch_coindesk_sentiment
+
+STATE_FILE = Path("data/learning_state.json")
+
+
+def save_state(state: LearningState) -> None:
+    """Persist learning state to disk for survival across restarts."""
+    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    data = {
+        "cycle": state.cycle,
+        "started_at_ms": state.started_at_ms,
+        "total_signals": state.total_signals_processed,
+        "total_blocks": state.total_blocks,
+        "total_candidates": state.total_candidates,
+        "total_live_candidates": state.total_live_candidates,
+        "correct_predictions": state.correct_predictions,
+        "total_predictions": state.total_predictions,
+        "adaptive_alpha": state.adaptive_alpha,
+        "strategies": [
+            {
+                "strategy_id": s.strategy_id, "name": s.name,
+                "lifecycle_state": s.lifecycle_state,
+                "allocated_budget_try": s.allocated_budget_try,
+                "max_entry_try": s.max_entry_try,
+                "max_trades_per_day": s.max_trades_per_day,
+                "current_edge_score": s.current_edge_score,
+                "current_risk_score": s.current_risk_score,
+                "current_confidence": s.current_confidence,
+                "enabled": s.enabled, "strategy_quality": s.strategy_quality,
+                "pnl_today_try": s.pnl_today_try, "pnl_week_try": s.pnl_week_try,
+                "total_decisions": s.total_decisions,
+                "total_pass": s.total_pass, "total_block": s.total_block,
+            }
+            for s in state.strategies.values()
+        ],
+        "memory_count": len(state.memory_records),
+        "last_prices": state.last_prices,
+        "market_sentiment": state.market_sentiment,
+    }
+    with open(STATE_FILE, "w") as f:
+        json.dump(data, f, indent=2)
+
+
+def load_state() -> LearningState | None:
+    """Load persisted learning state from disk."""
+    if not STATE_FILE.exists():
+        return None
+    with open(STATE_FILE) as f:
+        data = json.load(f)
+    state = LearningState()
+    state.cycle = data.get("cycle", 0)
+    state.total_signals_processed = data.get("total_signals", 0)
+    state.total_blocks = data.get("total_blocks", 0)
+    state.total_candidates = data.get("total_candidates", 0)
+    state.total_live_candidates = data.get("total_live_candidates", 0)
+    state.correct_predictions = data.get("correct_predictions", 0)
+    state.total_predictions = data.get("total_predictions", 0)
+    state.adaptive_alpha = data.get("adaptive_alpha", 0.15)
+    state.last_prices = data.get("last_prices", {})
+    state.market_sentiment = data.get("market_sentiment", {})
+
+    for sdata in data.get("strategies", []):
+        sid = sdata["strategy_id"]
+        if sid in {s.strategy_id for s in DEFAULT_STRATEGIES}:
+            s = StrategyState(
+                strategy_id=sid, name=sdata["name"],
+                lifecycle_state=sdata["lifecycle_state"],
+                allocated_budget_try=sdata["allocated_budget_try"],
+                max_entry_try=sdata["max_entry_try"],
+                max_trades_per_day=sdata["max_trades_per_day"],
+                current_edge_score=sdata["current_edge_score"],
+                current_risk_score=sdata["current_risk_score"],
+                current_confidence=sdata["current_confidence"],
+                enabled=sdata["enabled"],
+                strategy_quality=sdata["strategy_quality"],
+                pnl_today_try=sdata["pnl_today_try"],
+                pnl_week_try=sdata["pnl_week_try"],
+                total_decisions=sdata.get("total_decisions", 0),
+                total_pass=sdata.get("total_pass", 0),
+                total_block=sdata.get("total_block", 0),
+            )
+            state.strategies[sid] = s
+
+    return state
 
 SYMBOL_MAP = {
     "btc-momentum-v3": "BTC/USDT",
@@ -58,7 +144,12 @@ def main() -> None:
     taapi_config = TaapiConfig(enabled=True, symbols=("BTC/USDT", "ETH/USDT", "SOL/USDT"))
     taapi_ok = is_enabled(taapi_config)
 
-    state = LearningState()
+    # Load persisted state or start fresh
+    state = load_state()
+    if state:
+        print(f"♺ Resumed from saved state (cycle {state.cycle}, α={state.adaptive_alpha:.3f})")
+    else:
+        state = LearningState()
     state.strategies = {s.strategy_id: s for s in DEFAULT_STRATEGIES}
 
     # Load historical context for informed initial decisions
@@ -182,6 +273,8 @@ def main() -> None:
             )
 
             path = export_snapshot(state)
+            if state.cycle % 5 == 0:
+                save_state(state)
             if state.cycle % 5 == 0 or args.once:
                 print(f"       ↳ snapshot: {path.name}")
 
