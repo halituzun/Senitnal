@@ -45,6 +45,7 @@ from services.intelligence_adapters.coingecko_adapter import fetch_market_sentim
 from services.intelligence_adapters.free_news_adapter import fetch_sentiment as fetch_cointelegraph_sentiment, fetch_coindesk_sentiment
 from scripts.gelal_bridge import run_guard_cycle, get_guard_stats
 from services.alerting import alert_kill_switch, alert_strategy_paused, alert_guard_block
+from services.paper_trading import PaperPortfolio, run_paper_trade
 
 STATE_FILE = Path("data/learning_state.json")
 
@@ -169,6 +170,10 @@ def main() -> None:
 
     # Load historical context for informed initial decisions
     hist = get_historical_context()
+
+    # Paper trading portfolio
+    portfolio = PaperPortfolio.load()
+    print(f"  Paper Portfolio: {portfolio.balance_try:.0f} TRY balance, {portfolio.total_trades} trades, {portfolio.win_rate():.0%} WR")
     for symbol, data in hist.get("symbols", {}).items():
         daily = data.get("intervals", {}).get("daily", {})
         if daily:
@@ -288,6 +293,26 @@ def main() -> None:
             )
 
             path = export_snapshot(state)
+            # Inject paper portfolio into snapshot for panel
+            try:
+                prices = fetch_prices()
+                pv = portfolio.total_value(prices)
+                pnl = portfolio.total_pnl(prices)
+                with open(path, "r") as f:
+                    snap = json.loads(f.read())
+                snap["paper_portfolio"] = {
+                    "balance_try": round(portfolio.balance_try, 2),
+                    "total_value_try": pv,
+                    "total_pnl_try": pnl,
+                    "total_trades": portfolio.total_trades,
+                    "winning_trades": portfolio.winning_trades,
+                    "win_rate": portfolio.win_rate(),
+                    "open_positions": len(portfolio.positions),
+                }
+                with open(path, "w") as f:
+                    json.dump(snap, f, indent=2)
+            except Exception:
+                pass
             if state.cycle % 5 == 0:
                 save_state(state)
                 # Critical event alerts
@@ -308,6 +333,26 @@ def main() -> None:
                     if avg_q > 0.8 and state.cycle > 500:
                         phase = "active_live"
                     run_guard_cycle(phase, qualities, state.kill_switch_active)
+                    # Paper trade: execute approved signals
+                    for sid, s in state.strategies.items():
+                        if s.lifecycle_state in ("ACTIVE_LIVE", "LIMITED_LIVE") and s.strategy_quality > 0.3:
+                            symbol = "BTCUSDT" if "btc" in sid else "ETHUSDT" if "eth" in sid else "SOLUSDT"
+                            price = prices.get(symbol, 0)
+                            if price and s.strategy_quality > 0.5:
+                                # Buy if no position, sell if position exists
+                                if sid not in portfolio.positions:
+                                    amt = min(s.max_entry_try, portfolio.balance_try * 0.1)
+                                    portfolio.open_position(sid, symbol, price, amt)
+                                else:
+                                    result = portfolio.close_position(sid, price)
+                                    if result:
+                                        state.ledger_events.append({
+                                            "id": f"trade-{state.cycle}", "ts_ms": int(time.time() * 1000),
+                                            "event_type": "PAPER_TRADE", "severity": "INFO",
+                                            "source": "paper-trader", "strategy_id": sid, "adapter_id": None,
+                                            "message": f"{'WIN' if result['win'] else 'LOSS'}: {result['pnl_try']:+.1f} TRY ({result['pnl_pct']:+.1f}%)"
+                                        })
+                    portfolio.save()
                 except Exception:
                     pass
             if state.cycle % 5 == 0 or args.once:

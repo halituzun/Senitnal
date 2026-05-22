@@ -1001,6 +1001,9 @@ function loadSnapshot() {
     if (snap["market_sentiment"] && typeof snap["market_sentiment"] === "object") {
       ;(DASHBOARD as Record<string, unknown>)["market_sentiment"] = snap["market_sentiment"]
     }
+    if (snap["paper_portfolio"] && typeof snap["paper_portfolio"] === "object") {
+      ;(DASHBOARD as Record<string, unknown>)["paper_portfolio"] = snap["paper_portfolio"]
+    }
 
     const strategies = ADAPTERS.filter((a) => (a as Record<string, unknown>)["strategy_id"] != null)
     // Recalculate PnL from strategy data if available
