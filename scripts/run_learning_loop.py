@@ -43,6 +43,7 @@ from scripts.fetch_historical import get_historical_context
 from scripts.backtest import run_backtest_pipeline
 from services.intelligence_adapters.coingecko_adapter import fetch_market_sentiment as fetch_coingecko_sentiment
 from services.intelligence_adapters.free_news_adapter import fetch_sentiment as fetch_cointelegraph_sentiment, fetch_coindesk_sentiment
+from scripts.gelal_bridge import run_guard_cycle, get_guard_stats
 
 STATE_FILE = Path("data/learning_state.json")
 
@@ -288,6 +289,12 @@ def main() -> None:
             path = export_snapshot(state)
             if state.cycle % 5 == 0:
                 save_state(state)
+                # Run Gel.Al guard cycle
+                try:
+                    qualities = {sid: s.strategy_quality for sid, s in state.strategies.items()}
+                    decisions = run_guard_cycle("shadow", qualities, state.kill_switch_active)
+                except Exception:
+                    pass
             if state.cycle % 5 == 0 or args.once:
                 print(f"       ↳ snapshot: {path.name}")
 
