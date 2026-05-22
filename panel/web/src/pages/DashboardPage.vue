@@ -109,6 +109,16 @@
           <div class="stat-label">Memories</div>
           <div class="stat-value" style="font-size:20px">{{ data.learning.total_memories }}</div>
         </div>
+        <div class="stat-card">
+          <div class="stat-label">Accuracy</div>
+          <div class="stat-value" :class="data.learning.accuracy >= 0.5 ? 'ok' : 'warn'" style="font-size:20px">
+            {{ (data.learning.accuracy * 100).toFixed(0) }}%
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Learn Rate (α)</div>
+          <div class="stat-value" style="font-size:20px">{{ data.learning.adaptive_alpha }}</div>
+        </div>
       </div>
 
       <!-- Recent events -->
@@ -150,7 +160,7 @@ interface Dashboard {
   pnl_summary: { today_try: number; week_try: number; month_try: number }
   adapter_hub: { total_adapters: number; healthy_count: number; stale_count: number; quarantined_count: number; revoked_count: number; degraded: boolean }
   recent_events: Array<{ id: string; ts_ms: number; severity: string; event_type: string; message: string }>
-  learning?: { cycle: number; total_signals: number; total_live_candidates: number; total_blocks: number; total_memories: number }
+  learning?: { cycle: number; total_signals: number; total_live_candidates: number; total_blocks: number; total_memories: number; accuracy: number; adaptive_alpha: number; correct_predictions: number; total_predictions: number }
   captured_at_ms: number
 }
 

@@ -22,8 +22,12 @@ from services.intelligence_adapters.taapi_adapter import (
     is_enabled,
 )
 from services.intelligence_adapters.gdelt_adapter import (
-    fetch_all_news,
+    fetch_all_news_with_headlines,
     compute_news_sentiment_summary,
+)
+from services.intelligence_adapters.deepseek_adapter import (
+    analyze_headlines,
+    compute_aggregate_sentiment,
 )
 from sentinel.runtime.learning_loop import (
     DEFAULT_STRATEGIES,
@@ -82,8 +86,20 @@ def main() -> None:
             # Fetch news sentiment (graceful — skip on failure)
             news_sentiment: dict[str, float] = {}
             try:
-                news = fetch_all_news(["crypto", "macro", "geopolitical"], max_per_category=5)
+                news, headlines = fetch_all_news_with_headlines(["crypto", "macro", "geopolitical"], max_per_category=5)
                 news_sentiment = compute_news_sentiment_summary(news)
+
+                # Deepseek AI-enhanced analysis
+                if headlines:
+                    try:
+                        ai = analyze_headlines(headlines[:10])
+                        ai_sentiment = compute_aggregate_sentiment(ai)
+                        news_sentiment["ai_risk_score"] = ai_sentiment.get("risk_score", 0.3)
+                        news_sentiment["ai_confidence"] = ai_sentiment.get("avg_confidence", 0.0)
+                        if ai_sentiment.get("risk_score", 0.0) > news_sentiment.get("macro_risk_score", 0.0):
+                            news_sentiment["macro_risk_score"] = ai_sentiment["risk_score"]
+                    except Exception:
+                        pass
             except Exception:
                 pass
 
@@ -97,7 +113,8 @@ def main() -> None:
             print(
                 f"  [{state.cycle:04d}] signals={state.total_signals_processed} "
                 f"★={state.total_live_candidates} ✗={state.total_blocks} "
-                f"active={active_cnt} PnL={total_pnl:+.1f}TRY mem={len(state.memory_records)}"
+                f"active={active_cnt} PnL={total_pnl:+.1f}TRY α={state.adaptive_alpha:.3f} "
+                f"acc={state.correct_predictions}/{state.total_predictions} mem={len(state.memory_records)}"
             )
 
             path = export_snapshot(state)

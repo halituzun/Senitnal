@@ -160,6 +160,40 @@ def fetch_all_news(
     return result
 
 
+def fetch_all_news_with_headlines(
+    categories: list[str] | None = None, max_per_category: int = 10,
+) -> tuple[dict[str, list[NewsEventSnapshot]], list[str]]:
+    """Fetch news and return (snapshots, headlines) for Deepseek analysis."""
+    if categories is None:
+        categories = ["crypto", "macro", "geopolitical"]
+
+    result: dict[str, list[NewsEventSnapshot]] = {}
+    all_headlines: list[str] = []
+
+    for cat in categories:
+        query = CATEGORY_QUERIES.get(cat)
+        if not query:
+            continue
+        try:
+            articles = fetch_category(query, max_per_category)
+        except Exception:
+            continue
+
+        snaps: list[NewsEventSnapshot] = []
+        for article in articles:
+            snap = normalize_article(article, cat)
+            if snap:
+                snaps.append(snap)
+                title = str(article.get("title", ""))
+                if title and len(title) > 10:
+                    all_headlines.append(f"[{cat}] {title[:200]}")
+
+        if snaps:
+            result[cat] = snaps
+
+    return result, all_headlines
+
+
 def compute_news_sentiment_summary(
     news: dict[str, list[NewsEventSnapshot]],
 ) -> dict[str, float]:

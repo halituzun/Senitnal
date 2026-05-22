@@ -75,6 +75,11 @@ class LearningState:
     _event_idx: int = 0
     _decision_idx: int = 0
     _memory_idx: int = 0
+    # Self-training metrics
+    correct_predictions: int = 0
+    total_predictions: int = 0
+    adaptive_alpha: float = 0.15  # Learning rate, auto-adjusted
+    last_cycle_pnl: float = 0.0
 
     def next_event_id(self) -> str:
         self._event_idx += 1
@@ -282,7 +287,7 @@ def _process_cycle(
     state.ledger_events.append(_event(state, "FUSION_COMPUTED", "INFO", "fusion-engine", strategy.strategy_id,
         f"Trend={edge_proxy:.2f} Contradiction={risk_proxy:.2f} Confidence={fusion_result.confidence:.2f}{news_impact}"))
 
-    alpha = 0.15
+    alpha = state.adaptive_alpha
     strategy.current_edge_score = round(strategy.current_edge_score * (1 - alpha) + edge_proxy * alpha, 3)
     strategy.current_risk_score = round(strategy.current_risk_score * (1 - alpha) + risk_proxy * alpha, 3)
     strategy.current_confidence = round(strategy.current_confidence * (1 - alpha) + fusion_result.confidence * alpha, 3)
@@ -342,8 +347,23 @@ def _process_cycle(
         strategy.pnl_week_try = round(strategy.pnl_week_try + pnl, 1)
         strategy.strategy_quality = round(min(1.0, strategy.strategy_quality + 0.02) if pnl > 0 else max(0.0, strategy.strategy_quality - 0.05), 3)
 
+        # Self-training: track prediction accuracy
+        predicted_direction = 1 if edge_proxy > 0.4 else 0
+        actual_direction = 1 if pnl > 0 else 0
+        state.total_predictions += 1
+        if predicted_direction == actual_direction:
+            state.correct_predictions += 1
+
+        # Adaptive learning rate
+        accuracy = state.correct_predictions / max(1, state.total_predictions)
+        if accuracy > 0.65:
+            state.adaptive_alpha = min(0.35, state.adaptive_alpha + 0.005)
+        elif accuracy < 0.35:
+            state.adaptive_alpha = max(0.05, state.adaptive_alpha - 0.01)
+        state.last_cycle_pnl = pnl
+
         state.ledger_events.append(_event(state, "PRODUCTION_DECISION", "INFO", "production-engine", strategy.strategy_id,
-            f"PnL={pnl:+.1f} TRY Quality={strategy.strategy_quality:.2f}"))
+            f"PnL={pnl:+.1f} TRY Quality={strategy.strategy_quality:.2f} α={state.adaptive_alpha:.3f} acc={accuracy:.0%}"))
 
     if abs(edge_proxy - 0.5) > 0.3 or fusion_result.source_agreement_score > 0.8:
         pattern = "BULLISH" if edge_proxy > 0.5 else "BEARISH"
@@ -436,6 +456,10 @@ def export_snapshot(state: LearningState) -> Path:
             "total_blocks": state.total_blocks, "total_candidates": state.total_candidates,
             "total_live_candidates": state.total_live_candidates,
             "total_memories": len(state.memory_records),
+            "correct_predictions": state.correct_predictions,
+            "total_predictions": state.total_predictions,
+            "accuracy": round(state.correct_predictions / max(1, state.total_predictions), 3),
+            "adaptive_alpha": round(state.adaptive_alpha, 3),
         },
         "portfolio": {
             "portfolio_id": "main-portfolio", "approved_capital_mode": "FIXED_TRY",
