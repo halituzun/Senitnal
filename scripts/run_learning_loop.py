@@ -80,7 +80,7 @@ def main() -> None:
                         tech_snapshots.append(taapi_snap)
 
             # Fetch news sentiment (graceful — skip on failure)
-            news_sentiment = {}
+            news_sentiment: dict[str, float] = {}
             try:
                 news = fetch_all_news(["crypto", "macro", "geopolitical"], max_per_category=5)
                 news_sentiment = compute_news_sentiment_summary(news)
