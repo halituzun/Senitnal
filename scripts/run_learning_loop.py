@@ -179,6 +179,12 @@ def main() -> None:
     defaults = {s.strategy_id: s for s in DEFAULT_STRATEGIES}
     for sid, s in state.strategies.items():
         if sid in defaults:
+            # Force PAUSED → LIMITED_LIVE if quality >= 0.10 (stuck prevention)
+            if s.lifecycle_state == "PAUSED" and s.strategy_quality >= 0.10:
+                s.lifecycle_state = "LIMITED_LIVE"
+                s.allocated_budget_try = s.max_entry_try * 3
+            if s.lifecycle_state == "ROLLBACK_REQUIRED" and s.strategy_quality >= 0.15:
+                s.lifecycle_state = "PAUSED"
             defaults[sid] = s
     state.strategies = defaults
 
