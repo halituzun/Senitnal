@@ -385,9 +385,13 @@ def main() -> None:
                     if s.strategy_quality < 0.10:
                         continue
                     symbol = "BTCUSDT" if "btc" in sid else "ETHUSDT" if "eth" in sid else "SOLUSDT" if "sol" in sid else "BNBUSDT"
-                    # Entry: edge > 0.20, risk < 0.75
-                    if sid not in portfolio.positions and s.current_edge_score > 0.20 and s.current_risk_score < 0.75:
-                        amt = min(s.max_entry_try, 500)
+                    # Entry: strong edge > 0.28, low risk < 0.6
+                    # Position size scales with edge confidence
+                    if sid not in portfolio.positions and s.current_edge_score > 0.28 and s.current_risk_score < 0.6:
+                        # Scale position: higher edge = larger position (20-100% of max)
+                        edge_factor = min(1.0, (s.current_edge_score - 0.20) / 0.30)
+                        amt = min(s.max_entry_try * edge_factor, 300)  # Max 300 TRY
+                        amt = max(amt, 50)  # Min 50 TRY
                         
                         if live_trading:
                             try:
