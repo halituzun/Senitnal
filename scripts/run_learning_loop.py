@@ -368,7 +368,7 @@ def main() -> None:
                     run_guard_cycle(phase, qualities, state.kill_switch_active)
                     # Execute trades: real if live, paper if not
                     for sid, s in state.strategies.items():
-                        if s.lifecycle_state not in ("ACTIVE_LIVE", "LIMITED_LIVE") or s.strategy_quality < 0.3:
+                        if s.lifecycle_state not in ("ACTIVE_LIVE", "LIMITED_LIVE") or s.strategy_quality < 0.10:
                             continue
                         symbol = "BTCUSDT" if "btc" in sid else "ETHUSDT" if "eth" in sid else "SOLUSDT"
                         price = prices.get(symbol, 0)
