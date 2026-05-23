@@ -442,7 +442,17 @@ def _process_cycle(
             pnl = round(pnl, 1)
         strategy.pnl_today_try = round(strategy.pnl_today_try + pnl, 1)
         strategy.pnl_week_try = round(strategy.pnl_week_try + pnl, 1)
-        strategy.strategy_quality = round(min(1.0, strategy.strategy_quality + 0.02) if pnl > 0 else max(0.0, strategy.strategy_quality - 0.05), 3)
+        # Use paper trading results for quality if available
+        paper_pnl_path = __import__("pathlib").Path("data/paper_trades/portfolio.json")
+        if paper_pnl_path.exists():
+            try:
+                pf_data = json.loads(paper_pnl_path.read_text())
+                real_pnl = pf_data.get("closed_pnl_try", 0)
+                strategy.strategy_quality = round(min(0.95, max(0.05, 0.5 + real_pnl / max(1, abs(real_pnl)) * 0.3)), 3)
+            except Exception:
+                strategy.strategy_quality = round(min(1.0, strategy.strategy_quality + 0.02) if pnl > 0 else max(0.0, strategy.strategy_quality - 0.05), 3)
+        else:
+            strategy.strategy_quality = round(min(1.0, strategy.strategy_quality + 0.02) if pnl > 0 else max(0.0, strategy.strategy_quality - 0.05), 3)
 
         # Self-training: track prediction accuracy
         predicted_direction = 1 if edge_proxy > 0.4 else 0
@@ -456,7 +466,7 @@ def _process_cycle(
         if accuracy > 0.65:
             state.adaptive_alpha = min(0.35, state.adaptive_alpha + 0.005)
         elif accuracy < 0.35:
-            state.adaptive_alpha = max(0.05, state.adaptive_alpha - 0.01)
+            state.adaptive_alpha = max(0.10, state.adaptive_alpha - 0.01)
         state.last_cycle_pnl = pnl
 
         state.ledger_events.append(_event(state, "PRODUCTION_DECISION", "INFO", "production-engine", strategy.strategy_id,
