@@ -384,40 +384,12 @@ def main() -> None:
                         continue
                     if s.strategy_quality < 0.10:
                         continue
-                    symbol = "BTCUSDT" if "btc" in sid else "ETHUSDT" if "eth" in sid else "SOLUSDT"
-                    price = prices.get(symbol, 0)
-                    if not price:
-                        continue
-                    
-                    # Exit signal: RSI > 75 (overbought → take profit) or RSI < 20 (oversold → cut)
-                    should_exit = False
-                    exit_reason = ""
-                    if sid in portfolio.positions:
-                        # Check indicator-based exit
-                        if s.current_risk_score > 0.8:
-                            should_exit = True
-                            exit_reason = f"high risk ({s.current_risk_score:.2f})"
-                        elif s.current_edge_score < 0.15:
-                            should_exit = True
-                            exit_reason = f"edge collapsed ({s.current_edge_score:.2f})"
-                        
-                        if should_exit:
-                            closed = portfolio.close_position(sid, price)
-                            pnl = closed['pnl_try'] if closed else 0
-                            state.ledger_events.append({
-                                "id": f"exit-{state.cycle}", "ts_ms": int(time.time() * 1000),
-                                "event_type": "INDICATOR_EXIT", "severity": "INFO",
-                                "source": "indicator-engine", "strategy_id": sid,
-                                "message": f"Exit {symbol}: {exit_reason} | PnL={pnl:+.1f} TRY"
-                            })
-                            continue  # Don't re-enter immediately
-                    
-                    # Entry signal: edge > 0.4 and risk < 0.5
-                    if sid not in portfolio.positions and s.current_edge_score > 0.35 and s.current_risk_score < 0.6:
+                    symbol = "BTCUSDT" if "btc" in sid else "ETHUSDT" if "eth" in sid else "SOLUSDT" if "sol" in sid else "BNBUSDT"
+                    # Entry: edge > 0.20, risk < 0.75
+                    if sid not in portfolio.positions and s.current_edge_score > 0.20 and s.current_risk_score < 0.75:
                         amt = min(s.max_entry_try, 500)
                         
                         if live_trading:
-                            # Try Binance
                             try:
                                 result = place_market_buy(symbol, amt)
                                 if result.status not in ("ERROR", "REJECTED", "SIMULATED"):
@@ -429,7 +401,6 @@ def main() -> None:
                                         "message": f"ENTRY {symbol} {amt:.0f} TRY @ {price:.0f} edge={s.current_edge_score:.2f}"
                                     })
                             except Exception:
-                                # Try BTCTürk
                                 try:
                                     bt_symbol = symbol.replace("USDT", "TRY")
                                     btcturk_order(bt_symbol, "BUY", quote_amount=amt)
@@ -437,9 +408,29 @@ def main() -> None:
                                 except Exception:
                                     pass
                         
-                        # Paper tracking always
                         if sid not in portfolio.positions:
                             portfolio.open_position(sid, symbol, price, min(amt, portfolio.balance_try * 0.1))
+                    
+                    # Exit logic: close if edge < 0.16 or risk > 0.75
+                    elif sid in portfolio.positions:
+                        should_exit = False
+                        exit_reason = ""
+                        if s.current_risk_score > 0.75:
+                            should_exit = True
+                            exit_reason = f"high risk ({s.current_risk_score:.2f})"
+                        elif s.current_edge_score < 0.16:
+                            should_exit = True
+                            exit_reason = f"edge weak ({s.current_edge_score:.2f})"
+                        
+                        if should_exit:
+                            closed = portfolio.close_position(sid, price)
+                            pnl = closed['pnl_try'] if closed else 0
+                            state.ledger_events.append({
+                                "id": f"exit-{state.cycle}", "ts_ms": int(time.time() * 1000),
+                                "event_type": "INDICATOR_EXIT", "severity": "INFO",
+                                "source": "indicator-engine", "strategy_id": sid,
+                                "message": f"EXIT {symbol}: {exit_reason} | PnL={pnl:+.1f} TRY"
+                            })
                 
                 portfolio.save()
             if state.cycle % 5 == 0 or args.once:
