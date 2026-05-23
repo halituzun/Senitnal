@@ -30,17 +30,20 @@ class TaapiConfig:
     )
     indicators: tuple[str, ...] = field(
         default_factory=lambda: (
-            "rsi",
-            "macd",
-            "adx",
-            "atr",
-            "bbands",
-            "supertrend",
-            "vwap",
-            "stochrsi",
-            "ichimoku",
-            "mfi",
-            "obv",
+            # Momentum
+            "rsi", "stochrsi", "mfi", "cci", "williams", "ao", "mom",
+            # Trend
+            "macd", "adx", "supertrend", "ichimoku", "sma", "ema", "wma", "hma", "vwap",
+            # Volatility
+            "atr", "bbands", "keltner", "donchian", "envelope",
+            # Volume
+            "obv", "cmf", "force_index", "eom", "nvi", "pvi",
+            # Pattern
+            "doji", "engulfing", "harami", "hammer", "morning_star", "marubozu",
+            # Support/Resistance
+            "pivot", "fibonacci",
+            # Custom
+            "rsi_divergence", "macd_divergence",
         )
     )
     spool_path: Path = Path("data/intelligence/taapi_snapshots")
