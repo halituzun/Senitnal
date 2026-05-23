@@ -394,10 +394,13 @@ def main() -> None:
                         amt = max(amt, 50)  # Min 50 TRY
                         
                         if live_trading:
+                            executed = False
+                            # Try Binance
                             try:
                                 result = place_market_buy(symbol, amt)
                                 if result.status not in ("ERROR", "REJECTED", "SIMULATED"):
                                     portfolio.open_position(sid, symbol, price, amt)
+                                    executed = True
                                     state.ledger_events.append({
                                         "id": f"live-{state.cycle}", "ts_ms": int(time.time() * 1000),
                                         "event_type": "LIVE_TRADE", "severity": "INFO",
@@ -405,10 +408,20 @@ def main() -> None:
                                         "message": f"ENTRY {symbol} {amt:.0f} TRY @ {price:.0f} edge={s.current_edge_score:.2f}"
                                     })
                             except Exception:
+                                pass
+                            
+                            # Fallback to BTCTürk
+                            if not executed:
                                 try:
                                     bt_symbol = symbol.replace("USDT", "TRY")
                                     btcturk_order(bt_symbol, "BUY", quote_amount=amt)
                                     portfolio.open_position(sid, bt_symbol, price, amt)
+                                    state.ledger_events.append({
+                                        "id": f"live-{state.cycle}", "ts_ms": int(time.time() * 1000),
+                                        "event_type": "LIVE_TRADE", "severity": "INFO",
+                                        "source": "btcturk", "strategy_id": sid,
+                                        "message": f"ENTRY {bt_symbol} {amt:.0f} TRY @ {price:.0f} edge={s.current_edge_score:.2f}"
+                                    })
                                 except Exception:
                                     pass
                         
