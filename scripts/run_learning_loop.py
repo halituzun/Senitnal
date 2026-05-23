@@ -16,6 +16,17 @@ import json
 import os
 import time
 from pathlib import Path
+
+# Load .env file if it exists
+_env_path = Path(__file__).resolve().parents[1] / ".env"
+if _env_path.exists():
+    with open(_env_path) as _f:
+        for _line in _f:
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _key, _val = _line.split("=", 1)
+                if _key not in os.environ:
+                    os.environ[_key] = _val.strip()
 from services.intelligence_adapters.binance_adapter import (
     fetch_all_snapshots as fetch_binance,
     fetch_prices,
