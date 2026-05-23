@@ -354,77 +354,77 @@ def main() -> None:
                 for sid, s in state.strategies.items():
                     if s.lifecycle_state == "PAUSED" and s.strategy_quality < 0.10:
                         alert_strategy_paused(sid, s.strategy_quality)
-                # Run Gel.Al guard cycle — auto-advance phase based on quality
+                # Run Gel.Al guard cycle
                 try:
                     qualities = {sid: s.strategy_quality for sid, s in state.strategies.items()}
                     avg_q = sum(qualities.values()) / max(1, len(qualities))
                     phase = "shadow"
-                    if avg_q > 0.4 and state.cycle > 100:
-                        phase = "canary"
-                    if avg_q > 0.6 and state.cycle > 200:
-                        phase = "limited_live"
-                    if avg_q > 0.8 and state.cycle > 500:
-                        phase = "active_live"
+                    if avg_q > 0.4 and state.cycle > 100: phase = "canary"
+                    if avg_q > 0.6 and state.cycle > 200: phase = "limited_live"
+                    if avg_q > 0.8 and state.cycle > 500: phase = "active_live"
                     run_guard_cycle(phase, qualities, state.kill_switch_active)
-                    # Execute trades: real if live, paper if not
-                    for sid, s in state.strategies.items():
-                        if s.lifecycle_state not in ("ACTIVE_LIVE", "LIMITED_LIVE") or s.strategy_quality < 0.10:
-                            continue
-                        symbol = "BTCUSDT" if "btc" in sid else "ETHUSDT" if "eth" in sid else "SOLUSDT"
-                        price = prices.get(symbol, 0)
-                        if not price:
-                            continue
-                        amt = min(s.max_entry_try, 500)  # Max 500 TRY per trade
-                        
-                        if live_trading:
-                            # Real exchange execution
-                            try:
-                                if sid not in portfolio.positions:
-                                    result = place_market_buy(symbol, amt)
-                                    if result.status not in ("ERROR", "REJECTED", "SIMULATED"):
-                                        portfolio.open_position(sid, symbol, price, amt)
-                                        state.ledger_events.append({
-                                            "id": f"live-{state.cycle}", "ts_ms": int(time.time() * 1000),
-                                            "event_type": "LIVE_TRADE", "severity": "INFO",
-                                            "source": "exchange-executor", "strategy_id": sid, "adapter_id": None,
-                                            "message": f"BUY {symbol} {amt:.0f} TRY @ {price:.0f} — {result.status}"
-                                        })
-                                else:
-                                    pos = portfolio.positions[sid]
-                                    qty = pos.quantity
-                                    result = place_market_sell(symbol, qty)
-                                    if result.status not in ("ERROR", "REJECTED", "SIMULATED"):
-                                        portfolio.close_position(sid, price)
-                                        state.ledger_events.append({
-                                            "id": f"live-{state.cycle}", "ts_ms": int(time.time() * 1000),
-                                            "event_type": "LIVE_TRADE", "severity": "INFO",
-                                            "source": "exchange-executor", "strategy_id": sid, "adapter_id": None,
-                                            "message": f"SELL {symbol} {qty:.6f} @ {price:.0f} — {result.status}"
-                                        })
-                            except Exception as e:
-                                state.ledger_events.append({
-                                    "id": f"live-err-{state.cycle}", "ts_ms": int(time.time() * 1000),
-                                    "event_type": "LIVE_TRADE_ERROR", "severity": "ERROR",
-                                    "source": "exchange-executor", "strategy_id": sid, "adapter_id": None,
-                                    "message": f"Exchange error: {str(e)[:100]}"
-                                })
-                        else:
-                            # Paper trading fallback
-                            if sid not in portfolio.positions:
-                                amt = min(s.max_entry_try, portfolio.balance_try * 0.1)
-                                portfolio.open_position(sid, symbol, price, amt)
-                            else:
-                                result = portfolio.close_position(sid, price)
-                                if result:
-                                    state.ledger_events.append({
-                                        "id": f"trade-{state.cycle}", "ts_ms": int(time.time() * 1000),
-                                        "event_type": "PAPER_TRADE", "severity": "INFO",
-                                        "source": "paper-trader", "strategy_id": sid, "adapter_id": None,
-                                        "message": f"{'WIN' if result['win'] else 'LOSS'}: {result['pnl_try']:+.1f} TRY"
-                                    })
-                    portfolio.save()
                 except Exception:
                     pass
+
+                # Reactivate paused strategies that have paper positions to unwind
+                for sid, s in state.strategies.items():
+                    if s.lifecycle_state == "PAUSED" and sid in portfolio.positions:
+                        s.lifecycle_state = "LIMITED_LIVE"
+                        s.allocated_budget_try = s.max_entry_try * 3
+
+                # Execute trades — runs EVERY cycle, outside guard try/except
+                for sid, s in state.strategies.items():
+                    if s.lifecycle_state not in ("ACTIVE_LIVE", "LIMITED_LIVE") or s.strategy_quality < 0.10:
+                        continue
+                    symbol = "BTCUSDT" if "btc" in sid else "ETHUSDT" if "eth" in sid else "SOLUSDT"
+                    price = prices.get(symbol, 0)
+                    if not price:
+                        continue
+                    amt = min(s.max_entry_try, 500)
+                    
+                    if live_trading:
+                        try:
+                            if sid not in portfolio.positions:
+                                result = place_market_buy(symbol, amt)
+                                if result.status not in ("ERROR", "REJECTED", "SIMULATED"):
+                                    portfolio.open_position(sid, symbol, price, amt)
+                                    state.ledger_events.append({
+                                        "id": f"live-{state.cycle}", "ts_ms": int(time.time() * 1000),
+                                        "event_type": "LIVE_TRADE", "severity": "INFO",
+                                        "source": "exchange-executor", "strategy_id": sid, "adapter_id": None,
+                                        "message": f"BUY {symbol} {amt:.0f} TRY @ {price:.0f} — {result.status}"
+                                    })
+                            else:
+                                pos = portfolio.positions[sid]
+                                result = place_market_sell(symbol, pos.quantity)
+                                if result.status not in ("ERROR", "REJECTED", "SIMULATED"):
+                                    portfolio.close_position(sid, price)
+                                    state.ledger_events.append({
+                                        "id": f"live-{state.cycle}", "ts_ms": int(time.time() * 1000),
+                                        "event_type": "LIVE_TRADE", "severity": "INFO",
+                                        "source": "exchange-executor", "strategy_id": sid, "adapter_id": None,
+                                        "message": f"SELL {symbol} {pos.quantity:.6f} @ {price:.0f} — {result.status}"
+                                    })
+                        except Exception as e:
+                            state.ledger_events.append({
+                                "id": f"live-err-{state.cycle}", "ts_ms": int(time.time() * 1000),
+                                "event_type": "LIVE_TRADE_ERROR", "severity": "ERROR",
+                                "source": "exchange-executor", "strategy_id": sid, "adapter_id": None,
+                                "message": f"Exchange error: {str(e)[:100]}"
+                            })
+                    else:
+                        if sid not in portfolio.positions:
+                            portfolio.open_position(sid, symbol, price, amt)
+                        else:
+                            result = portfolio.close_position(sid, price)
+                            if result:
+                                state.ledger_events.append({
+                                    "id": f"trade-{state.cycle}", "ts_ms": int(time.time() * 1000),
+                                    "event_type": "PAPER_TRADE", "severity": "INFO",
+                                    "source": "paper-trader", "strategy_id": sid, "adapter_id": None,
+                                    "message": f"{'WIN' if result['win'] else 'LOSS'}: {result['pnl_try']:+.1f} TRY"
+                                })
+                portfolio.save()
             if state.cycle % 5 == 0 or args.once:
                 print(f"       ↳ snapshot: {path.name}")
 
