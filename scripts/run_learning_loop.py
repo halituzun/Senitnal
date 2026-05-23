@@ -385,9 +385,9 @@ def main() -> None:
                     if s.strategy_quality < 0.10:
                         continue
                     symbol = "BTCUSDT" if "btc" in sid else "ETHUSDT" if "eth" in sid else "SOLUSDT" if "sol" in sid else "BNBUSDT"
-                    # Entry: strong edge > 0.28, low risk < 0.6
+                    # Entry: edge >= 0.28, risk < 0.65
                     # Position size scales with edge confidence
-                    if sid not in portfolio.positions and s.current_edge_score > 0.28 and s.current_risk_score < 0.6:
+                    if sid not in portfolio.positions and s.current_edge_score >= 0.28 and s.current_risk_score < 0.65:
                         # Scale position: higher edge = larger position (20-100% of max)
                         edge_factor = min(1.0, (s.current_edge_score - 0.20) / 0.30)
                         amt = min(s.max_entry_try * edge_factor, 300)  # Max 300 TRY
@@ -415,14 +415,14 @@ def main() -> None:
                         if sid not in portfolio.positions:
                             portfolio.open_position(sid, symbol, price, min(amt, portfolio.balance_try * 0.1))
                     
-                    # Exit logic: close if edge < 0.16 or risk > 0.75
+                    # Exit logic: close if edge < 0.22 or risk > 0.70
                     elif sid in portfolio.positions:
                         should_exit = False
                         exit_reason = ""
-                        if s.current_risk_score > 0.75:
+                        if s.current_risk_score > 0.70:
                             should_exit = True
                             exit_reason = f"high risk ({s.current_risk_score:.2f})"
-                        elif s.current_edge_score < 0.16:
+                        elif s.current_edge_score < 0.22:
                             should_exit = True
                             exit_reason = f"edge weak ({s.current_edge_score:.2f})"
                         
