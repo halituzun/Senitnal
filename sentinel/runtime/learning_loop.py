@@ -442,15 +442,23 @@ def _process_cycle(
             pnl = round(pnl, 1)
         strategy.pnl_today_try = round(strategy.pnl_today_try + pnl, 1)
         strategy.pnl_week_try = round(strategy.pnl_week_try + pnl, 1)
-        # Use paper trading results for quality if available
-        paper_pnl_path = __import__("pathlib").Path("data/paper_trades/portfolio.json")
+        # Quality: use paper trading results if available, else simulated
+        paper_pnl_path = __import__("pathlib").Path("data/paper_trades/trades.jsonl")
+        paper_quality = None
         if paper_pnl_path.exists():
             try:
-                pf_data = json.loads(paper_pnl_path.read_text())
-                real_pnl = pf_data.get("closed_pnl_try", 0)
-                strategy.strategy_quality = round(min(0.95, max(0.05, 0.5 + real_pnl / max(1, abs(real_pnl)) * 0.3)), 3)
+                trades = [json.loads(line) for line in paper_pnl_path.read_text().splitlines() if line.strip()]
+                strat_trades = [t for t in trades if t.get("strategy_id") == strategy.strategy_id and t.get("action") == "CLOSE"]
+                if strat_trades:
+                    wins = sum(1 for t in strat_trades if t.get("win"))
+                    win_rate = wins / len(strat_trades)
+                    total_pnl = sum(t.get("pnl_try", 0) for t in strat_trades)
+                    # Quality from win rate + PnL
+                    paper_quality = round(min(0.95, max(0.05, win_rate * 0.6 + (0.4 if total_pnl > 0 else 0.2))), 3)
             except Exception:
-                strategy.strategy_quality = round(min(1.0, strategy.strategy_quality + 0.02) if pnl > 0 else max(0.0, strategy.strategy_quality - 0.05), 3)
+                pass
+        if paper_quality is not None:
+            strategy.strategy_quality = paper_quality
         else:
             strategy.strategy_quality = round(min(1.0, strategy.strategy_quality + 0.02) if pnl > 0 else max(0.0, strategy.strategy_quality - 0.05), 3)
 
