@@ -23,10 +23,9 @@ from urllib.request import Request, urlopen
 
 ORDER_LOG = Path("data/trades/live_orders.jsonl")
 
-# Safety limits
-MAX_ORDER_TRY = 100.0  # Maximum per-order amount in TRY
-MAX_DAILY_VOLUME_TRY = 500.0  # Maximum total daily volume
-MIN_ORDER_TRY = 5.0  # Minimum order size
+# Safety limits — REMOVED per user request. Use portfolio allocation instead.
+MAX_ORDER_TRY = float("inf")  # No hard limit
+MAX_DAILY_VOLUME_TRY = float("inf")  # no hard limit
 
 
 @dataclass

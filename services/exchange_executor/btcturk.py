@@ -1,24 +1,31 @@
 """BTCTürk exchange executor."""
 from __future__ import annotations
-import hashlib, hmac, json, os, time
+import base64, hashlib, hmac, json, os, time
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 def _signed_request(endpoint: str, params: dict = None, method: str = "GET") -> dict:
     api_key = os.environ.get("BTCTURK_PUBLIC_KEY", "")
-    api_secret = os.environ.get("BTCTURK_PRIVATE_KEY", "")
-    if not api_key or not api_secret:
+    api_secret_b64 = os.environ.get("BTCTURK_PRIVATE_KEY", "")
+    if not api_key or not api_secret_b64:
         raise ValueError("BTCTURK keys not set")
     params = params or {}
-    params["nonce"] = int(time.time() * 1000)
-    body = urlencode(params)
-    msg = f"{api_key}{params['nonce']}"
-    sig = hmac.new(api_secret.encode(), msg.encode(), hashlib.sha256).hexdigest()
-    url = f"https://api.btcturk.com{endpoint}?{body}" if method == "GET" else f"https://api.btcturk.com{endpoint}"
-    headers = {"X-PCK": api_key, "X-Stamp": str(params["nonce"]), "X-Signature": sig, "Accept": "application/json"}
-    if method == "POST": headers["Content-Type"] = "application/x-www-form-urlencoded"
-    req = Request(url, data=body.encode() if method == "POST" else None, headers=headers)
-    if method == "POST": req.method = "POST"
+    nonce = str(int(time.time() * 1000))
+    msg = f"{api_key}{nonce}"
+    secret_bytes = base64.b64decode(api_secret_b64)
+    sig = base64.b64encode(hmac.new(secret_bytes, msg.encode(), hashlib.sha256).digest()).decode()
+    url = f"https://api.btcturk.com{endpoint}"
+    headers = {"X-PCK": api_key, "X-Stamp": nonce, "X-Signature": sig, "Accept": "application/json"}
+    if method == "POST":
+        headers["Content-Type"] = "application/x-www-form-urlencoded"
+        body = urlencode(params).encode()
+    else:
+        body = None
+        if params:
+            url += "?" + urlencode(params)
+    req = Request(url, data=body, headers=headers)
+    if method == "POST":
+        req.method = "POST"
     with urlopen(req, timeout=15) as resp:
         return json.loads(resp.read())
 
