@@ -1,33 +1,50 @@
 """BTCTürk exchange executor."""
 from __future__ import annotations
-import base64, hashlib, hmac, json, os, time
+import base64, hashlib, hmac, json, os, socket, time
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+
+# Force IPv4 for BTCTürk (their whitelist uses IPv4)
+_socket_orig = socket.getaddrinfo
+def _force_ipv4(host, port, family=0, *args, **kwargs):
+    return _socket_orig(host, port, socket.AF_INET, *args, **kwargs)
 
 def _signed_request(endpoint: str, params: dict = None, method: str = "GET") -> dict:
     api_key = os.environ.get("BTCTURK_PUBLIC_KEY", "")
     api_secret_b64 = os.environ.get("BTCTURK_PRIVATE_KEY", "")
     if not api_key or not api_secret_b64:
         raise ValueError("BTCTURK keys not set")
-    params = params or {}
-    nonce = str(int(time.time() * 1000))
-    msg = f"{api_key}{nonce}"
-    secret_bytes = base64.b64decode(api_secret_b64)
-    sig = base64.b64encode(hmac.new(secret_bytes, msg.encode(), hashlib.sha256).digest()).decode()
-    url = f"https://api.btcturk.com{endpoint}"
-    headers = {"X-PCK": api_key, "X-Stamp": nonce, "X-Signature": sig, "Accept": "application/json"}
-    if method == "POST":
-        headers["Content-Type"] = "application/x-www-form-urlencoded"
-        body = urlencode(params).encode()
-    else:
-        body = None
-        if params:
-            url += "?" + urlencode(params)
-    req = Request(url, data=body, headers=headers)
-    if method == "POST":
-        req.method = "POST"
-    with urlopen(req, timeout=15) as resp:
-        return json.loads(resp.read())
+    
+    socket.getaddrinfo = _force_ipv4
+    try:
+        params = params or {}
+        nonce = str(int(time.time()) * 1000)
+        msg = f"{api_key}{nonce}"
+        secret_bytes = base64.b64decode(api_secret_b64)
+        sig_bytes = hmac.new(secret_bytes, msg.encode(), hashlib.sha256).digest()
+        sig = base64.b64encode(sig_bytes).decode()
+        url = f"https://api.btcturk.com{endpoint}"
+        headers = {
+            "X-PCK": api_key,
+            "X-Stamp": nonce,
+            "X-Signature": sig,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0",
+        }
+        if method == "POST":
+            body = json.dumps(params).encode() if params else None
+        else:
+            body = None
+            if params:
+                url += "?" + urlencode(params)
+        req = Request(url, data=body, headers=headers)
+        if method == "POST":
+            req.method = "POST"
+        with urlopen(req, timeout=15) as resp:
+            return json.loads(resp.read())
+    finally:
+        socket.getaddrinfo = _socket_orig
 
 def get_balances() -> dict:
     try:
