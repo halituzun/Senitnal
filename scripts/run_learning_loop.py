@@ -389,17 +389,16 @@ def main() -> None:
                     if not price:
                         continue
                     
-                    # Exit signal: RSI > 75 (overbought → take profit) or RSI < 20 (oversold → cut)
+                    # Exit signal: risk too high or edge collapsed
                     should_exit = False
                     exit_reason = ""
                     if sid in portfolio.positions:
-                        # Check indicator-based exit
-                        if s.current_risk_score > 0.8:
+                        if s.current_risk_score > 0.75:
                             should_exit = True
                             exit_reason = f"high risk ({s.current_risk_score:.2f})"
-                        elif s.current_edge_score < 0.15:
+                        elif s.current_edge_score < 0.22:
                             should_exit = True
-                            exit_reason = f"edge collapsed ({s.current_edge_score:.2f})"
+                            exit_reason = f"edge weak ({s.current_edge_score:.2f})"
                         
                         if should_exit:
                             closed = portfolio.close_position(sid, price)
@@ -412,8 +411,8 @@ def main() -> None:
                             })
                             continue  # Don't re-enter immediately
                     
-                    # Entry signal: edge > 0.4 and risk < 0.5
-                    if sid not in portfolio.positions and s.current_edge_score > 0.35 and s.current_risk_score < 0.6:
+                    # Entry signal: edge > 0.25 and risk < 0.7
+                    if sid not in portfolio.positions and s.current_edge_score > 0.25 and s.current_risk_score < 0.7:
                         amt = min(s.max_entry_try, 500)
                         
                         if live_trading:
