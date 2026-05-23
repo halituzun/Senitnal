@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import time
 from pathlib import Path
 from services.intelligence_adapters.binance_adapter import (
@@ -46,6 +47,8 @@ from services.intelligence_adapters.free_news_adapter import fetch_sentiment as 
 from scripts.gelal_bridge import run_guard_cycle, get_guard_stats
 from services.alerting import alert_kill_switch, alert_strategy_paused, alert_guard_block
 from services.paper_trading import PaperPortfolio, run_paper_trade
+from services.exchange_executor import place_market_buy, place_market_sell, get_balances as get_binance_balances
+from services.exchange_executor.btcturk import get_balances as get_btcturk_balances, place_market_order as btcturk_order
 
 STATE_FILE = Path("data/learning_state.json")
 
@@ -173,7 +176,26 @@ def main() -> None:
 
     # Paper trading portfolio
     portfolio = PaperPortfolio.load()
-    print(f"  Paper Portfolio: {portfolio.balance_try:.0f} TRY balance, {portfolio.total_trades} trades, {portfolio.win_rate():.0%} WR")
+    print(f"  Paper Portfolio: {portfolio.balance_try:.0f} TRY, {portfolio.total_trades} trades, {portfolio.win_rate():.0%} WR")
+    
+    # Real exchange balances
+    live_trading = os.environ.get("BINANCE_LIVE_TRADING", "").lower() == "true"
+    if live_trading:
+        try:
+            bb = get_binance_balances()
+            if isinstance(bb, dict) and 'error' not in str(bb):
+                print(f"  Binance: {len(bb)} assets")
+        except Exception:
+            pass
+        try:
+            bt = get_btcturk_balances()
+            if isinstance(bt, dict) and 'error' not in str(bt):
+                total_try = sum(d['total'] for d in bt.values() if isinstance(d, dict) and d.get('asset') == 'TRY')
+                print(f"  BTCTürk: {len(bt)} assets, {bt.get('TRY', {}).get('total', 0):.0f} TRY")
+        except Exception:
+            pass
+        print(f"  ⚠️  LIVE TRADING ACTIVE — gerçek emirler gönderilecek")
+    print()
     for symbol, data in hist.get("symbols", {}).items():
         daily = data.get("intervals", {}).get("daily", {})
         if daily:
