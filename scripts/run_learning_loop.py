@@ -394,6 +394,13 @@ def main() -> None:
                                         "source": "exchange-executor", "strategy_id": sid, "adapter_id": None,
                                         "message": f"BUY {symbol} {amt:.0f} TRY @ {price:.0f} — {result.status}"
                                     })
+                                else:
+                                    state.ledger_events.append({
+                                        "id": f"live-err-{state.cycle}", "ts_ms": int(time.time() * 1000),
+                                        "event_type": "LIVE_TRADE_ERROR", "severity": "WARN",
+                                        "source": "exchange-executor", "strategy_id": sid, "adapter_id": None,
+                                        "message": f"BUY BLOCKED: {symbol} {amt:.0f} TRY — {result.error or result.status}"
+                                    })
                             else:
                                 pos = portfolio.positions[sid]
                                 result = place_market_sell(symbol, pos.quantity)
@@ -404,6 +411,13 @@ def main() -> None:
                                         "event_type": "LIVE_TRADE", "severity": "INFO",
                                         "source": "exchange-executor", "strategy_id": sid, "adapter_id": None,
                                         "message": f"SELL {symbol} {pos.quantity:.6f} @ {price:.0f} — {result.status}"
+                                    })
+                                else:
+                                    state.ledger_events.append({
+                                        "id": f"live-err-{state.cycle}", "ts_ms": int(time.time() * 1000),
+                                        "event_type": "LIVE_TRADE_ERROR", "severity": "WARN",
+                                        "source": "exchange-executor", "strategy_id": sid, "adapter_id": None,
+                                        "message": f"SELL BLOCKED: {symbol} — {result.error or result.status} (Binance balance empty?)"
                                     })
                         except Exception as e:
                             state.ledger_events.append({
