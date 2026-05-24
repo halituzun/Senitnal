@@ -389,12 +389,21 @@ def main() -> None:
                     if not price:
                         continue
                     # Entry: edge >= 0.22, risk < 0.65
-                    # Position size scales with edge confidence
+                    # Kelly position sizing: bet fraction = edge_score * quality / risk
                     if sid not in portfolio.positions and s.current_edge_score >= 0.22 and s.current_risk_score < 0.65:
-                        # Scale position: higher edge = larger position (20-100% of max)
-                        edge_factor = min(1.0, (s.current_edge_score - 0.20) / 0.30)
-                        amt = min(s.max_entry_try * edge_factor, 300)  # Max 300 TRY
+                        # Kelly formula: f = (p*b - q) / b  where p=win_prob, b=odds
+                        win_prob = s.current_confidence if s.current_confidence > 0 else 0.5
+                        kelly_fraction = max(0.02, (win_prob * (s.current_edge_score / max(0.01, s.current_risk_score)) - (1-win_prob)) / 10)
+                        kelly_fraction = min(kelly_fraction, 0.10)  # Max 10% of portfolio
+                        
+                        # Position size based on portfolio value and Kelly
+                        total_value = portfolio.total_value(prices)
+                        amt = min(s.max_entry_try, total_value * kelly_fraction)
                         amt = max(amt, 50)  # Min 50 TRY
+                        
+                        # Risk check: no single position > 5% of portfolio
+                        if amt > total_value * 0.05:
+                            amt = total_value * 0.05
                         
                         if live_trading:
                             executed = False
@@ -431,25 +440,45 @@ def main() -> None:
                         if sid not in portfolio.positions:
                             portfolio.open_position(sid, symbol, price, min(amt, portfolio.balance_try * 0.1))
                     
-                    # Exit logic: close if edge < 0.22 or risk > 0.70
+                    # Smart exit: take-profit, trailing stop, risk guard
                     elif sid in portfolio.positions:
+                        pos = portfolio.positions[sid]
+                        pnl_pct = (price - pos.entry_price) / pos.entry_price if pos.entry_price > 0 else 0
                         should_exit = False
                         exit_reason = ""
-                        if s.current_risk_score > 0.70:
+                        
+                        # Take-profit: strong edge spike → lock in gains
+                        if pnl_pct > 0.03 and s.current_edge_score > 0.40:
+                            should_exit = True
+                            exit_reason = f"take-profit +{pnl_pct*100:.1f}% edge={s.current_edge_score:.2f}"
+                        # Trailing stop: -2% from peak
+                        elif pnl_pct < -0.02:
+                            should_exit = True
+                            exit_reason = f"stop-loss {pnl_pct*100:.1f}%"
+                        # Risk guard: high risk → exit
+                        elif s.current_risk_score > 0.70:
                             should_exit = True
                             exit_reason = f"high risk ({s.current_risk_score:.2f})"
-                        elif s.current_edge_score < 0.18:
+                        # Edge collapse: edge < 0.15 → exit
+                        elif s.current_edge_score < 0.15:
                             should_exit = True
-                            exit_reason = f"edge weak ({s.current_edge_score:.2f})"
+                            exit_reason = f"edge collapsed ({s.current_edge_score:.2f})"
                         
                         if should_exit:
+                            # Execute real sell if position was on exchange
+                            if live_trading:
+                                try:
+                                    if sid in portfolio.positions:
+                                        place_market_sell(symbol, pos.quantity)
+                                except Exception:
+                                    pass
                             closed = portfolio.close_position(sid, price)
                             pnl = closed['pnl_try'] if closed else 0
                             state.ledger_events.append({
                                 "id": f"exit-{state.cycle}", "ts_ms": int(time.time() * 1000),
-                                "event_type": "INDICATOR_EXIT", "severity": "INFO",
-                                "source": "indicator-engine", "strategy_id": sid,
-                                "message": f"EXIT {symbol}: {exit_reason} | PnL={pnl:+.1f} TRY"
+                                "event_type": "SMART_EXIT", "severity": "INFO",
+                                "source": "risk-engine", "strategy_id": sid,
+                                "message": f"EXIT {symbol}: {exit_reason} | PnL={pnl:+.1f} TRY ({pnl_pct*100:+.1f}%)"
                             })
                 
                 portfolio.save()
