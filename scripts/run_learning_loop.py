@@ -468,14 +468,27 @@ def main() -> None:
                         should_exit = False
                         exit_reason = ""
                         
-                        # Take-profit: +1.5% gain with decent edge → lock in
-                        if pnl_pct > 0.015 and s.current_edge_score > 0.30:
+                        # Dynamic exit thresholds based on volatility
+                        vol_factor = 1.0 + s.current_risk_score  # 1.0-1.9
+                        tp_target = 0.01 * vol_factor  # 1-1.9% take-profit (volatility-adjusted)
+                        sl_limit = -0.01 * vol_factor  # 1-1.9% stop-loss
+                        
+                        # Determine edge trend (improving or deteriorating?)
+                        edge_improving = s.current_edge_score > (getattr(s, '_prev_edge', s.current_edge_score) or s.current_edge_score - 0.01)
+                        setattr(s, '_prev_edge', s.current_edge_score)  # Track for next cycle
+                        
+                        # Take-profit: dynamic target based on edge strength
+                        if pnl_pct > tp_target:
                             should_exit = True
-                            exit_reason = f"take-profit +{pnl_pct*100:.1f}% edge={s.current_edge_score:.2f}"
-                        # Trailing stop: -1.5% loss → cut
-                        elif pnl_pct < -0.015:
+                            exit_reason = f"TP +{pnl_pct*100:.1f}% (target={tp_target*100:.1f}%)"
+                        # Stop-loss: dynamic limit
+                        elif pnl_pct < sl_limit:
                             should_exit = True
-                            exit_reason = f"stop-loss {pnl_pct*100:.1f}%"
+                            exit_reason = f"SL {pnl_pct*100:.1f}% (limit={sl_limit*100:.1f}%)"
+                        # Edge rapidly deteriorating → exit early
+                        elif not edge_improving and s.current_edge_score < 0.25 and pnl_pct > 0:
+                            should_exit = True
+                            exit_reason = f"edge fading ({s.current_edge_score:.2f}) lock +{pnl_pct*100:.1f}%"
                         # Risk guard: high risk → exit
                         elif s.current_risk_score > 0.70:
                             should_exit = True
