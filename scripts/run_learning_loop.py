@@ -385,7 +385,10 @@ def main() -> None:
                     if s.strategy_quality < 0.10:
                         continue
                     symbol = "BTCUSDT" if "btc" in sid else "ETHUSDT" if "eth" in sid else "SOLUSDT" if "sol" in sid else "BNBUSDT"
-                    # Entry: edge >= 0.28, risk < 0.65
+                    price = prices.get(symbol, 0)
+                    if not price:
+                        continue
+                    # Entry: edge >= 0.22, risk < 0.65
                     # Position size scales with edge confidence
                     if sid not in portfolio.positions and s.current_edge_score >= 0.22 and s.current_risk_score < 0.65:
                         # Scale position: higher edge = larger position (20-100% of max)
