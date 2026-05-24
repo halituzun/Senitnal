@@ -414,7 +414,7 @@ def main() -> None:
                         elif s.current_risk_score < 0.2: vol_adj = 1.5
                         
                         # 4. Exposure limit — max 20% in one position
-                        current_exposure = sum(pd['amount_try'] for pd in portfolio.positions.values()) if portfolio.positions else 0
+                        current_exposure = sum(pd.amount_try for pd in portfolio.positions.values()) if portfolio.positions else 0
                         remaining = total_value * 0.20 - current_exposure
                         
                         # 5. Exchange-specific limits
