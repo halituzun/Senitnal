@@ -396,21 +396,33 @@ def main() -> None:
                     if not price:
                         continue
                     # Entry: edge >= 0.22, risk < 0.65
-                    # Kelly position sizing: bet fraction = edge_score * quality / risk
+                    # Dynamic position sizing
                     if sid not in portfolio.positions and s.current_edge_score >= 0.22 and s.current_risk_score < 0.65:
-                        # Kelly formula: f = (p*b - q) / b  where p=win_prob, b=odds
+                        # 1. Base position from Kelly: f = edge * confidence / risk
                         win_prob = s.current_confidence if s.current_confidence > 0 else 0.5
-                        kelly_fraction = max(0.02, (win_prob * (s.current_edge_score / max(0.01, s.current_risk_score)) - (1-win_prob)) / 10)
-                        kelly_fraction = min(kelly_fraction, 0.10)  # Max 10% of portfolio
+                        risk_adj = max(0.01, s.current_risk_score)
+                        kelly = (win_prob * s.current_edge_score - (1 - win_prob) * risk_adj) / max(0.01, s.current_edge_score)
+                        kelly = max(0.01, min(kelly, 0.15))
                         
-                        # Position size based on portfolio value and Kelly
+                        # 2. Available balance check
                         total_value = portfolio.total_value(prices)
-                        amt = min(s.max_entry_try, total_value * kelly_fraction)
-                        amt = max(amt, 50)  # Min 50 TRY
+                        max_position = total_value * kelly
                         
-                        # Risk check: no single position > 5% of portfolio
-                        if amt > total_value * 0.05:
-                            amt = total_value * 0.05
+                        # 3. Volatility adjustment
+                        vol_adj = 1.0
+                        if s.current_risk_score > 0.5: vol_adj = 0.5
+                        elif s.current_risk_score < 0.2: vol_adj = 1.5
+                        
+                        # 4. Exposure limit — max 20% in one position
+                        current_exposure = sum(pd['amount_try'] for pd in portfolio.positions.values()) if portfolio.positions else 0
+                        remaining = total_value * 0.20 - current_exposure
+                        
+                        # 5. Exchange-specific limits
+                        if live_trading:
+                            max_position = min(max_position, 500)  # Max 500 TRY/order safety
+                        
+                        amt = min(max_position * vol_adj, remaining, s.max_entry_try, 500)
+                        amt = max(amt, 25)  # Min 25 TRY
                         
                         if live_trading:
                             executed = False
