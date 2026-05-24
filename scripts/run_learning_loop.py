@@ -447,20 +447,22 @@ def main() -> None:
                         should_exit = False
                         exit_reason = ""
                         
-                        # Take-profit: strong edge spike → lock in gains
-                        if pnl_pct > 0.03 and s.current_edge_score > 0.40:
+                        # Take-profit: +1.5% gain with decent edge → lock in
+                        if pnl_pct > 0.015 and s.current_edge_score > 0.30:
                             should_exit = True
                             exit_reason = f"take-profit +{pnl_pct*100:.1f}% edge={s.current_edge_score:.2f}"
-                        # Trailing stop: -2% from peak
-                        elif pnl_pct < -0.02:
+                        # Trailing stop: -1.5% loss → cut
+                        elif pnl_pct < -0.015:
                             should_exit = True
                             exit_reason = f"stop-loss {pnl_pct*100:.1f}%"
                         # Risk guard: high risk → exit
                         elif s.current_risk_score > 0.70:
                             should_exit = True
                             exit_reason = f"high risk ({s.current_risk_score:.2f})"
-                        # Edge collapse: edge < 0.15 → exit
-                        elif s.current_edge_score < 0.15:
+                        # Force rotation every 20 cycles to prevent stagnation
+                        elif state.cycle % 20 == 0:
+                            should_exit = True
+                            exit_reason = f"scheduled rotation (cycle {state.cycle})"
                             should_exit = True
                             exit_reason = f"edge collapsed ({s.current_edge_score:.2f})"
                         
