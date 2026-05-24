@@ -420,16 +420,36 @@ def main() -> None:
                         s.lifecycle_state = "LIMITED_LIVE"
                         s.allocated_budget_try = s.max_entry_try * 3
 
-                # Execute trades with indicator-based decisions
+                # Execute trades — scan ALL available pairs, pick best signals
+                # Build candidate list from active strategies + additional pairs
+                candidates = []
                 for sid, s in state.strategies.items():
-                    if s.lifecycle_state not in ("ACTIVE_LIVE", "LIMITED_LIVE"):
-                        continue
-                    if s.strategy_quality < 0.10:
-                        continue
+                    if s.lifecycle_state not in ("ACTIVE_LIVE", "LIMITED_LIVE"): continue
+                    if s.strategy_quality < 0.10: continue
                     symbol = "BTCUSDT" if "btc" in sid else "ETHUSDT" if "eth" in sid else "SOLUSDT" if "sol" in sid else "BNBUSDT"
                     price = prices.get(symbol, 0)
-                    if not price:
-                        continue
+                    if not price: continue
+                    candidates.append((sid, s, symbol, price))
+                
+                # Add extra pairs from Binance prices that have strong signals
+                extra_pairs = {
+                    "ADAUSDT": "ada-scalp", "DOGEUSDT": "doge-momentum", 
+                    "AVAXUSDT": "avax-breakout", "LINKUSDT": "link-trend",
+                    "DOTUSDT": "dot-reversion", "MATICUSDT": "matic-scalp",
+                }
+                for sym, sid in extra_pairs.items():
+                    price = prices.get(sym, 0)
+                    if price and price > 0.01:
+                        # Use a lightweight strategy state for extra pairs
+                        edge = 0.25  # Neutral initial
+                        for st in state.strategies.values():
+                            if st.current_edge_score > edge: edge = st.current_edge_score
+                        candidates.append((sid, None, sym, price))
+                
+                # Sort by entry price (prefer cheaper coins for BTCTürk budget)
+                candidates.sort(key=lambda x: x[3])
+                
+                for sid, s, symbol, price in candidates[:8]:  # Max 8 positions total
                     
                     # Ensemble: count how many strategies agree on direction
                     bullish_votes = sum(1 for st in state.strategies.values() 
