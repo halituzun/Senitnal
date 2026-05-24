@@ -55,6 +55,7 @@ from scripts.fetch_historical import get_historical_context
 from scripts.backtest import run_backtest_pipeline
 from services.intelligence_adapters.coingecko_adapter import fetch_market_sentiment as fetch_coingecko_sentiment
 from services.intelligence_adapters.free_news_adapter import fetch_sentiment as fetch_cointelegraph_sentiment, fetch_coindesk_sentiment
+from services.intelligence_adapters.smart_strategy import compute_indicator_score
 from scripts.gelal_bridge import run_guard_cycle, get_guard_stats
 from services.alerting import alert_kill_switch, alert_strategy_paused, alert_guard_block
 from services.paper_trading import PaperPortfolio, run_paper_trade
@@ -248,8 +249,14 @@ def main() -> None:
                         config=taapi_config, symbol=symbol,
                         symbol_hash=symbol, timeframe="4h",
                     )
-                    if taapi_snap:
+                    if taapi_snap and taapi_snap.indicators:
                         tech_snapshots.append(taapi_snap)
+                        # Smart strategy analysis from real indicators
+                        score = compute_indicator_score(taapi_snap.indicators)
+                        # Blend smart score with existing strategy state
+                        strategy.current_edge_score = round(strategy.current_edge_score * 0.6 + max(0, score["edge_score"]) * 0.4, 3)
+                        strategy.current_risk_score = round(strategy.current_risk_score * 0.6 + score["risk_score"] * 0.4, 3)
+                        strategy.current_confidence = round(strategy.current_confidence * 0.6 + score["confidence"] * 0.4, 3)
 
             # Fetch news sentiment (graceful — skip on failure)
             news_sentiment: dict[str, float] = {}
