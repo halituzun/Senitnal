@@ -555,8 +555,6 @@ def main() -> None:
                         elif state.cycle % 10 == 0:
                             should_exit = True
                             exit_reason = f"scheduled rotation (cycle {state.cycle})"
-                            should_exit = True
-                            exit_reason = f"edge collapsed ({s.current_edge_score:.2f})"
                         
                         if should_exit:
                             # Execute real sell if position was on exchange
