@@ -426,6 +426,7 @@ def main() -> None:
                                         "source": "binance", "strategy_id": sid,
                                         "message": f"ENTRY {symbol} {amt:.0f} TRY @ {price:.0f} edge={s.current_edge_score:.2f}"
                                     })
+                                    print(f"  🟢 ALIM  {symbol} {amt:.0f} TRY @ {price:.0f} (edge={s.current_edge_score:.2f})")
                             except Exception:
                                 pass
                             
@@ -441,6 +442,7 @@ def main() -> None:
                                         "source": "btcturk", "strategy_id": sid,
                                         "message": f"ENTRY {bt_symbol} {amt:.0f} TRY @ {price:.0f} edge={s.current_edge_score:.2f}"
                                     })
+                                    print(f"  🟢 BTCTÜRK {bt_symbol} {amt:.0f} TRY @ {price:.0f} (edge={s.current_edge_score:.2f})")
                                 except Exception:
                                     pass
                         
@@ -491,6 +493,7 @@ def main() -> None:
                                 "source": "risk-engine", "strategy_id": sid,
                                 "message": f"EXIT {symbol}: {exit_reason} | PnL={pnl:+.2f} TRY (fee={fee:.2f})"
                             })
+                            print(f"  🔴 SATIŞ {symbol}: {exit_reason} | PnL={pnl:+.2f} TRY")
                 
                 portfolio.save()
             if state.cycle % 5 == 0 or args.once:
