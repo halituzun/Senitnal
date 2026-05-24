@@ -98,38 +98,47 @@ def analyze_market(indicators: dict[str, float]) -> MarketRegime:
     elif mfi < 20:
         regime.rsi_zone = "oversold"
 
-    # Determine action based on regime
-    bullish_signals = sum([
-        regime.trend == "bull",
-        regime.rsi_zone == "oversold",
-        regime.momentum == "strong" and regime.trend == "bull",
-        regime.volume_signal == "high" and regime.trend == "bull",
-        stoch_k < 30 and stoch_d < 30 and stoch_k > stoch_d,  # Stoch bullish cross
-        cci < -100,  # Oversold CCI → bullish reversal
-        mfi < 30,  # Oversold MFI
-    ])
-    bearish_signals = sum([
-        regime.trend == "bear",
-        regime.rsi_zone == "overbought",
-        regime.momentum == "strong" and regime.trend == "bear",
-        regime.volume_signal == "high" and regime.trend == "bear",
-        stoch_k > 70 and stoch_d > 70,  # Stoch overbought
-        cci > 100,  # Overbought CCI
-        mfi > 70,  # Overbought MFI
-    ])
+    # Determine action based on regime — MARKET ADAPTIVE
+    action = "hold"
+    confidence = 0.0
+    
+    # Scenario 1: OVERSOLD — buy the dip (mean reversion)
+    if regime.rsi_zone == "oversold" and stoch_k < 30:
+        if cci < -100 or stoch_k > stoch_d:  # Bullish divergence or stoch turn
+            action = "buy"
+            confidence = 0.7 + (0.3 if stoch_k > stoch_d else 0)
+    # Scenario 2: OVERBOUGHT — take profit / sell
+    elif regime.rsi_zone == "overbought" and stoch_k > 70:
+        if cci > 100 or stoch_k < stoch_d:  # Bearish divergence
+            action = "sell"
+            confidence = 0.7
+    # Scenario 3: STRONG TREND — follow it
+    elif regime.momentum == "strong":
+        if regime.trend == "bull" and adx > 25:
+            action = "buy"
+            confidence = 0.6
+        elif regime.trend == "bear" and adx > 25:
+            action = "sell"
+            confidence = 0.6
+    # Scenario 4: RANGING — scalp the edges
+    elif regime.momentum == "weak" and regime.volatility == "normal":
+        if rsi < 35 and stoch_k < 25:
+            action = "buy"
+            confidence = 0.5
+        elif rsi > 65 and stoch_k > 75:
+            action = "sell"
+            confidence = 0.5
+    # Scenario 5: HIGH VOLUME BREAKOUT
+    elif regime.volume_signal == "high" and adx > 20:
+        if regime.trend == "bull":
+            action = "buy"
+            confidence = 0.55
+        elif regime.trend == "bear":
+            action = "sell"
+            confidence = 0.55
 
-    total = bullish_signals + bearish_signals
-    if total > 0:
-        regime.confidence = max(bullish_signals, bearish_signals) / total
-        if bullish_signals >= 4:
-            regime.action = "buy"
-        elif bearish_signals >= 4:
-            regime.action = "sell"
-        elif bullish_signals >= 3:
-            regime.action = "buy" if regime.rsi_zone == "oversold" else "hold"
-        elif bearish_signals >= 3:
-            regime.action = "sell" if regime.rsi_zone == "overbought" else "hold"
-
+    regime.action = action
+    regime.confidence = confidence
     return regime
 
 
