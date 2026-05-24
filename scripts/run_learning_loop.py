@@ -448,10 +448,15 @@ def main() -> None:
                         if "bnb" in psid: open_symbols.add("BNB")
                     
                     # Dynamic entry: stronger when ensemble agrees
-                    entry_ok = (s.current_edge_score >= 0.22 and s.current_risk_score < 0.65)
-                    # Boost entry threshold based on consensus (more consensus = easier entry)
-                    if consensus < 0.4: entry_ok = s.current_edge_score >= 0.28  # Weak consensus = strict
-                    elif consensus > 0.6: entry_ok = s.current_edge_score >= 0.20  # Strong consensus = easier
+                    # Lower threshold in oversold/overbought extremes
+                    base_threshold = 0.22
+                    if s.current_risk_score < 0.1: base_threshold = 0.15  # Very low risk = easier entry
+                    if s.current_confidence > 0.6: base_threshold = 0.12   # High confidence = easier
+                    
+                    entry_ok = (s.current_edge_score >= base_threshold and s.current_risk_score < 0.65)
+                    # Boost entry based on consensus
+                    if consensus > 0.6: entry_ok = s.current_edge_score >= max(0.12, base_threshold - 0.05)  # Strong consensus = easier
+                    elif consensus < 0.3: entry_ok = s.current_edge_score >= min(0.30, base_threshold + 0.05)  # Weak consensus = strict
                     # Entry: edge >= 0.22, risk < 0.65
                     # Dynamic position sizing
                     if sid not in portfolio.positions and entry_ok:
@@ -551,8 +556,8 @@ def main() -> None:
                         elif s.current_risk_score > 0.70:
                             should_exit = True
                             exit_reason = f"high risk ({s.current_risk_score:.2f})"
-                        # Force rotation every 10 cycles to prevent stagnation
-                        elif state.cycle % 10 == 0:
+                        # Force rotation every 15 cycles to prevent stagnation
+                        elif state.cycle % 15 == 0:
                             should_exit = True
                             exit_reason = f"scheduled rotation (cycle {state.cycle})"
                         
