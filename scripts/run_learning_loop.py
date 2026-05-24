@@ -470,17 +470,19 @@ def main() -> None:
                             # Execute real sell if position was on exchange
                             if live_trading:
                                 try:
-                                    if sid in portfolio.positions:
-                                        place_market_sell(symbol, pos.quantity)
+                                    place_market_sell(symbol, pos.quantity)
                                 except Exception:
                                     pass
                             closed = portfolio.close_position(sid, price)
                             pnl = closed['pnl_try'] if closed else 0
+                            # Deduct trading fees (0.15% per trade = 0.3% round-trip)
+                            fee = (pos.amount_try + (pos.amount_try + pnl)) * 0.0015
+                            pnl -= fee
                             state.ledger_events.append({
                                 "id": f"exit-{state.cycle}", "ts_ms": int(time.time() * 1000),
                                 "event_type": "SMART_EXIT", "severity": "INFO",
                                 "source": "risk-engine", "strategy_id": sid,
-                                "message": f"EXIT {symbol}: {exit_reason} | PnL={pnl:+.1f} TRY ({pnl_pct*100:+.1f}%)"
+                                "message": f"EXIT {symbol}: {exit_reason} | PnL={pnl:+.2f} TRY (fee={fee:.2f})"
                             })
                 
                 portfolio.save()
