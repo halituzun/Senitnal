@@ -26,7 +26,7 @@ from sentinel.intelligence.schemas import (
 BINANCE_TICKER_URL = "https://api.binance.com/api/v3/ticker/24hr"
 BINANCE_KLINES_URL = "https://api.binance.com/api/v3/klines"
 
-DEFAULT_SYMBOLS: tuple[str, ...] = ("BTCUSDT", "ETHUSDT", "SOLUSDT")
+DEFAULT_SYMBOLS: tuple[str, ...] = ("BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT")
 DEFAULT_TIMEFRAME = "15m"  # 15-minute klines for RSI
 RSI_PERIOD = 14
 
