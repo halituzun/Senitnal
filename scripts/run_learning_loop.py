@@ -395,9 +395,31 @@ def main() -> None:
                     price = prices.get(symbol, 0)
                     if not price:
                         continue
+                    
+                    # Ensemble: count how many strategies agree on direction
+                    bullish_votes = sum(1 for st in state.strategies.values() 
+                                       if st.current_edge_score > 0.25 and st.lifecycle_state in ("ACTIVE_LIVE","LIMITED_LIVE"))
+                    bearish_votes = sum(1 for st in state.strategies.values() 
+                                       if st.current_edge_score < 0.18 and st.lifecycle_state in ("ACTIVE_LIVE","LIMITED_LIVE"))
+                    total_active = sum(1 for st in state.strategies.values() if st.lifecycle_state in ("ACTIVE_LIVE","LIMITED_LIVE"))
+                    consensus = bullish_votes / max(1, total_active)
+                    
+                    # Correlation check: if BTC and ETH both open, reduce new positions
+                    open_symbols = set()
+                    for psid in portfolio.positions:
+                        if "btc" in psid: open_symbols.add("BTC")
+                        if "eth" in psid: open_symbols.add("ETH")
+                        if "sol" in psid: open_symbols.add("SOL")
+                        if "bnb" in psid: open_symbols.add("BNB")
+                    
+                    # Dynamic entry: stronger when ensemble agrees
+                    entry_ok = (s.current_edge_score >= 0.22 and s.current_risk_score < 0.65)
+                    # Boost entry threshold based on consensus (more consensus = easier entry)
+                    if consensus < 0.4: entry_ok = s.current_edge_score >= 0.28  # Weak consensus = strict
+                    elif consensus > 0.6: entry_ok = s.current_edge_score >= 0.20  # Strong consensus = easier
                     # Entry: edge >= 0.22, risk < 0.65
                     # Dynamic position sizing
-                    if sid not in portfolio.positions and s.current_edge_score >= 0.22 and s.current_risk_score < 0.65:
+                    if sid not in portfolio.positions and entry_ok:
                         # 1. Base position from Kelly: f = edge * confidence / risk
                         win_prob = s.current_confidence if s.current_confidence > 0 else 0.5
                         risk_adj = max(0.01, s.current_risk_score)
