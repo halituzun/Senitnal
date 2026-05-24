@@ -1,144 +1,132 @@
 #!/usr/bin/env python3
-"""Full-screen Trading Dashboard v2 — split layout, live log, positions.
-
-Top: Strategy grid + Portfolio + Exchange balances
-Bottom: Scrolling trade log with real-time updates
-"""
+"""Terminal Dashboard v3 — clean borders, live trade log, proper alignment."""
 
 import json, os, shutil, sys, time
 from pathlib import Path
 
-SNAPSHOT = Path("panel/api/src/mock/snapshot.json")
-PORTFOLIO = Path("data/paper_trades/portfolio.json")
-TRADES = Path("data/paper_trades/trades.jsonl")
+SNAP = Path("panel/api/src/mock/snapshot.json")
+PORT = Path("data/paper_trades/portfolio.json")
+TRADE_LOG = Path("data/paper_trades/trades.jsonl")
 
-C = {
-    "g": "\033[32m", "r": "\033[31m", "y": "\033[33m",
-    "b": "\033[34m", "c": "\033[36m", "m": "\033[35m",
-    "w": "\033[37m", "B": "\033[1m", "d": "\033[2m",
-    "x": "\033[0m", "clr": "\033[2J\033[H",
-    "inv": "\033[7m",
-}
+class C:
+    G = "\033[32m"; R = "\033[31m"; Y = "\033[33m"; B = "\033[1m"; D = "\033[2m"
+    C = "\033[36m"; W = "\033[37m"; X = "\033[0m"; CL = "\033[2J\033[H"
 
-def clr(c: str, t: str) -> str: return f"{C.get(c,'')}{t}{C['x']}"
-def bar(v: float, w: int = 15, mx: float = 1.0) -> str:
-    f = int(min(abs(v), mx) / mx * w)
-    color = "g" if v > 0.5 else "y" if v > 0.25 else "r"
-    return clr(color, "█" * f + "░" * (w - f))
+def g(t): return f"{C.G}{t}{C.X}"
+def r(t): return f"{C.R}{t}{C.X}"
+def y(t): return f"{C.Y}{t}{C.X}"
+def b(t): return f"{C.B}{t}{C.X}"
+def c(t): return f"{C.C}{t}{C.X}"
+def d(t): return f"{C.D}{t}{C.X}"
 
-_last_trade_count = 0
+def bar(v, w=12):
+    f = int(max(0, min(v, 1.0)) * w)
+    color = C.G if v > 0.5 else C.Y if v > 0.25 else C.R
+    return f"{color}{'█'*f}{C.X}{'░'*(w-f)}"
 
 def render():
-    global _last_trade_count
-    cols, rows = shutil.get_terminal_size((120, 40))
-    
+    last_trade = 0
     while True:
         try:
-            snap = json.loads(SNAPSHOT.read_text()) if SNAPSHOT.exists() else {}
+            snap = json.loads(SNAP.read_text()) if SNAP.exists() else {}
             ls = snap.get("learning_state", {})
-            strategies = snap.get("strategies", [])
-            events = snap.get("ledger_events", [])
+            strats = snap.get("strategies", [])
             
-            pf = json.loads(PORTFOLIO.read_text()) if PORTFOLIO.exists() else {"balance_try": 10000, "closed_pnl_try": 0, "total_trades": 0, "winning_trades": 0, "positions": {}}
+            pf = json.loads(PORT.read_text()) if PORT.exists() else {"balance_try":10000,"closed_pnl_try":0,"total_trades":0,"winning_trades":0,"positions":{}}
             
-            # Read all trades for log
-            trade_lines = []
-            if TRADES.exists():
-                trade_lines = [json.loads(l) for l in open(TRADES).readlines()[-50:] if l.strip()]
+            trades_raw = []
+            if TRADE_LOG.exists():
+                for line in open(TRADE_LOG).readlines()[-100:]:
+                    if line.strip(): trades_raw.append(json.loads(line))
             
-            age = int(time.time() - SNAPSHOT.stat().st_mtime) if SNAPSHOT.exists() else 999
+            age = int(time.time() - SNAP.stat().st_mtime) if SNAP.exists() else 999
             cycle = ls.get("cycle", 0)
             alpha = ls.get("adaptive_alpha", 0)
             acc = ls.get("accuracy", 0)
             mem = ls.get("total_memories", 0)
-            pnl = pf.get("closed_pnl_try", 0)
-            trades = pf.get("total_trades", 0)
+            pnl_val = pf.get("closed_pnl_try", 0)
+            total_tr = pf.get("total_trades", 0)
             wins = pf.get("winning_trades", 0)
-            wr = wins / max(1, trades)
+            wr = wins/max(1,total_tr)
             positions = pf.get("positions", {})
             
-            live = "g" if age < 8 else "y" if age < 25 else "r"
-            pnl_c = "g" if pnl > 0 else "r" if pnl < 0 else "y"
+            cols, rows = shutil.get_terminal_size((100, 35))
+            W = min(cols - 2, 140)
             
-            # Calculate available height for log
-            header_h = 8
-            strat_h = len(strategies) + 2
-            pos_h = min(len(positions) + 3, 8) if positions else 0
-            log_h = max(6, rows - header_h - strat_h - pos_h - 2)
-            
-            sys.stdout.write(C["clr"])
+            sys.stdout.write(C.CL)
             
             # ═══ HEADER ═══
-            w = cols - 2
-            print(clr("B", f"╔{'═'*w}╗"))
-            print(clr("B", f"║  SENTINEL TRADING v2 {' '*(w-26)}║"))
-            print(clr("B", f"╠{'═'*w}╣"))
-            print(f"║  Cycle: {cycle:<6} │ α: {alpha:.3f} │ Acc: {acc:.0%} │ Mem: {mem:<5} │ {clr(live, f'LIVE ({age}s)')} {' '*(w-65)}║")
-            print(f"║  PnL: {clr(pnl_c, f'{pnl:+.1f} TRY'):<20} │ Trades: {trades:<5} │ WR: {wr:.0%} │ Pos: {len(positions):<3} {' '*(w-60)}║")
+            status = g("● LIVE") if age < 8 else y("● STALE") if age < 30 else r("● DEAD")
+            pnl_str = g(f"{pnl_val:+.1f} TRY") if pnl_val > 0 else r(f"{pnl_val:+.1f} TRY") if pnl_val < 0 else f"{pnl_val:+.1f} TRY"
+            
+            print("═" * W)
+            print(f"  SENTINEL TRADING  │  Cycle {cycle}  │  α={alpha:.3f}  │  Acc={acc:.0%}  │  Mem={mem}  │  {status}  │  {time.strftime('%H:%M:%S')}")
+            print("═" * W)
+            print(f"  PnL: {pnl_str}  │  {total_tr} trades  │  {g(f'{wr:.0%}')} WR  │  {len(positions)} open  │  New: {total_tr - last_trade}")
+            last_trade = total_tr
+            print("─" * W)
             
             # ═══ STRATEGIES ═══
-            print(clr("B", f"╠{'═'*w}╣"))
-            print(f"║  {'STRATEJİ':<19s} {'EDGE':<17s} {'RISK':<8s} {'QUALITY':<10s} {'STATE':<18s} {'POS':<5s} {'SİNYAL':<8s} {' '*(w-92)}║")
+            print(f"  {'STRATEGY':<20s} {'EDGE':<14s} {'RISK':<8s} {'Q':<6s} {'STATE':<14s} {'SIGNAL':<10s} POS")
+            print("  " + "─" * (W - 4))
             
-            for st in strategies:
-                name = st["name"][:17]
+            for st in strats:
+                name = st["name"][:18]
                 edge = st.get("current_edge_score", 0)
                 risk = st.get("current_risk_score", 0)
                 q = st.get("strategy_quality", 0)
                 state = st.get("lifecycle_state", "?")
-                
-                rc = "g" if risk < 0.3 else "y" if risk < 0.6 else "r"
-                qc = "g" if q > 0.5 else "y" if q > 0.3 else "r"
-                sc = "g" if "ACTIVE" in state or "LIMITED" in state else "y" if "PAUSED" in state else "r"
-                
                 has_pos = "🔒" if any(st["strategy_id"] in k for k in positions) else "  "
-                signal = clr("g", "BUY") if edge >= 0.28 else clr("y", "WAIT") if edge >= 0.20 else clr("r", "PASS")
                 
-                print(f"║  {name:<17s} {bar(edge):<17s} {edge:.2f}  {clr(rc, f'{risk:.2f}'):<20s} {clr(qc, f'{q:.2f}'):<20s} {clr(sc, state):<26s} {has_pos}  {signal:<16s}║")
+                if edge >= 0.28: sig = g("▶ BUY ")
+                elif edge >= 0.20: sig = y("▶ WAIT")
+                else: sig = r("▶ PASS")
+                
+                rs = g(f"{risk:.2f}") if risk < 0.3 else y(f"{risk:.2f}") if risk < 0.6 else r(f"{risk:.2f}")
+                qs = g(f"{q:.2f}") if q > 0.5 else y(f"{q:.2f}") if q > 0.3 else r(f"{q:.2f}")
+                ss = g(state) if "ACTIVE" in state else y(state) if "LIMITED" in state else r(state)
+                
+                print(f"  {name:<20s} {bar(edge):<14s} {edge:.2f}  {rs:<16s} {qs:<10s} {ss:<22s} {sig:<14s}{has_pos}")
             
             # ═══ POSITIONS ═══
             if positions:
-                print(clr("B", f"╠{'═'*w}╣"))
-                print(f"║  AÇIK POZİSYONLAR {' '*(w-20)}║")
-                for sid, pd in list(positions.items())[:6]:
-                    entry = pd.get("entry_price", 0)
+                print("─" * W)
+                print(f"  OPEN POSITIONS:")
+                for sid, pd in list(positions.items())[:5]:
                     amt = pd.get("amount_try", 0)
-                    name = sid[:30]
-                    print(f"║    {name:<30s} {amt:8.0f} TRY @ {entry:<12.2f} {' '*(w-58)}║")
+                    entry = pd.get("entry_price", 0)
+                    print(f"    {sid:<30s} {amt:8.0f} TRY @ {entry:<12.2f}")
             
             # ═══ TRADE LOG ═══
-            print(clr("B", f"╠{'═'*w}╣"))
-            print(f"║  TRADE LOG (son 50) {' '*(w-22)}║")
+            print("═" * W)
+            log_lines = max(6, rows - 18 - len(strats) - (min(len(positions),5)+2 if positions else 0))
             
-            show_trades = trade_lines[-log_h:]
-            for t in show_trades:
-                action = t.get("action", "?")
-                sid = t.get("strategy_id", "?")[:20]
-                if action == "OPEN":
-                    msg = f"🟢 ALIM  {sid:<20s} {t.get('amount_try',0):8.0f} TRY @ {t.get('price',0):.2f}"
-                elif action == "CLOSE":
+            show = trades_raw[-log_lines:]
+            for t in show:
+                a = t.get("action", "?")
+                sid = t.get("strategy_id", "?")[:18]
+                if a == "OPEN":
+                    msg = f"{g('🟢 BUY ')} {sid:<20s} {t.get('amount_try',0):8.0f} TRY @ {t.get('price',0):.0f}"
+                elif a == "CLOSE":
                     p = t.get("pnl_try", 0)
-                    wl = "WIN " if t.get("win") else "LOSS"
-                    msg = f"🔴 SATIŞ {sid:<20s} {p:+8.1f} TRY {wl}"
+                    icon = g("🟢 WIN") if t.get("win") else r("🔴 LOSS")
+                    msg = f"{icon} {sid:<20s} {p:+8.1f} TRY"
                 else:
-                    msg = f"   {action} {sid}"
-                print(f"║  {msg:<{w-4}s} ║")
+                    msg = f"   {a} {sid}"
+                print(f"  {msg}")
             
-            # Fill remaining space
-            remaining = log_h - len(show_trades)
-            for _ in range(remaining):
-                print(f"║  {' '*(w-4)} ║")
+            # Fill
+            for _ in range(log_lines - len(show)):
+                print()
             
-            # ═══ FOOTER ═══
-            print(clr("B", f"╚{'═'*w}╝"))
-            print(clr("d", f"  R:2s │ Ctrl+C exit │ {time.strftime('%H:%M:%S')} │ Loop: {'ACTIVE' if age < 20 else 'STOPPED'} │ Trades this session: {trades - _last_trade_count} new"))
-            _last_trade_count = trades
+            print("═" * W)
+            print(d(f"  R:2s │ Ctrl+C exit │ Loop running" if age < 20 else f"  R:2s │ Ctrl+C exit │ Loop STOPPED ({age}s ago)"))
             
         except Exception as e:
-            print(clr("r", f"Error: {e}"))
+            print(r(f"Error: {e}"))
         
         time.sleep(2)
 
 if __name__ == "__main__":
     try: render()
-    except KeyboardInterrupt: print(clr("g", "\n✓ Closed"))
+    except KeyboardInterrupt: print(g("\n✓ Closed"))
