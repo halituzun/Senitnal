@@ -450,6 +450,15 @@ def main() -> None:
                 candidates.sort(key=lambda x: x[3])
                 
                 for sid, s, symbol, price in candidates[:8]:  # Max 8 positions total
+                    # Extra pairs get default strategy values from market average
+                    if s is None:
+                        active_edges = [st.current_edge_score for st in state.strategies.values() if st.lifecycle_state in ("ACTIVE_LIVE","LIMITED_LIVE")]
+                        avg_edge = sum(active_edges)/len(active_edges) if active_edges else 0.25
+                        class _PS:
+                            current_edge_score = avg_edge; current_risk_score = 0.3
+                            current_confidence = 0.5; strategy_quality = 0.40
+                            lifecycle_state = "LIMITED_LIVE"; max_entry_try = 100
+                        s = _PS()
                     
                     # Ensemble: count how many strategies agree on direction
                     bullish_votes = sum(1 for st in state.strategies.values() 
