@@ -310,6 +310,41 @@ def main() -> None:
             state = run_cycle_with_real_data(state, micro_snapshots, tech_snapshots, news_sentiment)
             cycle_count += 1
 
+            # Walk-forward validation: every 50 cycles, score strategies by recent PnL
+            if state.cycle % 50 == 0 and state.cycle > 0:
+                try:
+                    import json as _json
+                    trades_log = _json.loads(open("data/paper_trades/trades.jsonl").read() + "\n]") if False else []
+                    # Score from portfolio
+                    for sid, s in state.strategies.items():
+                        # Check recent closed trades for this strategy
+                        recent_pnl = 0.0
+                        recent_wins = 0
+                        recent_total = 0
+                        trade_file = "data/paper_trades/trades.jsonl"
+                        try:
+                            for line in open(trade_file):
+                                if not line.strip(): continue
+                                t = _json.loads(line)
+                                if t.get("strategy_id") == sid and t.get("action") == "CLOSE":
+                                    recent_pnl += t.get("pnl_try", 0)
+                                    recent_total += 1
+                                    if t.get("win"): recent_wins += 1
+                        except Exception:
+                            pass
+                        
+                        # Adjust quality based on actual results
+                        if recent_total >= 3:
+                            wr = recent_wins / recent_total
+                            if wr > 0.6 and recent_pnl > 0:
+                                s.strategy_quality = min(0.95, s.strategy_quality + 0.10)
+                                print(f"  ⬆️  {sid}: WR={wr:.0%} PnL={recent_pnl:+.1f} → Q={s.strategy_quality:.2f}")
+                            elif wr < 0.4 or recent_pnl < -10:
+                                s.strategy_quality = max(0.05, s.strategy_quality - 0.10)
+                                print(f"  ⬇️  {sid}: WR={wr:.0%} PnL={recent_pnl:+.1f} → Q={s.strategy_quality:.2f}")
+                except Exception:
+                    pass
+
             # Periodic backtest (every 100 cycles) to re-optimize strategies
             if state.cycle % 100 == 0:
                 try:
