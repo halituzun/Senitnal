@@ -460,6 +460,7 @@ def main() -> None:
                         
                         if sid not in portfolio.positions:
                             portfolio.open_position(sid, symbol, price, min(amt, portfolio.balance_try * 0.1))
+                            print(f"  📄 PAPER {symbol} {min(amt, portfolio.balance_try * 0.1):.0f} TRY @ {price:.0f}")
                     
                     # Smart exit: take-profit, trailing stop, risk guard
                     elif sid in portfolio.positions:
@@ -493,8 +494,8 @@ def main() -> None:
                         elif s.current_risk_score > 0.70:
                             should_exit = True
                             exit_reason = f"high risk ({s.current_risk_score:.2f})"
-                        # Force rotation every 20 cycles to prevent stagnation
-                        elif state.cycle % 20 == 0:
+                        # Force rotation every 10 cycles to prevent stagnation
+                        elif state.cycle % 10 == 0:
                             should_exit = True
                             exit_reason = f"scheduled rotation (cycle {state.cycle})"
                             should_exit = True
