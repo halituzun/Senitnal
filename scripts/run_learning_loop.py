@@ -483,7 +483,7 @@ def main() -> None:
                     
                     # Dynamic entry: stronger when ensemble agrees
                     # Lower threshold in oversold/overbought extremes
-                    base_threshold = 0.22
+                    base_threshold = 0.18
                     if s.current_risk_score < 0.1: base_threshold = 0.15  # Very low risk = easier entry
                     if s.current_confidence > 0.6: base_threshold = 0.12   # High confidence = easier
                     
