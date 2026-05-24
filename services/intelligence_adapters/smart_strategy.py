@@ -168,7 +168,7 @@ def compute_indicator_score(indicators: dict[str, float]) -> dict[str, Any]:
     edge_score = max(-1.0, min(1.0, edge_score))
 
     # Risk score: from volatility and uncertainty
-    risk_score = regime.volatility == "high" * 0.4 + (1 - regime.confidence) * 0.3
+    risk_score = (regime.volatility == "high") * 0.4 + (1 - regime.confidence) * 0.3
 
     return {
         "edge_score": round(edge_score, 3),
