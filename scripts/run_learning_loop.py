@@ -253,10 +253,15 @@ def main() -> None:
                         tech_snapshots.append(taapi_snap)
                         # Smart strategy analysis from real indicators
                         score = compute_indicator_score(taapi_snap.indicators)
-                        # Blend smart score with existing strategy state
-                        strategy.current_edge_score = round(strategy.current_edge_score * 0.6 + max(0, score["edge_score"]) * 0.4, 3)
-                        strategy.current_risk_score = round(strategy.current_risk_score * 0.6 + score["risk_score"] * 0.4, 3)
-                        strategy.current_confidence = round(strategy.current_confidence * 0.6 + score["confidence"] * 0.4, 3)
+                        # Dynamic blend: give more weight to smart strategy in extreme conditions
+                        smart_weight = 0.4
+                        rsi_val = taapi_snap.indicators.get("rsi", 50)
+                        if rsi_val < 30 or rsi_val > 70: smart_weight = 0.7  # Extreme RSI → trust indicators more
+                        if score["confidence"] > 0.6: smart_weight = 0.6  # High confidence → more weight
+                        old_weight = 1.0 - smart_weight
+                        strategy.current_edge_score = round(strategy.current_edge_score * old_weight + max(0, score["edge_score"]) * smart_weight, 3)
+                        strategy.current_risk_score = round(strategy.current_risk_score * old_weight + score["risk_score"] * smart_weight, 3)
+                        strategy.current_confidence = round(strategy.current_confidence * old_weight + score["confidence"] * smart_weight, 3)
 
             # Fetch news sentiment (graceful — skip on failure)
             news_sentiment: dict[str, float] = {}
