@@ -30,6 +30,7 @@ if _env_path.exists():
 from services.intelligence_adapters.binance_adapter import (
     fetch_all_snapshots as fetch_binance,
     fetch_prices,
+    fetch_24h_tickers,
 )
 from services.intelligence_adapters.taapi_adapter import (
     TaapiConfig,
@@ -425,7 +426,40 @@ def main() -> None:
                         s.lifecycle_state = "LIMITED_LIVE"
                         s.allocated_budget_try = s.max_entry_try * 3
 
-                # Execute trades — scan ALL available pairs, pick best signals
+                # QUICK TRADE MODE: direct Binance signal bypassing slow fusion
+                # Buy when 24h drop >2% (oversold bounce), sell on recovery
+                tickers = fetch_24h_tickers()
+                for sid, s in state.strategies.items():
+                    if s.lifecycle_state not in ("ACTIVE_LIVE", "LIMITED_LIVE"): continue
+                    symbol = "BTCUSDT" if "btc" in sid else "ETHUSDT" if "eth" in sid else "SOLUSDT" if "sol" in sid else "BNBUSDT"
+                    price = prices.get(symbol, 0)
+                    if not price: continue
+                    
+                    ticker = tickers.get(symbol, {})
+                    chg_24h = float(ticker.get("priceChangePercent", 0)) if ticker else 0
+                    
+                    # Entry: 24h drop > 1.5% = oversold bounce opportunity
+                    if sid not in portfolio.positions and chg_24h < -1.5:
+                        amt = min(200, portfolio.balance_try * 0.1)  # 10% of portfolio
+                        amt = max(amt, 50)
+                        if live_trading:
+                            try:
+                                bt_symbol = symbol.replace("USDT", "TRY")
+                                btcturk_order(bt_symbol, "BUY", quote_amount=amt)
+                            except: pass
+                        portfolio.open_position(sid, symbol, price, amt)
+                        print(f"  🟢 QUICK {symbol} {amt:.0f} TRY @ {price:.0f} (24h={chg_24h:+.1f}%)")
+                    
+                    # Exit: recovered +1% or dropped further -2% from entry
+                    elif sid in portfolio.positions:
+                        pos = portfolio.positions[sid]
+                        pnl_pct = (price - pos.entry_price) / pos.entry_price if pos.entry_price > 0 else 0
+                        if pnl_pct > 0.01 or pnl_pct < -0.015:
+                            closed = portfolio.close_position(sid, price)
+                            pnl = closed['pnl_try'] if closed else 0
+                            print(f"  🔴 QUICK {symbol}: {pnl:+.1f} TRY ({pnl_pct*100:+.1f}%)")
+                
+                portfolio.save()
                 # Build candidate list from active strategies + additional pairs
                 candidates = []
                 for sid, s in state.strategies.items():
